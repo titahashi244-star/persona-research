@@ -8,10 +8,12 @@ on:
         required: true
       person_name:
         description: '担当者名'
-        required: true
+        required: false
+        default: ''
       department:
         description: '部署'
-        required: true
+        required: false
+        default: ''
 
 permissions:
   contents: write
