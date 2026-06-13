@@ -1,2 +1,3 @@
 tavily-python
 google-generativeai
+weasyprint

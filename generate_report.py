@@ -4,6 +4,12 @@ from datetime import datetime
 from tavily import TavilyClient
 import google.generativeai as genai
 
+try:
+    from weasyprint import HTML as WeasyprintHTML
+    WEASYPRINT_AVAILABLE = True
+except Exception:
+    WEASYPRINT_AVAILABLE = False
+
 # ============================================================
 # HTML TEMPLATE
 # ============================================================
@@ -652,21 +658,111 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
 
 
 # ============================================================
+# PDF GENERATION
+# ============================================================
+PDF_CSS = """
+@page { margin: 15mm 12mm; size: A4; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Helvetica Neue', Arial, sans-serif; background:#fff; color:#1a1a2e; font-size:11px; line-height:1.6; }
+.header { background:#1a1a2e; color:#fff; padding:20px 24px; margin-bottom:16px; }
+.header .badge { background:#e94560; color:#fff; font-size:9px; font-weight:700; padding:2px 8px; border-radius:10px; display:inline-block; margin-bottom:6px; }
+.header .company-name { font-size:22px; font-weight:800; color:#fff; margin:6px 0 2px; }
+.header .person-info { color:#aaa; font-size:10px; }
+.container { padding:0 12px; }
+.vsummary { background:#f8f9fa; border:1px solid #ddd; border-radius:8px; padding:16px; margin-bottom:14px; }
+.vsummary-title { font-size:9px; font-weight:700; color:#666; letter-spacing:1px; margin-bottom:12px; }
+.signal-row { display:flex; gap:10px; margin-bottom:12px; }
+.signal-box { flex:1; background:#fff; border:1px solid #ddd; border-radius:6px; padding:10px; text-align:center; }
+.signal-light { font-size:20px; display:block; margin-bottom:4px; }
+.signal-label { font-size:9px; color:#444; font-weight:700; }
+.signal-note { font-size:8px; color:#888; margin-top:2px; }
+.key-facts { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.key-fact { background:#fff; border:1px solid #ddd; border-radius:6px; padding:8px 12px; flex:1; min-width:120px; }
+.key-fact-label { font-size:8px; color:#888; font-weight:700; margin-bottom:2px; }
+.key-fact-value { font-size:12px; font-weight:800; color:#1a1a2e; }
+.opening-box { background:#f3eeff; border:1px solid #c9a0e8; border-radius:6px; padding:10px 14px; }
+.opening-label { font-size:8px; color:#7b4fa6; font-weight:700; margin-bottom:4px; }
+.opening-text { font-size:11px; font-weight:600; color:#1a1a2e; }
+.opening-caution { font-size:8px; color:#999; margin-top:4px; }
+.quick-stats { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+.stat-box { background:#f8f9fa; border:1px solid #ddd; border-radius:6px; padding:10px; text-align:center; flex:1; min-width:100px; }
+.stat-value { font-size:13px; font-weight:800; color:#e94560; }
+.stat-label { font-size:8px; color:#666; margin-top:2px; }
+.section { background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:14px 16px; margin-bottom:10px; page-break-inside:avoid; }
+.section-title { font-size:12px; font-weight:700; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.section-body { color:#333; font-size:10px; line-height:1.7; }
+.section-body p { margin-bottom:6px; }
+.section-body ul { padding-left:16px; }
+.section-body li { margin-bottom:4px; }
+.highlight { background:#f8f9fa; border-left:3px solid #e94560; padding:8px 12px; border-radius:0 4px 4px 0; margin:8px 0; }
+.voice-card { background:#f8f9fa; border:1px solid #e0e0e0; border-radius:6px; padding:8px 12px; margin:5px 0; font-size:10px; }
+.voice-card .voice-text { color:#333; font-style:italic; }
+.voice-card .voice-meta { color:#888; font-size:9px; margin-top:3px; }
+.comp-table { width:100%; border-collapse:collapse; font-size:9px; margin-top:8px; }
+.comp-table th { background:#f0f0f0; padding:6px 8px; text-align:left; font-weight:700; border-bottom:1px solid #ddd; }
+.comp-table td { padding:6px 8px; border-bottom:1px solid #f0f0f0; }
+.comp-table .target { color:#1565c0; font-weight:700; }
+.qa-item { background:#f8f9fa; border-radius:6px; padding:8px 12px; margin:5px 0; }
+.qa-q { color:#e65100; font-weight:700; font-size:10px; margin-bottom:3px; }
+.qa-a { color:#333; font-size:10px; }
+.icebreaker-item { background:#f8f9fa; border-left:3px solid #81c784; padding:6px 12px; margin:4px 0; font-size:10px; }
+.checklist li { list-style:none; display:flex; gap:6px; align-items:flex-start; margin-bottom:5px; }
+.checklist li::before { content:"☐"; color:#e94560; flex-shrink:0; }
+.key-message { background:#fff3e0; border:1px solid #ffb74d; border-radius:6px; padding:10px 14px; margin-top:10px; }
+.key-message-label { font-size:8px; color:#e65100; font-weight:700; margin-bottom:4px; }
+.key-message-text { font-size:12px; font-weight:800; color:#1a1a2e; }
+.conf { display:inline-block; font-size:8px; font-weight:700; padding:1px 5px; border-radius:8px; margin-left:4px; }
+.conf-高 { background:#e8f5e9; color:#388e3c; border:1px solid #a5d6a7; }
+.conf-中 { background:#fff8e1; color:#f57c00; border:1px solid #ffe082; }
+.conf-低 { background:#ffebee; color:#c62828; border:1px solid #ef9a9a; }
+.conf-低-wrap { background:#fff5f5; border-left:3px solid #e57373; padding:4px 8px; margin:2px 0; }
+.sources-section { background:#f8f9fa; border:1px solid #e0e0e0; border-radius:8px; padding:14px 16px; margin-top:10px; }
+.sources-section a { color:#1565c0; font-size:9px; word-break:break-all; }
+.footer { text-align:center; padding:16px; color:#aaa; font-size:9px; margin-top:10px; border-top:1px solid #eee; }
+.back-link { display:none; }
+"""
+
+def build_pdf_html(html: str) -> str:
+    """HTMLのダークテーマCSSをPDF用ライトテーマに置き換える"""
+    # <style>...</style>ブロックをPDF用CSSに差し替え
+    import re
+    pdf_html = re.sub(r"<style>.*?</style>", f"<style>{PDF_CSS}</style>", html, flags=re.DOTALL)
+    return pdf_html
+
+
+def generate_pdf(html: str, pdf_path: str) -> bool:
+    if not WEASYPRINT_AVAILABLE:
+        print("  weasyprint not available, skipping PDF")
+        return False
+    try:
+        pdf_html = build_pdf_html(html)
+        WeasyprintHTML(string=pdf_html).write_pdf(pdf_path)
+        print(f"✓ PDF保存: {pdf_path}")
+        return True
+    except Exception as e:
+        print(f"  PDF生成エラー: {e}")
+        return False
+
+
+# ============================================================
 # INDEX
 # ============================================================
-def update_index(company_name: str, person_name: str, department: str, filename: str):
+def update_index(company_name: str, person_name: str, department: str, filename: str, pdf_filename: str = ""):
     index_path = "reports/index.json"
     index = []
     if os.path.exists(index_path):
         with open(index_path, encoding="utf-8") as f:
             index = json.load(f)
-    index.insert(0, {
+    entry = {
         "company": company_name,
         "person": person_name,
         "department": department,
         "file": filename,
         "created_at": datetime.now().isoformat(),
-    })
+    }
+    if pdf_filename:
+        entry["pdf"] = pdf_filename
+    index.insert(0, entry)
     with open(index_path, "w", encoding="utf-8") as f:
         json.dump(index, f, ensure_ascii=False, indent=2)
 
@@ -702,5 +798,9 @@ if __name__ == "__main__":
         f.write(html)
     print(f"✓ レポート保存: {filepath}")
 
-    update_index(company_name, person_name, department, filename)
+    pdf_filename = filename.replace(".html", ".pdf")
+    pdf_filepath = f"reports/{pdf_filename}"
+    pdf_ok = generate_pdf(html, pdf_filepath)
+
+    update_index(company_name, person_name, department, filename, pdf_filename if pdf_ok else "")
     print("✓ 完了")
