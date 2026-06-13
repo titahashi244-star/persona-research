@@ -164,58 +164,80 @@ SNS_REVIEW_DOMAINS = [
     "togetter.com", "note.com",
 ]
 
+def is_fresh_url(url: str) -> bool:
+    """PDFや古い文書パターンを除外する"""
+    url_lower = url.lower()
+    if url_lower.endswith(".pdf"):
+        return False
+    # 明らかに古い年号が含まれるURLを除外
+    import re
+    old_years = re.findall(r"/(20[01]\d)/", url_lower)
+    if old_years:
+        return False
+    return True
+
+
+def do_search(tavily: TavilyClient, key: str, query: str, kwargs: dict, filter_pdf: bool = False) -> list:
+    try:
+        r = tavily.search(query, max_results=6, search_depth="advanced", **kwargs)
+        items = [
+            {"title": x["title"], "content": x["content"][:600], "url": x["url"]}
+            for x in r["results"]
+        ]
+        if filter_pdf:
+            items = [x for x in items if is_fresh_url(x["url"])]
+        print(f"  ✓ {key}: {len(items)}件")
+        return items[:5]
+    except Exception as e:
+        # include_domains 指定で失敗した場合はdomains指定なしで再試行
+        if "include_domains" in kwargs:
+            try:
+                fallback = {k: v for k, v in kwargs.items() if k != "include_domains"}
+                r = tavily.search(query, max_results=6, search_depth="advanced", **fallback)
+                items = [
+                    {"title": x["title"], "content": x["content"][:600], "url": x["url"]}
+                    for x in r["results"]
+                ]
+                if filter_pdf:
+                    items = [x for x in items if is_fresh_url(x["url"])]
+                print(f"  ✓ {key} (fallback): {len(items)}件")
+                return items[:5]
+            except Exception as e2:
+                print(f"  Search warn ({key}): {e2}")
+        else:
+            print(f"  Search warn ({key}): {e}")
+        return []
+
+
 def search_all(tavily: TavilyClient, company_name: str, person_name: str, department: str) -> dict:
-    # 鮮度重視（直近30日）の検索設定
-    FRESH = {"days": 30}
+    FRESH   = {"days": 30}   # 直近30日
+    FRESHER = {"days": 14}   # 直近2週間（ニュース・SNS）
 
     queries = [
-        # key, query, extra_kwargs
-        ("financials",         f"{company_name} 決算 売上 営業利益 業績",                          {}),
-        ("ir",                 f"{company_name} IR 中期経営計画 成長戦略",                         {}),
-        ("news",               f"{company_name} 新発表 新戦略 リリース",                           {**FRESH, "include_domains": PRESS_RELEASE_DOMAINS}),
-        ("news_general",       f"{company_name} ニュース 発表",                                   FRESH),
-        ("products",           f"{company_name} 新商品 新サービス 発売",                           FRESH),
-        ("products_ranking",   f"{company_name} 商品 売上ランキング カテゴリ シェア",               {}),
-        ("industry",           f"{company_name} 業界 市場規模 市場動向 シェア",                    {}),
-        ("competitors",        f"{company_name} 競合他社 比較 シェア",                             {}),
-        ("competitor_products",f"{company_name} 競合 商品比較 差別化",                             {}),
-        ("sns_consumer",       f"{company_name} 口コミ 評判 レビュー 本音",                        {**FRESH, "include_domains": SNS_REVIEW_DOMAINS}),
-        ("sns_trend",          f"{company_name} 話題 キャンペーン トレンド バズ",                  FRESH),
-        ("person",             f"{company_name} {person_name} {department}" if person_name else f"{company_name} {department} 責任者", {}),
-        ("person_sns",         f"{person_name} {company_name} インタビュー 登壇 発言" if person_name else "", {}),
-        ("initiatives",        f"{company_name} DX マーケティング 取り組み",                       FRESH),
-        ("issues",             f"{company_name} 課題 リスク 懸念 弱点",                            {}),
+        # key, query, kwargs, filter_pdf
+        ("financials",          f"{company_name} 決算 売上 営業利益 業績",                    {},                                              False),
+        ("ir",                  f"{company_name} IR 中期経営計画",                            {},                                              False),
+        ("news",                f"{company_name} 新発表 リリース",                            {**FRESHER, "include_domains": PRESS_RELEASE_DOMAINS}, True),
+        ("news_general",        f"{company_name} ニュース 発表 2025 OR 2026",                 FRESHER,                                         True),
+        ("products",            f"{company_name} 新商品 新発売 2025 OR 2026",                 FRESH,                                           True),
+        ("products_ranking",    f"{company_name} 商品 売上ランキング カテゴリ シェア",         {},                                              False),
+        ("industry",            f"{company_name} 業界 市場規模 市場動向",                     {},                                              False),
+        ("competitors",         f"{company_name} 競合他社 比較 シェア",                       {},                                              False),
+        ("competitor_products", f"{company_name} 競合 商品比較 差別化",                       {},                                              False),
+        ("sns_consumer",        f"{company_name} 口コミ 評判 レビュー 本音",                  {**FRESH, "include_domains": SNS_REVIEW_DOMAINS},True),
+        ("sns_trend",           f"{company_name} 話題 キャンペーン トレンド 2025 OR 2026",    FRESHER,                                         True),
+        ("person",              f"{company_name} {person_name} {department}" if person_name else f"{company_name} {department} 責任者", {}, False),
+        ("person_sns",          f"{person_name} {company_name} インタビュー 登壇 発言" if person_name else "", {}, False),
+        ("initiatives",         f"{company_name} DX マーケティング 取り組み 2025 OR 2026",    FRESH,                                           True),
+        ("issues",              f"{company_name} 課題 リスク 懸念 弱点",                      {},                                              False),
     ]
 
     results = {}
-    for key, query, kwargs in queries:
+    for key, query, kwargs, filter_pdf in queries:
         if not query.strip():
             results[key] = []
             continue
-        try:
-            r = tavily.search(query, max_results=5, search_depth="advanced", **kwargs)
-            results[key] = [
-                {"title": x["title"], "content": x["content"][:600], "url": x["url"]}
-                for x in r["results"]
-            ]
-            print(f"  ✓ {key}: {len(results[key])}件")
-        except Exception as e:
-            # include_domains で結果0件の場合はdomains指定なしで再試行
-            if "include_domains" in kwargs:
-                try:
-                    fallback_kwargs = {k: v for k, v in kwargs.items() if k != "include_domains"}
-                    r = tavily.search(query, max_results=5, search_depth="advanced", **fallback_kwargs)
-                    results[key] = [
-                        {"title": x["title"], "content": x["content"][:600], "url": x["url"]}
-                        for x in r["results"]
-                    ]
-                    print(f"  ✓ {key} (fallback): {len(results[key])}件")
-                except Exception as e2:
-                    results[key] = []
-                    print(f"  Search warn ({key}): {e2}")
-            else:
-                results[key] = []
-                print(f"  Search warn ({key}): {e}")
+        results[key] = do_search(tavily, key, query, kwargs, filter_pdf)
 
     # news + news_general をマージしてnewsに統合
     seen = set()
@@ -261,14 +283,18 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
     model = genai.GenerativeModel("gemini-2.5-flash")
 
+    today = now_jst().strftime("%Y年%m月%d日")
+    cutoff = (now_jst() - timedelta(days=30)).strftime("%Y年%m月%d日")
+
     prompt = f"""
 あなたは大日本印刷（DNP）の凄腕B2B営業担当です。
 「この会社のことを業界の誰よりも深く理解している」という印象を与えられるレベルの商談前レポートを作成してください。
 
-【重要】深さより鮮度を優先してください。
-- 直近1ヶ月以内の新商品・ニュースリリース・キャンペーン情報を必ず含める
-- SNSの声は「最近話題になっていること」を具体的に記述する
-- 古い情報より新しい情報を優先する
+【重要：日付ルール】今日は {today} です。
+- 「最新ニュース」「新商品」「SNSの声」セクションは、検索データの中から {cutoff} 以降の情報のみ使用すること
+- それより古い情報（特にPDFの戦略文書・数年前のニュース）は一切使わないこと
+- 情報の日付が不明な場合は「時期不明」と明記し、古い可能性があると注記すること
+- 「直近1ヶ月」と書く場合は {today} 基準で正確に表現すること
 
 【今回提案するDNPサービス: {service["name"]}】
 {service["description"]}
