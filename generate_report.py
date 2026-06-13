@@ -116,12 +116,14 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
     .section {{ border:1px solid #ddd; page-break-inside:avoid; }}
   }}
   /* Visual Summary */
-  .vsummary {{ background:#12121f; border:1px solid #2a2a4a; border-radius:14px; padding:24px 28px; margin-bottom:20px; }}
-  .vsummary-title {{ font-size:11px; font-weight:700; color:#4a5568; letter-spacing:1px; margin-bottom:16px; }}
-  .key-facts {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:8px; margin-bottom:16px; }}
-  .key-fact {{ border-left:3px solid #2a2a4a; padding:10px 14px; }}
-  .key-fact-label {{ font-size:10px; color:#4a5568; font-weight:600; margin-bottom:4px; }}
-  .key-fact-value {{ font-size:14px; font-weight:700; color:#e0e0e0; line-height:1.4; }}
+  .vsummary {{ background:linear-gradient(135deg,#12121f 0%,#1a1a2e 100%); border:1px solid #2a2a4a; border-radius:14px; padding:24px 28px; margin-bottom:20px; }}
+  .vsummary-metrics {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:#2a2a4a; border-radius:10px; overflow:hidden; margin-bottom:16px; }}
+  .vsummary-metric {{ background:#12121f; padding:14px 18px; }}
+  .vsummary-metric-label {{ font-size:10px; color:#4a5568; font-weight:700; letter-spacing:0.5px; margin-bottom:5px; text-transform:uppercase; }}
+  .vsummary-metric-value {{ font-size:14px; font-weight:700; color:#e0e0e0; line-height:1.4; }}
+  .vsummary-location {{ background:#0d0d1a; border:1px solid #1e1e3a; border-radius:8px; padding:12px 16px; display:flex; gap:20px; flex-wrap:wrap; }}
+  .vsummary-location-item {{ font-size:12px; color:#7f8c9a; }}
+  .vsummary-location-item strong {{ color:#b0bec5; margin-right:6px; }}
 
   @media(max-width:600px) {{
     .header {{ padding:24px; }}
@@ -142,7 +144,6 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
 <div class="container">
   <a href="../index.html" class="back-link">← レポート一覧に戻る</a>
   {visual_summary_html}
-  {quick_stats_html}
   {sections_html}
   <div class="footer">DNPペルソナインサイト 商談前リサーチレポート｜自動生成　※情報は公開情報をもとにAIが分析したものです</div>
 </div>
@@ -215,6 +216,7 @@ def search_all(tavily: TavilyClient, company_name: str, person_name: str, depart
 
     queries = [
         # key, query, kwargs, filter_pdf
+        ("profile",             f"{company_name} 本社 所在地 事業所 工場 設立 従業員",        {},                                              False),
         ("financials",          f"{company_name} 決算 売上 営業利益 業績",                    {},                                              False),
         ("ir",                  f"{company_name} IR 中期経営計画",                            {},                                              False),
         ("news",                f"{company_name} 新発表 リリース",                            {**FRESHER, "include_domains": PRESS_RELEASE_DOMAINS}, True),
@@ -322,6 +324,8 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
     "employees": "従業員数（わかれば）",
     "revenue": "直近売上高（わかれば）",
     "market_position": "市場ポジション（例: 業界3位）",
+    "hq": "本社所在地（例: 東京都渋谷区）",
+    "offices": "主要事業所・工場（例: 大阪、名古屋、仙台工場）",
     "confidence": "高/中/低"
   }},
   "company_summary": {{
@@ -461,47 +465,40 @@ def bullets(items: list) -> str:
 
 def build_visual_summary(data: dict) -> str:
     qs = data.get("quick_stats", {})
-    fin = data.get("financials", {})
+    conf = qs.get("confidence", "")
+    badge = conf_badge(conf) if conf else ""
 
-    # キーファクト（業界・売上・ポジション・従業員）
-    highlights = fin.get("highlights", [])
-    fin_highlight = ""
-    if highlights:
-        h = highlights[0]
-        fin_highlight = h.get("text", "") if isinstance(h, dict) else str(h)
-
-    facts = [
-        ("業界", qs.get("industry", "")),
-        ("売上高", qs.get("revenue", "")),
-        ("市場ポジション", qs.get("market_position", "")),
-        ("従業員数", qs.get("employees", "")),
-        ("業績ハイライト", fin_highlight),
+    metrics = [
+        ("INDUSTRY", qs.get("industry", "")),
+        ("REVENUE", qs.get("revenue", "")),
+        ("POSITION", qs.get("market_position", "")),
+        ("EMPLOYEES", qs.get("employees", "")),
+        ("FOUNDED", qs.get("founded", "")),
     ]
-    facts_html = "".join(
-        f'<div class="key-fact"><div class="key-fact-label">{l}</div><div class="key-fact-value">{v}</div></div>'
-        for l, v in facts if v and v != "—"
+    metrics_html = "".join(
+        f'<div class="vsummary-metric"><div class="vsummary-metric-label">{l}</div><div class="vsummary-metric-value">{v}</div></div>'
+        for l, v in metrics if v and v not in ("—", "不明", "")
     )
+
+    hq = qs.get("hq", "")
+    offices = qs.get("offices", "")
+    location_parts = []
+    if hq:
+        location_parts.append(f'<span class="vsummary-location-item"><strong>🏢 本社</strong>{hq}</span>')
+    if offices:
+        location_parts.append(f'<span class="vsummary-location-item"><strong>📍 拠点</strong>{offices}</span>')
+    location_html = f'<div class="vsummary-location">{"".join(location_parts)}</div>' if location_parts else ""
+
+    conf_note = f'<div style="text-align:right;font-size:11px;color:#4a5568;margin-bottom:10px">基本情報の信頼度: {badge}</div>' if badge else ""
 
     return f"""
 <div class="vsummary">
-  <div class="vsummary-title">📋 概要サマリー</div>
-  <div class="key-facts">{facts_html}</div>
+  {conf_note}
+  <div class="vsummary-metrics">{metrics_html}</div>
+  {location_html}
 </div>"""
 
 
-def build_quick_stats(data: dict) -> str:
-    qs = data.get("quick_stats", {})
-    conf = qs.get("confidence", "")
-    badge = conf_badge(conf) if conf else ""
-    stats = [
-        (qs.get("industry", "—"), "業界"),
-        (qs.get("revenue", "—"), "売上高"),
-        (qs.get("employees", "—"), "従業員数"),
-        (qs.get("market_position", "—"), "市場ポジション"),
-    ]
-    boxes = "".join(f'<div class="stat-box"><div class="stat-value">{v}</div><div class="stat-label">{l}</div></div>' for v, l in stats)
-    conf_note = f'<div style="text-align:right;margin-bottom:8px;font-size:11px;color:#4a5568">基本情報の信頼度: {badge}</div>' if badge else ""
-    return f'{conf_note}<div class="quick-stats">{boxes}</div>'
 
 
 def build_sources_html(research: dict) -> str:
@@ -562,7 +559,7 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
     c = data.get("company_summary", {})
     sections.append(render_section("🏢", "企業概要", "#4fc3f7",
         f"<p>{c.get('description','')}</p>{bullets(c.get('key_points',[]))}",
-        src("financials", "ir")))
+        src("profile", "financials", "ir")))
 
     # 2. 財務・業績
     f = data.get("financials", {})
@@ -657,7 +654,6 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
         badge_color=badge_color,
         created_at=now_jst().strftime("%Y年%m月%d日 %H:%M"),
         visual_summary_html=build_visual_summary(data),
-        quick_stats_html=build_quick_stats(data),
         sections_html="\n".join(sections),
     )
 
