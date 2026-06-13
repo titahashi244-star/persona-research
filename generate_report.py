@@ -87,6 +87,18 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
   .conf-低 {{ background:#3a1010; color:#e57373; border:1px solid #7a2020; }}
   .conf-低-wrap {{ background:#2b1010; border-left:3px solid #e57373; border-radius:0 6px 6px 0; padding:8px 12px; margin:4px 0; }}
 
+  /* Source drawer */
+  details.src {{ margin-top:14px; }}
+  details.src summary {{ font-size:11px; color:#3a3a6a; cursor:pointer; user-select:none; list-style:none; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #2a2a4a; border-radius:20px; }}
+  details.src summary::-webkit-details-marker {{ display:none; }}
+  details.src summary::before {{ content:"📎"; }}
+  details.src[open] summary {{ color:#7f8c9a; border-color:#3a3a6a; }}
+  details.src .src-list {{ margin-top:10px; padding:10px 14px; background:#0a0a0f; border-radius:8px; border:1px solid #1a1a2e; }}
+  details.src .src-list a {{ display:block; color:#4fc3f7; font-size:11px; text-decoration:none; padding:4px 0; border-bottom:1px solid #1a1a2e; word-break:break-all; }}
+  details.src .src-list a:last-child {{ border-bottom:none; }}
+  details.src .src-list a:hover {{ text-decoration:underline; }}
+  details.src .src-title {{ font-size:10px; color:#4a5568; margin-bottom:2px; }}
+
   /* Key message */
   .key-message {{ background:linear-gradient(135deg,#1e0a15,#2a1020); border:1px solid #e94560; border-radius:10px; padding:20px 24px; margin-top:16px; }}
   .key-message-label {{ color:#e94560; font-size:11px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }}
@@ -326,13 +338,25 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
 # ============================================================
 # HTML RENDERING
 # ============================================================
-def render_section(icon: str, title: str, color: str, body_html: str) -> str:
+def render_sources_drawer(sources: list) -> str:
+    if not sources:
+        return ""
+    links = "".join(
+        f'<a href="{s["url"]}" target="_blank"><span class="src-title">{s.get("title","")}</span></a>'
+        for s in sources if s.get("url")
+    )
+    return f'<details class="src"><summary>根拠を見る（{len(sources)}件）</summary><div class="src-list">{links}</div></details>'
+
+
+def render_section(icon: str, title: str, color: str, body_html: str, sources: list = None) -> str:
+    drawer = render_sources_drawer(sources) if sources else ""
     return f"""
 <div class="section">
   <div class="section-title" style="color:{color}">
     <span style="font-size:20px">{icon}</span>{title}
   </div>
   <div class="section-body">{body_html}</div>
+  {drawer}
 </div>"""
 
 
@@ -445,11 +469,22 @@ def build_sources_html(research: dict) -> str:
 def build_html(company_name: str, person_name: str, department: str, data: dict, service_key: str = "persona_insight", research: dict = None) -> str:
     service = SERVICES.get(service_key, SERVICES["persona_insight"])
     sections = []
+    r = research or {}
+
+    def src(*keys):
+        seen, out = set(), []
+        for k in keys:
+            for item in r.get(k, []):
+                if item.get("url") and item["url"] not in seen:
+                    seen.add(item["url"])
+                    out.append(item)
+        return out
 
     # 1. 企業概要
     c = data.get("company_summary", {})
     sections.append(render_section("🏢", "企業概要", "#4fc3f7",
-        f"<p>{c.get('description','')}</p>{bullets(c.get('key_points',[]))}"))
+        f"<p>{c.get('description','')}</p>{bullets(c.get('key_points',[]))}",
+        src("financials", "ir")))
 
     # 2. 財務・業績
     f = data.get("financials", {})
@@ -457,14 +492,16 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
     if f.get("concerns"):
         concerns_html = f'<div class="highlight"><p>⚠️ 課題・懸念点：</p>{bullets(f["concerns"])}</div>'
     sections.append(render_section("📈", "財務・業績", "#81c784",
-        f"<p>{f.get('summary','')}</p>{bullets(f.get('highlights',[]))}{concerns_html}"))
+        f"<p>{f.get('summary','')}</p>{bullets(f.get('highlights',[]))}{concerns_html}",
+        src("financials", "ir")))
 
     # 3. 業界トレンド
     t = data.get("industry_trends", {})
     market_badge = conf_badge(t.get("market_size_confidence", "")) if t.get("market_size_confidence") else ""
     market_html = f'<div class="highlight"><p>市場規模：{t["market_size"]}{market_badge}</p></div>' if t.get("market_size") else ""
     sections.append(render_section("🌊", "業界トレンド・市場動向", "#ffb74d",
-        f"<p>{t.get('summary','')}</p>{bullets(t.get('trends',[]))}{market_html}"))
+        f"<p>{t.get('summary','')}</p>{bullets(t.get('trends',[]))}{market_html}",
+        src("industry")))
 
     # 4. 競合分析
     comp = data.get("competitors", {})
@@ -479,7 +516,8 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
 <tr><th>企業名</th><th>シェア</th><th>強み</th><th>弱み</th></tr>
 {table_rows}</table>"""
     sections.append(render_section("⚔️", "競合分析", "#ce93d8",
-        f"<p>{comp.get('summary','')}</p>{table_html}"))
+        f"<p>{comp.get('summary','')}</p>{table_html}",
+        src("competitors", "competitor_products")))
 
     # 5. 主力製品・カテゴリ
     prod = data.get("products", {})
@@ -488,12 +526,14 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
         badge = conf_badge(cat.get("confidence", "")) if cat.get("confidence") else ""
         cat_html += f'<div class="voice-card"><strong style="color:#4fc3f7">{cat.get("name","")}</strong>　{cat.get("products","")}　<span style="color:#7f8c9a;font-size:12px">{cat.get("position","")}</span>{badge}</div>'
     sections.append(render_section("📦", "主力製品・カテゴリ別ポジション", "#80cbc4",
-        f"<p>{prod.get('summary','')}</p>{cat_html}"))
+        f"<p>{prod.get('summary','')}</p>{cat_html}",
+        src("products")))
 
     # 6. 最新ニュース
     n = data.get("latest_news", {})
     sections.append(render_section("🆕", "最新ニュース・新商品・取り組み", "#ffcc02",
-        f"<p>{n.get('summary','')}</p>{bullets(n.get('items',[]))}"))
+        f"<p>{n.get('summary','')}</p>{bullets(n.get('items',[]))}",
+        src("news", "initiatives")))
 
     # 7. SNS・消費者の声
     sns = data.get("sns_voice", {})
@@ -502,7 +542,8 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
     opp_html = bullets(sns.get("opportunities", []))
     sections.append(render_section("📱", "SNS・消費者の声", "#f48fb1",
         f"<p>{sns.get('summary','')}</p>{pos_html}{neg_html}"
-        f"<p style='margin-top:14px;color:#81c784;font-weight:700'>💡 ビジネス機会</p>{opp_html}"))
+        f"<p style='margin-top:14px;color:#81c784;font-weight:700'>💡 ビジネス機会</p>{opp_html}",
+        src("sns_consumer", "sns_trend")))
 
     # 8. 面談相手プロファイル
     p = data.get("person_profile", {})
@@ -510,26 +551,23 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
     sections.append(render_section("👤", "面談相手・部署プロファイル", "#f48fb1",
         f"<p>{p.get('summary','')}</p>"
         f"<p style='margin-top:12px;font-weight:700;color:#7f8c9a'>関心事・KPI</p>{bullets(p.get('likely_interests',[]))}"
-        f"<p style='margin-top:12px;font-weight:700;color:#7f8c9a'>コミュニケーションのポイント</p>{tips_html}"))
+        f"<p style='margin-top:12px;font-weight:700;color:#7f8c9a'>コミュニケーションのポイント</p>{tips_html}",
+        src("person", "person_sns")))
 
     # 9. アイスブレイク話題
     ib_html = "".join(f'<div class="icebreaker-item">💬 {i}</div>' for i in data.get("icebreakers", []))
-    sections.append(render_section("☕", "アイスブレイク話題", "#a5d6a7", ib_html))
+    sections.append(render_section("☕", "アイスブレイク話題", "#a5d6a7", ib_html,
+        src("news", "sns_trend")))
 
     # 10. 想定Q&A
     qa_html = "".join(f'<div class="qa-item"><div class="qa-q">Q: {qa.get("q","")}</div><div class="qa-a">A: {qa.get("a","")}</div></div>' for qa in data.get("anticipated_qa", []))
-    sections.append(render_section("❓", "想定Q&A・切り返し", "#ffb74d", qa_html))
+    sections.append(render_section("❓", "想定Q&A・切り返し", "#ffb74d", qa_html,
+        src("issues", "competitors")))
 
-    # 12. 訪問前チェックリスト
+    # 11. 訪問前チェックリスト
     cl_items = data.get("checklist", [])
     cl_html = f'<ul class="checklist">{"".join(f"<li>{i}</li>" for i in cl_items)}</ul>'
     sections.append(render_section("✅", "訪問前チェックリスト", "#81c784", cl_html))
-
-    # 13. 参考URL
-    if research:
-        sources = build_sources_html(research)
-        if sources:
-            sections.append(sources)
 
     person_display = f"{person_name}（{department}）" if person_name else department or "担当者未定"
     badge_color = service.get("badge_color", "#e94560")
