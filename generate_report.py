@@ -392,9 +392,31 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
     "アイスブレイク話題3"
   ],
   "anticipated_qa": [
-    {{"q": "想定される質問・懸念1", "a": "推奨回答・切り返し"}},
-    {{"q": "想定される質問・懸念2", "a": "推奨回答・切り返し"}},
-    {{"q": "想定される質問・懸念3", "a": "推奨回答・切り返し"}}
+    {{
+      "category": "コスト・予算",
+      "q": "{company_name}の現状・課題・予算感を踏まえた、コストや投資対効果に関する具体的な懸念質問",
+      "a": "{company_name}の業績・事業規模・課題と照らし合わせ、具体的な数字や事例を使った説得力ある回答。「他社では〜」「御社の〜という課題に対して」等の形で"
+    }},
+    {{
+      "category": "競合・比較",
+      "q": "{company_name}が実際に使っているか検討中と思われる競合サービス・手法との比較質問",
+      "a": "その競合との具体的な差別化ポイント。{company_name}の業界・事業特性に合わせた回答"
+    }},
+    {{
+      "category": "導入・実現性",
+      "q": "{company_name}の組織・体制・現在の取り組みを踏まえた、導入工数・社内調整に関する懸念",
+      "a": "導入ステップの具体化と、{company_name}の現状に合わせたスモールスタート案など"
+    }},
+    {{
+      "category": "効果・実績",
+      "q": "{company_name}の業界・事業課題に近い導入事例や効果の根拠を求める質問",
+      "a": "同業界・類似課題の具体的な事例と成果数字。{company_name}に当てはめた期待効果"
+    }},
+    {{
+      "category": "タイミング・優先度",
+      "q": "{company_name}が今抱えているであろう優先課題・プロジェクトを踏まえ、「なぜ今なのか」という質問",
+      "a": "{company_name}の直近のニュース・経営課題・業界トレンドと結びつけた緊急性の説明"
+    }}
   ],
   "checklist": [
     "訪問前に確認すべきこと1",
@@ -669,7 +691,11 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
         src("news", "sns_trend")))
 
     # 10. 想定Q&A
-    qa_html = "".join(f'<div class="qa-item"><div class="qa-q">Q: {qa.get("q","")}</div><div class="qa-a">A: {qa.get("a","")}</div></div>' for qa in data.get("anticipated_qa", []))
+    def qa_card(qa):
+        cat = qa.get("category", "")
+        cat_html = f'<div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ {cat}</div>' if cat else ""
+        return f'<div class="qa-item">{cat_html}<div class="qa-q">Q: {qa.get("q","")}</div><div class="qa-a">A: {qa.get("a","")}</div></div>'
+    qa_html = "".join(qa_card(qa) for qa in data.get("anticipated_qa", []))
     sections.append(render_section("❓", "想定Q&A・切り返し", "#ffb74d", qa_html,
         src("issues", "competitors")))
 
