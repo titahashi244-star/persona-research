@@ -107,19 +107,6 @@
   <div class="form-card">
     <h2>📋 リサーチ情報を入力</h2>
 
-    <!-- URL from which to extract company name -->
-    <div class="form-group">
-      <label>🔗 URLから会社名を自動入力（任意）</label>
-      <div style="display:flex;gap:8px">
-        <input type="url" id="extractUrl" placeholder="例: https://www.example.co.jp/company/" style="flex:1">
-        <button type="button" onclick="extractFromUrl()" id="extractBtn"
-          style="background:#4fc3f7;color:#0a0a0f;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
-          会社名を取得
-        </button>
-      </div>
-      <div id="extractStatus" style="font-size:12px;color:#7f8c9a;margin-top:6px;display:none"></div>
-    </div>
-
     <div class="form-group">
       <label>会社名 *</label>
       <input type="text" id="company" placeholder="例: 株式会社〇〇" required>
@@ -202,39 +189,6 @@ const BASE_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}`;
 let pollingTimer = null;
 let progressTimer = null;
 
-async function extractFromUrl() {
-  const url = document.getElementById("extractUrl").value.trim();
-  if (!url) { alert("URLを入力してください"); return; }
-
-  const btn = document.getElementById("extractBtn");
-  const status = document.getElementById("extractStatus");
-  btn.disabled = true;
-  btn.textContent = "取得中...";
-  status.style.display = "block";
-  status.style.color = "#7f8c9a";
-  status.textContent = "ページを解析しています...";
-
-  try {
-    const res = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: APP_PASSWORD, action: "extract_company", url })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-
-    document.getElementById("company").value = data.company_name;
-    status.style.color = "#81c784";
-    status.textContent = `✅ 「${data.company_name}」を入力しました。内容を確認して生成してください。`;
-    document.getElementById("extractUrl").value = "";
-  } catch(e) {
-    status.style.color = "#e57373";
-    status.textContent = "❌ 取得失敗: " + e.message;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "会社名を取得";
-  }
-}
 
 async function lookupCompany() {
   const company = document.getElementById("company").value.trim();
