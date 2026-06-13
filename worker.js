@@ -8,42 +8,54 @@ export default {
       return corsResponse("");
     }
 
-    const { password, company_name, person_name, department, service_key } = await request.json();
+    const body = await request.json();
+    const { password, action } = body;
 
     if (password !== APP_PASSWORD) {
       return corsResponse(JSON.stringify({ error: "パスワードが違います" }), 401);
     }
 
-    const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/generate-report.yml/dispatches`,
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `token ${env.GITHUB_PAT}`,
-          "Accept": "application/vnd.github.v3+json",
-          "Content-Type": "application/json",
-          "User-Agent": "persona-research-worker",
-        },
-        body: JSON.stringify({
-          ref: "main",
-          inputs: {
-            company_name,
-            person_name:  person_name  || "",
-            department:   department   || "",
-            service_key:  service_key  || "persona_insight",
-          }
-        })
+    // 削除
+    if (action === "delete") {
+      const { filename } = body;
+      const res = await githubDispatch(env, "delete-report.yml", { filename });
+      if (!res.ok) {
+        return corsResponse(JSON.stringify({ error: await res.text() }), 500);
       }
-    );
-
-    if (!res.ok) {
-      const err = await res.text();
-      return corsResponse(JSON.stringify({ error: err }), 500);
+      return corsResponse(JSON.stringify({ ok: true }));
     }
 
+    // 生成（デフォルト）
+    const { company_name, person_name, department, service_key } = body;
+    const res = await githubDispatch(env, "generate-report.yml", {
+      company_name,
+      person_name:  person_name  || "",
+      department:   department   || "",
+      service_key:  service_key  || "persona_insight",
+    });
+
+    if (!res.ok) {
+      return corsResponse(JSON.stringify({ error: await res.text() }), 500);
+    }
     return corsResponse(JSON.stringify({ ok: true }));
   }
 };
+
+async function githubDispatch(env, workflow, inputs) {
+  return fetch(
+    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/${workflow}/dispatches`,
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `token ${env.GITHUB_PAT}`,
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+        "User-Agent": "persona-research-worker",
+      },
+      body: JSON.stringify({ ref: "main", inputs }),
+    }
+  );
+}
 
 function corsResponse(body, status = 200) {
   return new Response(body, {

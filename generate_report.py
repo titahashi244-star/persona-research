@@ -1,8 +1,12 @@
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from tavily import TavilyClient
 import google.generativeai as genai
+
+JST = timezone(timedelta(hours=9))
+def now_jst():
+    return datetime.now(JST)
 
 try:
     from weasyprint import HTML as WeasyprintHTML
@@ -625,7 +629,7 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
         person_display=person_display,
         service_name=service["name"],
         badge_color=badge_color,
-        created_at=datetime.now().strftime("%Y年%m月%d日 %H:%M"),
+        created_at=now_jst().strftime("%Y年%m月%d日 %H:%M"),
         visual_summary_html=build_visual_summary(data),
         quick_stats_html=build_quick_stats(data),
         sections_html="\n".join(sections),
@@ -733,7 +737,7 @@ def update_index(company_name: str, person_name: str, department: str, filename:
         "person": person_name,
         "department": department,
         "file": filename,
-        "created_at": datetime.now().isoformat(),
+        "created_at": now_jst().isoformat(),
     }
     if pdf_filename:
         entry["pdf"] = pdf_filename
@@ -763,7 +767,7 @@ if __name__ == "__main__":
     html = build_html(company_name, person_name, department, data, service_key, research)
 
     os.makedirs("reports", exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = now_jst().strftime("%Y%m%d_%H%M%S")
     slug = company_name.replace(" ", "_").replace("　", "_").replace("/", "-")
     service_label = "HR" if service_key == "human_research" else "PI"
     filename = f"{slug}_{service_label}_{timestamp}.html"
