@@ -642,7 +642,7 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
 PDF_CSS = """
 @page { margin: 15mm 12mm; size: A4; }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: 'Helvetica Neue', Arial, sans-serif; background:#fff; color:#1a1a2e; font-size:11px; line-height:1.6; }
+body { font-family: 'Noto Sans CJK JP', 'Noto Sans JP', 'IPAexGothic', sans-serif; background:#fff; color:#1a1a2e; font-size:11px; line-height:1.6; }
 .header { background:#1a1a2e; color:#fff; padding:20px 24px; margin-bottom:16px; }
 .header .badge { background:#e94560; color:#fff; font-size:9px; font-weight:700; padding:2px 8px; border-radius:10px; display:inline-block; margin-bottom:6px; }
 .header .company-name { font-size:22px; font-weight:800; color:#fff; margin:6px 0 2px; }
