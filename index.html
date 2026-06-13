@@ -83,17 +83,6 @@
 
 <div class="container">
 
-  <!-- PAT Banner -->
-  <div class="pat-banner" id="patBanner">
-    <h3>🔑 初回設定：GitHub Personal Access Tokenを入力してください</h3>
-    <div class="pat-row">
-      <input type="password" id="patInput" placeholder="ghp_xxxxxxxxxxxx">
-      <button class="pat-save" onclick="savePAT()">保存</button>
-    </div>
-    <div class="pat-saved" id="patSaved">✅ 保存しました（このブラウザに記憶されます）</div>
-    <div class="pat-hint">取得方法：GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → repo + workflow にチェック</div>
-  </div>
-
   <!-- Form -->
   <div class="form-card">
     <h2>📋 リサーチ情報を入力</h2>
@@ -144,14 +133,13 @@
 
 <script>
 // ========== 設定 ==========
-const GITHUB_OWNER = "titahashi244-star";
-const GITHUB_REPO  = "persona-research";
-function getPAT() { return localStorage.getItem("github_pat") || ""; }
-function setPAT(t) { localStorage.setItem("github_pat", t); }
+const GITHUB_OWNER  = "titahashi244-star";
+const GITHUB_REPO   = "persona-research";
+const WORKER_URL    = "https://persona-research-proxy.t-itahashi244.workers.dev";
+const APP_PASSWORD  = "dnp2025";
 // ==========================
 
 const BASE_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}`;
-const API_BASE = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
 
 let pollingTimer = null;
 let progressTimer = null;
@@ -170,16 +158,14 @@ async function generateReport() {
   hideError();
 
   try {
-    const res = await fetch(`${API_BASE}/actions/workflows/generate-report.yml/dispatches`, {
+    const res = await fetch(WORKER_URL, {
       method: "POST",
-      headers: {
-        "Authorization": `token ${getPAT()}`,
-        "Accept": "application/vnd.github.v3+json",
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        ref: "main",
-        inputs: { company_name: company, person_name: person, department: dept }
+        password: APP_PASSWORD,
+        company_name: company,
+        person_name: person,
+        department: dept,
       })
     });
 
@@ -299,20 +285,6 @@ async function loadReports() {
   } catch (_) {}
 }
 
-function savePAT() {
-  const val = document.getElementById("patInput").value.trim();
-  if (!val) { alert("トークンを入力してください"); return; }
-  setPAT(val);
-  document.getElementById("patSaved").style.display = "block";
-  document.getElementById("patInput").value = "";
-  setTimeout(() => { document.getElementById("patBanner").classList.remove("visible"); }, 1500);
-}
-
-function checkPAT() {
-  if (!getPAT()) document.getElementById("patBanner").classList.add("visible");
-}
-
-checkPAT();
 loadReports();
 </script>
 </body>
