@@ -93,9 +93,27 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
     .header {{ background:#1a1a2e !important; -webkit-print-color-adjust:exact; }}
     .section {{ border:1px solid #ddd; page-break-inside:avoid; }}
   }}
+  /* Visual Summary */
+  .vsummary {{ background:#12121f; border:1px solid #2a2a4a; border-radius:14px; padding:28px; margin-bottom:20px; }}
+  .vsummary-title {{ font-size:12px; font-weight:700; color:#4a5568; letter-spacing:1px; text-transform:uppercase; margin-bottom:20px; }}
+  .signal-row {{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }}
+  .signal-box {{ background:#0a0a0f; border-radius:10px; padding:16px; text-align:center; border:1px solid #2a2a4a; }}
+  .signal-light {{ font-size:28px; display:block; margin-bottom:6px; }}
+  .signal-label {{ font-size:11px; color:#7f8c9a; font-weight:600; }}
+  .signal-note {{ font-size:11px; color:#4a5568; margin-top:4px; }}
+  .key-facts {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin-bottom:20px; }}
+  .key-fact {{ background:#0a0a0f; border:1px solid #2a2a4a; border-radius:8px; padding:14px; }}
+  .key-fact-label {{ font-size:10px; color:#4a5568; font-weight:700; letter-spacing:0.5px; margin-bottom:4px; }}
+  .key-fact-value {{ font-size:15px; font-weight:800; color:#e0e0e0; line-height:1.4; }}
+  .opening-box {{ background:linear-gradient(135deg,#1a1020,#1e1535); border:1px solid #6a3a7a; border-radius:10px; padding:16px 20px; }}
+  .opening-label {{ font-size:10px; color:#9b6bbb; font-weight:700; letter-spacing:1px; margin-bottom:6px; }}
+  .opening-text {{ font-size:14px; color:#e0e0e0; font-weight:600; line-height:1.6; }}
+  .opening-caution {{ font-size:10px; color:#4a5568; margin-top:6px; }}
+
   @media(max-width:600px) {{
     .header {{ padding:24px; }}
     .quick-stats {{ grid-template-columns:1fr 1fr; }}
+    .signal-row {{ grid-template-columns:1fr; }}
   }}
 </style>
 </head>
@@ -110,6 +128,7 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
 </div>
 <div class="container">
   <a href="../index.html" class="back-link">← レポート一覧に戻る</a>
+  {visual_summary_html}
   {quick_stats_html}
   {sections_html}
   <div class="footer">DNPペルソナインサイト 商談前リサーチレポート｜自動生成　※情報は公開情報をもとにAIが分析したものです</div>
@@ -366,6 +385,98 @@ def bullets(items: list) -> str:
     return "<ul>" + "".join(parts) + "</ul>"
 
 
+def signal_light(level: str) -> str:
+    return {"高": "🟢", "中": "🟡", "低": "🔴"}.get(level, "⚪")
+
+
+def infer_signal(data: dict, key: str) -> str:
+    """Infer traffic light from confidence fields in a section."""
+    section = data.get(key, {})
+    confs = []
+    for v in section.values() if isinstance(section, dict) else []:
+        if isinstance(v, list):
+            for item in v:
+                if isinstance(item, dict) and "confidence" in item:
+                    confs.append(item["confidence"])
+        elif isinstance(v, str) and v in ("高", "中", "低"):
+            confs.append(v)
+    if not confs:
+        return "中"
+    if "高" in confs and "低" not in confs:
+        return "高"
+    if "低" in confs:
+        return "低"
+    return "中"
+
+
+def build_visual_summary(data: dict) -> str:
+    fin = data.get("financials", {})
+    comp = data.get("competitors", {})
+    sns = data.get("sns_voice", {})
+    angles = data.get("proposal_angles", {})
+    qs = data.get("quick_stats", {})
+
+    # 信号機: 業績・競合・SNS
+    fin_signal = infer_signal(data, "financials")
+    comp_signal = infer_signal(data, "competitors")
+    # SNSはポジネガで判断
+    sns_pos = len(sns.get("positives", []))
+    sns_neg = len(sns.get("negatives", []))
+    sns_level = "高" if sns_pos > sns_neg else ("低" if sns_neg > sns_pos + 1 else "中")
+
+    fin_note = (fin.get("highlights") or [{}])[0]
+    fin_note_text = fin_note.get("text", "") if isinstance(fin_note, dict) else str(fin_note)
+    fin_note_text = fin_note_text[:40] + "…" if len(fin_note_text) > 40 else fin_note_text
+
+    signal_html = f"""
+<div class="signal-row">
+  <div class="signal-box">
+    <span class="signal-light">{signal_light(fin_signal)}</span>
+    <div class="signal-label">業績・財務</div>
+    <div class="signal-note">{fin_note_text}</div>
+  </div>
+  <div class="signal-box">
+    <span class="signal-light">{signal_light(comp_signal)}</span>
+    <div class="signal-label">競合状況</div>
+    <div class="signal-note">{comp.get('summary','')[:40]}…</div>
+  </div>
+  <div class="signal-box">
+    <span class="signal-light">{signal_light(sns_level)}</span>
+    <div class="signal-label">消費者評判</div>
+    <div class="signal-note">ポジ{sns_pos}件 / ネガ{sns_neg}件</div>
+  </div>
+</div>"""
+
+    # キーファクト（数字・ポジション）
+    facts = [
+        ("業界", qs.get("industry", "—")),
+        ("売上高", qs.get("revenue", "—")),
+        ("市場ポジション", qs.get("market_position", "—")),
+        ("従業員数", qs.get("employees", "—")),
+    ]
+    facts_html = "".join(
+        f'<div class="key-fact"><div class="key-fact-label">{l}</div><div class="key-fact-value">{v}</div></div>'
+        for l, v in facts if v and v != "—"
+    )
+
+    # 冒頭の掴み（AI参考）
+    opening = angles.get("opening_line", "")
+    opening_html = f"""
+<div class="opening-box">
+  <div class="opening-label">🎤 商談冒頭メモ（AI参考・要確認）</div>
+  <div class="opening-text">{opening}</div>
+  <div class="opening-caution">※ AIによる提案です。事実確認の上ご使用ください</div>
+</div>""" if opening else ""
+
+    return f"""
+<div class="vsummary">
+  <div class="vsummary-title">📋 ビジュアルサマリー</div>
+  {signal_html}
+  <div class="key-facts">{facts_html}</div>
+  {opening_html}
+</div>"""
+
+
 def build_quick_stats(data: dict) -> str:
     qs = data.get("quick_stats", {})
     conf = qs.get("confidence", "")
@@ -534,6 +645,7 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
         service_name=service["name"],
         badge_color=badge_color,
         created_at=datetime.now().strftime("%Y年%m月%d日 %H:%M"),
+        visual_summary_html=build_visual_summary(data),
         quick_stats_html=build_quick_stats(data),
         sections_html="\n".join(sections),
     )
