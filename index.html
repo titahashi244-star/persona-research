@@ -209,7 +209,7 @@ function startProgress() {
 async function pollForReport(company, person, dept) {
   const slug = company.replace(/ /g, "_").replace(/　/g, "_").replace(/\//g, "-");
   const startTime = Date.now();
-  const MAX_WAIT = 5 * 60 * 1000;
+  const MAX_WAIT = 8 * 60 * 1000;
 
   pollingTimer = setInterval(async () => {
     if (Date.now() - startTime > MAX_WAIT) {
