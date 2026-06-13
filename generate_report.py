@@ -294,31 +294,6 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
     "アイスブレイク話題2",
     "アイスブレイク話題3"
   ],
-  "proposal_angles": {{
-    "summary": "DNPペルソナインサイトの提案切り口（4〜5文。{company_name}固有の課題・SNSの声・競合状況に紐づけて具体的に。『消費者の本音を言語化する』という価値を軸に）",
-    "angles": [
-      {{
-        "angle": "提案切り口1（例：新商品開発における消費者インサイト獲得）",
-        "reason": "なぜ{company_name}にとってこれが急務か（競合・業績・トレンドと紐づけて）",
-        "example": "DNPペルソナインサイトでどう解決するか（仮想ペルソナとの対話例）",
-        "roi": "期待できる成果・KPI改善"
-      }},
-      {{
-        "angle": "提案切り口2",
-        "reason": "なぜ刺さるか",
-        "example": "活用イメージ",
-        "roi": "期待成果"
-      }},
-      {{
-        "angle": "提案切り口3",
-        "reason": "なぜ刺さるか",
-        "example": "活用イメージ",
-        "roi": "期待成果"
-      }}
-    ],
-    "key_message": "{company_name}の課題に直結した商談での一言キーメッセージ（30字程度）",
-    "opening_line": "商談冒頭の掴みの一言（相手が『おっ』と思うような{company_name}固有の情報を含む一言）"
-  }},
   "anticipated_qa": [
     {{"q": "想定される質問・懸念1", "a": "推奨回答・切り返し"}},
     {{"q": "想定される質問・懸念2", "a": "推奨回答・切り返し"}},
@@ -541,22 +516,7 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
     ib_html = "".join(f'<div class="icebreaker-item">💬 {i}</div>' for i in data.get("icebreakers", []))
     sections.append(render_section("☕", "アイスブレイク話題", "#a5d6a7", ib_html))
 
-    # 10. 提案切り口
-    a = data.get("proposal_angles", {})
-    angles_html = ""
-    for ang in a.get("angles", []):
-        angles_html += f"""<div class="qa-item">
-<div class="qa-q">🎯 {ang.get("angle","")}</div>
-<div class="qa-a"><strong>なぜ刺さるか：</strong>{ang.get("reason","")}<br><strong>活用イメージ：</strong>{ang.get("example","")}</div>
-</div>"""
-    key_msg = a.get("key_message", "")
-    opening = a.get("opening_line", "")
-    opening_html = f'<div class="highlight"><p>🎤 <strong>冒頭の掴み一言：</strong>{opening}</p></div>' if opening else ""
-    sections.append(render_section("💡", f"{service['name']} 提案切り口", service.get('badge_color', '#e94560'),
-        f"{opening_html}<p>{a.get('summary','')}</p>{angles_html}"
-        f'<div class="key-message"><div class="key-message-label">💬 キーメッセージ</div><div class="key-message-text">{key_msg}</div></div>'))
-
-    # 11. 想定Q&A
+    # 10. 想定Q&A
     qa_html = "".join(f'<div class="qa-item"><div class="qa-q">Q: {qa.get("q","")}</div><div class="qa-a">A: {qa.get("a","")}</div></div>' for qa in data.get("anticipated_qa", []))
     sections.append(render_section("❓", "想定Q&A・切り返し", "#ffb74d", qa_html))
 
