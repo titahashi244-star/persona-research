@@ -121,9 +121,12 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
   .vsummary-metric {{ background:#12121f; padding:14px 18px; }}
   .vsummary-metric-label {{ font-size:10px; color:#4a5568; font-weight:700; letter-spacing:0.5px; margin-bottom:5px; text-transform:uppercase; }}
   .vsummary-metric-value {{ font-size:14px; font-weight:700; color:#e0e0e0; line-height:1.4; }}
-  .vsummary-location {{ background:#0d0d1a; border:1px solid #1e1e3a; border-radius:8px; padding:12px 16px; display:flex; gap:20px; flex-wrap:wrap; }}
+  .vsummary-location {{ background:#0d0d1a; border:1px solid #1e1e3a; border-radius:8px; padding:12px 16px; display:flex; gap:20px; flex-wrap:wrap; margin-bottom:14px; }}
   .vsummary-location-item {{ font-size:12px; color:#7f8c9a; }}
   .vsummary-location-item strong {{ color:#b0bec5; margin-right:6px; }}
+  .quick-links {{ display:flex; flex-wrap:wrap; gap:8px; }}
+  .quick-link {{ display:inline-flex; align-items:center; gap:6px; background:#0a0a0f; border:1px solid #2a2a4a; border-radius:20px; padding:6px 14px; color:#4fc3f7; font-size:12px; text-decoration:none; transition:border-color 0.2s; }}
+  .quick-link:hover {{ border-color:#4fc3f7; }}
 
   @media(max-width:600px) {{
     .header {{ padding:24px; }}
@@ -463,7 +466,36 @@ def bullets(items: list) -> str:
     return "<ul>" + "".join(parts) + "</ul>"
 
 
-def build_visual_summary(data: dict) -> str:
+def build_quick_links(research: dict) -> str:
+    """公式HP・PRTimes・IRページを優先して先頭表示するリンク集"""
+    priority_domains = [
+        ("公式HP", [".co.jp", ".com", ".jp"], lambda u: "prtimes" not in u and "ir." not in u and "nikkei" not in u and "wikipedia" not in u),
+        ("プレスリリース", ["prtimes.jp", "atpress.ne.jp", "valuepress.co.jp"], None),
+        ("IR・投資家情報", ["ir.", "/ir/", "/investors/", "disclosure"], None),
+    ]
+    seen, links = set(), []
+    all_items = []
+    for key in ("profile", "financials", "ir", "news"):
+        all_items += research.get(key, [])
+
+    for label, patterns, extra_filter in priority_domains:
+        for item in all_items:
+            url = item.get("url", "")
+            if url in seen:
+                continue
+            matched = any(p in url for p in patterns)
+            if matched and (extra_filter is None or extra_filter(url)):
+                seen.add(url)
+                title = item.get("title", url)[:30]
+                links.append(f'<a class="quick-link" href="{url}" target="_blank">🔗 {label}｜{title}</a>')
+                break
+
+    if not links:
+        return ""
+    return f'<div class="quick-links">{"".join(links)}</div>'
+
+
+def build_visual_summary(data: dict, research: dict = None) -> str:
     qs = data.get("quick_stats", {})
     conf = qs.get("confidence", "")
     badge = conf_badge(conf) if conf else ""
@@ -490,12 +522,14 @@ def build_visual_summary(data: dict) -> str:
     location_html = f'<div class="vsummary-location">{"".join(location_parts)}</div>' if location_parts else ""
 
     conf_note = f'<div style="text-align:right;font-size:11px;color:#4a5568;margin-bottom:10px">基本情報の信頼度: {badge}</div>' if badge else ""
+    quick_links = build_quick_links(research) if research else ""
 
     return f"""
 <div class="vsummary">
   {conf_note}
   <div class="vsummary-metrics">{metrics_html}</div>
   {location_html}
+  {quick_links}
 </div>"""
 
 
@@ -653,7 +687,7 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
         service_name=service["name"],
         badge_color=badge_color,
         created_at=now_jst().strftime("%Y年%m月%d日 %H:%M"),
-        visual_summary_html=build_visual_summary(data),
+        visual_summary_html=build_visual_summary(data, research),
         sections_html="\n".join(sections),
     )
 
