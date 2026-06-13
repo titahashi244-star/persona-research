@@ -74,6 +74,13 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
   /* Tags */
   .tag {{ display:inline-block; background:#1e1e35; border:1px solid #3a3a5a; color:#9b9bbc; font-size:11px; padding:3px 10px; border-radius:20px; margin:3px; }}
 
+  /* Confidence badges */
+  .conf {{ display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; }}
+  .conf-高 {{ background:#1b3a2a; color:#81c784; border:1px solid #2e6b45; }}
+  .conf-中 {{ background:#3a2e10; color:#ffb74d; border:1px solid #7a5c10; }}
+  .conf-低 {{ background:#3a1010; color:#e57373; border:1px solid #7a2020; }}
+  .conf-低-wrap {{ background:#2b1010; border-left:3px solid #e57373; border-radius:0 6px 6px 0; padding:8px 12px; margin:4px 0; }}
+
   /* Key message */
   .key-message {{ background:linear-gradient(135deg,#1e0a15,#2a1020); border:1px solid #e94560; border-radius:10px; padding:20px 24px; margin-top:16px; }}
   .key-message-label {{ color:#e94560; font-size:11px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }}
@@ -195,6 +202,12 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
 【リサーチデータ】
 {json.dumps(research, ensure_ascii=False, indent=2)[:15000]}
 
+【信頼度ルール】
+各事実・数値には confidence フィールドを付けてください:
+- "高": 検索結果に明確な根拠あり（決算資料・公式IR・報道等で確認済み）
+- "中": 複数ソースから推測できるが直接的な数値根拠なし
+- "低": 推測・類推・情報が古い可能性あり → 要確認
+
 以下のJSONスキーマで出力してください（マークダウンなし、JSONのみ、日本語で）:
 {{
   "quick_stats": {{
@@ -202,7 +215,8 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
     "founded": "設立年（わかれば）",
     "employees": "従業員数（わかれば）",
     "revenue": "直近売上高（わかれば）",
-    "market_position": "市場ポジション（例: 業界3位）"
+    "market_position": "市場ポジション（例: 業界3位）",
+    "confidence": "高/中/低"
   }},
   "company_summary": {{
     "description": "企業の事業内容・特徴・経営ビジョン（4〜5文。具体的な数字・ブランド名を含める）",
@@ -210,32 +224,43 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
   }},
   "financials": {{
     "summary": "直近の業績・財務状況（4〜5文。具体的な数字を含める）",
-    "highlights": ["数字を含む注目点1", "注目点2", "注目点3", "注目点4"],
+    "highlights": [
+      {{"text": "数字を含む注目点1", "confidence": "高/中/低"}},
+      {{"text": "注目点2", "confidence": "高/中/低"}},
+      {{"text": "注目点3", "confidence": "高/中/低"}},
+      {{"text": "注目点4", "confidence": "高/中/低"}}
+    ],
     "concerns": ["課題・懸念点1", "課題2"]
   }},
   "industry_trends": {{
     "summary": "業界トレンド・市場動向（4〜5文）",
     "trends": ["トレンド1（具体的に）", "トレンド2", "トレンド3", "トレンド4"],
-    "market_size": "市場規模・成長率（わかれば）"
+    "market_size": "市場規模・成長率（わかれば）",
+    "market_size_confidence": "高/中/低"
   }},
   "competitors": {{
     "summary": "競合状況の概要（3〜4文）",
     "table": [
-      {{"company": "企業名または{company_name}（自社）", "is_target": true, "strength": "強み", "weakness": "弱み", "share": "シェア（わかれば）"}},
-      {{"company": "競合A", "is_target": false, "strength": "強み", "weakness": "弱み", "share": "シェア（わかれば）"}},
-      {{"company": "競合B", "is_target": false, "strength": "強み", "weakness": "弱み", "share": "シェア（わかれば）"}}
+      {{"company": "企業名または{company_name}（自社）", "is_target": true, "strength": "強み", "weakness": "弱み", "share": "シェア（わかれば）", "confidence": "高/中/低"}},
+      {{"company": "競合A", "is_target": false, "strength": "強み", "weakness": "弱み", "share": "シェア（わかれば）", "confidence": "高/中/低"}},
+      {{"company": "競合B", "is_target": false, "strength": "強み", "weakness": "弱み", "share": "シェア（わかれば）", "confidence": "高/中/低"}}
     ]
   }},
   "products": {{
     "summary": "主力製品・サービスと市場での位置づけ（3〜4文）",
     "categories": [
-      {{"name": "カテゴリ名", "products": "代表製品名", "position": "市場での位置・ランキング"}},
-      {{"name": "カテゴリ名2", "products": "代表製品名", "position": "市場での位置・ランキング"}}
+      {{"name": "カテゴリ名", "products": "代表製品名", "position": "市場での位置・ランキング", "confidence": "高/中/低"}},
+      {{"name": "カテゴリ名2", "products": "代表製品名", "position": "市場での位置・ランキング", "confidence": "高/中/低"}}
     ]
   }},
   "latest_news": {{
     "summary": "最新ニュース・新商品・取り組みの概要（3〜4文）",
-    "items": ["ニュース1（具体的に）", "ニュース2", "ニュース3", "ニュース4"]
+    "items": [
+      {{"text": "ニュース1（具体的に）", "confidence": "高/中/低"}},
+      {{"text": "ニュース2", "confidence": "高/中/低"}},
+      {{"text": "ニュース3", "confidence": "高/中/低"}},
+      {{"text": "ニュース4", "confidence": "高/中/低"}}
+    ]
   }},
   "sns_voice": {{
     "summary": "消費者・市場からのSNS・口コミの全体感（3〜4文）",
@@ -320,14 +345,31 @@ def render_section(icon: str, title: str, color: str, body_html: str) -> str:
 </div>"""
 
 
+def conf_badge(level: str) -> str:
+    level = level or "中"
+    return f'<span class="conf conf-{level}">{level}</span>'
+
+
 def bullets(items: list) -> str:
     if not items:
         return ""
-    return "<ul>" + "".join(f"<li>{i}</li>" for i in items if i) + "</ul>"
+    parts = []
+    for i in items:
+        if isinstance(i, dict):
+            text = i.get("text", "")
+            conf = i.get("confidence", "")
+            wrap_class = ' class="conf-低-wrap"' if conf == "低" else ""
+            badge = conf_badge(conf) if conf else ""
+            parts.append(f"<li{wrap_class}>{text}{badge}</li>")
+        else:
+            parts.append(f"<li>{i}</li>")
+    return "<ul>" + "".join(parts) + "</ul>"
 
 
 def build_quick_stats(data: dict) -> str:
     qs = data.get("quick_stats", {})
+    conf = qs.get("confidence", "")
+    badge = conf_badge(conf) if conf else ""
     stats = [
         (qs.get("industry", "—"), "業界"),
         (qs.get("revenue", "—"), "売上高"),
@@ -335,7 +377,8 @@ def build_quick_stats(data: dict) -> str:
         (qs.get("market_position", "—"), "市場ポジション"),
     ]
     boxes = "".join(f'<div class="stat-box"><div class="stat-value">{v}</div><div class="stat-label">{l}</div></div>' for v, l in stats)
-    return f'<div class="quick-stats">{boxes}</div>'
+    conf_note = f'<div style="text-align:right;margin-bottom:8px;font-size:11px;color:#4a5568">基本情報の信頼度: {badge}</div>' if badge else ""
+    return f'{conf_note}<div class="quick-stats">{boxes}</div>'
 
 
 def build_sources_html(research: dict) -> str:
@@ -397,7 +440,8 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
 
     # 3. 業界トレンド
     t = data.get("industry_trends", {})
-    market_html = f'<div class="highlight"><p>市場規模：{t["market_size"]}</p></div>' if t.get("market_size") else ""
+    market_badge = conf_badge(t.get("market_size_confidence", "")) if t.get("market_size_confidence") else ""
+    market_html = f'<div class="highlight"><p>市場規模：{t["market_size"]}{market_badge}</p></div>' if t.get("market_size") else ""
     sections.append(render_section("🌊", "業界トレンド・市場動向", "#ffb74d",
         f"<p>{t.get('summary','')}</p>{bullets(t.get('trends',[]))}{market_html}"))
 
@@ -406,7 +450,8 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
     table_rows = ""
     for row in comp.get("table", []):
         cls = ' class="target"' if row.get("is_target") else ""
-        table_rows += f"<tr><td{cls}>{row.get('company','')}</td><td>{row.get('share','—')}</td><td style='color:#81c784'>{row.get('strength','')}</td><td style='color:#e57373'>{row.get('weakness','')}</td></tr>"
+        badge = conf_badge(row.get("confidence", "")) if row.get("confidence") else ""
+        table_rows += f"<tr><td{cls}>{row.get('company','')}{badge}</td><td>{row.get('share','—')}</td><td style='color:#81c784'>{row.get('strength','')}</td><td style='color:#e57373'>{row.get('weakness','')}</td></tr>"
     table_html = ""
     if table_rows:
         table_html = f"""<table class="comp-table">
@@ -419,7 +464,8 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
     prod = data.get("products", {})
     cat_html = ""
     for cat in prod.get("categories", []):
-        cat_html += f'<div class="voice-card"><strong style="color:#4fc3f7">{cat.get("name","")}</strong>　{cat.get("products","")}　<span style="color:#7f8c9a;font-size:12px">{cat.get("position","")}</span></div>'
+        badge = conf_badge(cat.get("confidence", "")) if cat.get("confidence") else ""
+        cat_html += f'<div class="voice-card"><strong style="color:#4fc3f7">{cat.get("name","")}</strong>　{cat.get("products","")}　<span style="color:#7f8c9a;font-size:12px">{cat.get("position","")}</span>{badge}</div>'
     sections.append(render_section("📦", "主力製品・カテゴリ別ポジション", "#80cbc4",
         f"<p>{prod.get('summary','')}</p>{cat_html}"))
 
