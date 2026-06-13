@@ -72,6 +72,21 @@
   .pat-saved { color: #81c784; font-size: 12px; margin-top: 8px; display: none; }
   .pat-hint { color: #4a5568; font-size: 11px; margin-top: 8px; }
 
+  /* Lookup panel */
+  .lookup-panel { display: none; background: #12121f; border: 1px solid #2a2a4a; border-radius: 12px; padding: 20px 24px; margin-top: 16px; }
+  .lookup-panel.visible { display: block; }
+  .lookup-title { font-size: 13px; color: #7f8c9a; margin-bottom: 14px; }
+  .lookup-item { background: #0a0a0f; border: 1px solid #2a2a4a; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; }
+  .lookup-item-title { font-size: 13px; color: #4fc3f7; font-weight: 600; margin-bottom: 4px; }
+  .lookup-item-snippet { font-size: 12px; color: #7f8c9a; line-height: 1.6; }
+  .lookup-item-url { font-size: 11px; color: #3a3a5a; margin-top: 4px; word-break: break-all; }
+  .lookup-actions { display: flex; gap: 10px; margin-top: 14px; }
+  .lookup-confirm { flex: 1; background: #e94560; color: white; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .lookup-confirm:hover { background: #c73652; }
+  .lookup-cancel { background: none; border: 1px solid #2a2a4a; color: #7f8c9a; border-radius: 8px; padding: 12px 20px; font-size: 14px; cursor: pointer; }
+  .lookup-cancel:hover { border-color: #7f8c9a; }
+  .lookup-spinner { display: flex; align-items: center; gap: 10px; color: #7f8c9a; font-size: 13px; }
+
   /* Service select */
   .service-select { width: 100%; background: #0a0a0f; border: 2px solid #e94560; border-radius: 8px; padding: 12px 16px; color: #e0e0e0; font-size: 14px; font-weight: 600; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23e94560' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
   .service-select:focus { outline: none; }
@@ -110,7 +125,17 @@
         <option value="human_research">DNPヒューマンリサーチ®</option>
       </select>
     </div>
-    <button class="btn" id="generateBtn" onclick="generateReport()">レポートを生成する</button>
+    <button class="btn" id="lookupBtn" onclick="lookupCompany()">会社を確認してから生成する</button>
+
+    <!-- Lookup panel -->
+    <div class="lookup-panel" id="lookupPanel">
+      <div class="lookup-title" id="lookupTitle">🔍 検索中...</div>
+      <div id="lookupResults"></div>
+      <div class="lookup-actions" id="lookupActions" style="display:none">
+        <button class="lookup-confirm" onclick="confirmAndGenerate()">✅ この会社で生成する</button>
+        <button class="lookup-cancel" onclick="cancelLookup()">戻る</button>
+      </div>
+    </div>
 
     <!-- Loading -->
     <div class="status" id="status">
@@ -156,6 +181,62 @@ const BASE_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}`;
 let pollingTimer = null;
 let progressTimer = null;
 
+async function lookupCompany() {
+  const company = document.getElementById("company").value.trim();
+  if (!company) { alert("会社名を入力してください"); return; }
+
+  const panel = document.getElementById("lookupPanel");
+  const title = document.getElementById("lookupTitle");
+  const results = document.getElementById("lookupResults");
+  const actions = document.getElementById("lookupActions");
+
+  panel.classList.add("visible");
+  title.textContent = `🔍 「${company}」を検索中...`;
+  results.innerHTML = '<div class="lookup-spinner"><div class="spinner"></div>検索しています...</div>';
+  actions.style.display = "none";
+  document.getElementById("lookupBtn").disabled = true;
+  hideError();
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: APP_PASSWORD, action: "lookup", company_name: company })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    title.textContent = `「${company}」の検索結果 — この会社で合っていますか？`;
+    if (!data.results || data.results.length === 0) {
+      results.innerHTML = '<div style="color:#7f8c9a;font-size:13px">検索結果が見つかりませんでした。会社名を確認してください。</div>';
+    } else {
+      results.innerHTML = data.results.map(r => `
+        <div class="lookup-item">
+          <div class="lookup-item-title">${r.title}</div>
+          <div class="lookup-item-snippet">${r.snippet}</div>
+          <div class="lookup-item-url"><a href="${r.url}" target="_blank" style="color:#3a3a5a">${r.url}</a></div>
+        </div>`).join("");
+      actions.style.display = "flex";
+    }
+  } catch(e) {
+    showError("会社検索エラー: " + e.message);
+    panel.classList.remove("visible");
+  } finally {
+    document.getElementById("lookupBtn").disabled = false;
+  }
+}
+
+function cancelLookup() {
+  document.getElementById("lookupPanel").classList.remove("visible");
+  document.getElementById("lookupResults").innerHTML = "";
+  document.getElementById("lookupActions").style.display = "none";
+}
+
+async function confirmAndGenerate() {
+  cancelLookup();
+  await generateReport();
+}
+
 async function generateReport() {
   const company    = document.getElementById("company").value.trim();
   const person     = document.getElementById("person").value.trim();
@@ -164,20 +245,7 @@ async function generateReport() {
 
   if (!company) { alert("会社名を入力してください"); return; }
 
-  const confirmMsg = [
-    `以下の内容でレポートを生成します。`,
-    ``,
-    `会社名：${company}`,
-    person ? `担当者：${person}` : null,
-    dept   ? `部署　：${dept}`   : null,
-    `商材　：${document.getElementById("service").options[document.getElementById("service").selectedIndex].text}`,
-    ``,
-    `よろしいですか？`
-  ].filter(x => x !== null).join("\n");
-
-  if (!confirm(confirmMsg)) return;
-
-  const btn = document.getElementById("generateBtn");
+  const btn = document.getElementById("lookupBtn");
   btn.disabled = true;
   showStatus("GitHub Actionsを起動中...", "");
   hideSuccess();
@@ -245,7 +313,7 @@ async function pollForReport(company, person, dept, serviceKey) {
       clearInterval(pollingTimer);
       clearInterval(progressTimer);
       showError("タイムアウト: GitHub Actionsの画面で状況を確認してください");
-      document.getElementById("generateBtn").disabled = false;
+      document.getElementById("lookupBtn").disabled = false;
       hideStatus();
       return;
     }
@@ -262,7 +330,7 @@ async function pollForReport(company, person, dept, serviceKey) {
         setTimeout(() => {
           hideStatus();
           showSuccess(company, `${BASE_URL}/reports/${found.file}`);
-          document.getElementById("generateBtn").disabled = false;
+          document.getElementById("lookupBtn").disabled = false;
           loadReports();
         }, 500);
       }

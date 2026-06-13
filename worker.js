@@ -15,6 +15,32 @@ export default {
       return corsResponse(JSON.stringify({ error: "パスワードが違います" }), 401);
     }
 
+    // 会社確認検索
+    if (action === "lookup") {
+      const { company_name } = body;
+      try {
+        const r = await fetch("https://api.tavily.com/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            api_key: env.TAVILY_API_KEY,
+            query: `${company_name} 会社概要 事業内容`,
+            max_results: 4,
+            search_depth: "basic",
+          }),
+        });
+        const data = await r.json();
+        const results = (data.results || []).map(x => ({
+          title: x.title,
+          url: x.url,
+          snippet: x.content?.slice(0, 150) || "",
+        }));
+        return corsResponse(JSON.stringify({ results }));
+      } catch (e) {
+        return corsResponse(JSON.stringify({ error: e.message }), 500);
+      }
+    }
+
     // 削除
     if (action === "delete") {
       const { filename } = body;
