@@ -14,6 +14,10 @@ on:
         description: '部署'
         required: false
         default: ''
+      service_key:
+        description: 'サービス (persona_insight / human_research)'
+        required: false
+        default: 'persona_insight'
 
 permissions:
   contents: write
@@ -39,6 +43,7 @@ jobs:
           COMPANY_NAME: ${{ github.event.inputs.company_name }}
           PERSON_NAME: ${{ github.event.inputs.person_name }}
           DEPARTMENT: ${{ github.event.inputs.department }}
+          SERVICE_KEY: ${{ github.event.inputs.service_key }}
         run: python generate_report.py
 
       - name: Commit and push report

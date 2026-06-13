@@ -71,14 +71,19 @@
   .pat-save { background: #e94560; color: white; border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .pat-saved { color: #81c784; font-size: 12px; margin-top: 8px; display: none; }
   .pat-hint { color: #4a5568; font-size: 11px; margin-top: 8px; }
+
+  /* Service select */
+  .service-select { width: 100%; background: #0a0a0f; border: 2px solid #e94560; border-radius: 8px; padding: 12px 16px; color: #e0e0e0; font-size: 14px; font-weight: 600; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23e94560' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
+  .service-select:focus { outline: none; }
+  .service-select option { background: #1a1a2e; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-badge">DNP PERSONA INSIGHT</div>
+  <div class="header-badge">DNP 商談前リサーチ</div>
   <h1>🔍 商談前リサーチ自動化</h1>
-  <p>会社名・担当者・部署を入力するだけで、商談前レポートを自動生成します</p>
+  <p>会社名・担当者・部署・商材を入力するだけで、商談前レポートを自動生成します</p>
 </div>
 
 <div class="container">
@@ -97,6 +102,13 @@
     <div class="form-group">
       <label>部署・役職</label>
       <input type="text" id="department" placeholder="例: マーケティング部 部長">
+    </div>
+    <div class="form-group">
+      <label>提案商材 *</label>
+      <select class="service-select" id="service">
+        <option value="persona_insight">DNPペルソナインサイト</option>
+        <option value="human_research">DNPヒューマンリサーチ®</option>
+      </select>
     </div>
     <button class="btn" id="generateBtn" onclick="generateReport()">レポートを生成する</button>
 
@@ -145,9 +157,10 @@ let pollingTimer = null;
 let progressTimer = null;
 
 async function generateReport() {
-  const company = document.getElementById("company").value.trim();
-  const person  = document.getElementById("person").value.trim();
-  const dept    = document.getElementById("department").value.trim();
+  const company    = document.getElementById("company").value.trim();
+  const person     = document.getElementById("person").value.trim();
+  const dept       = document.getElementById("department").value.trim();
+  const serviceKey = document.getElementById("service").value;
 
   if (!company) { alert("会社名を入力してください"); return; }
 
@@ -166,6 +179,7 @@ async function generateReport() {
         company_name: company,
         person_name: person,
         department: dept,
+        service_key: serviceKey,
       })
     });
 
@@ -175,7 +189,7 @@ async function generateReport() {
     }
 
     startProgress();
-    pollForReport(company, person, dept);
+    pollForReport(company, person, dept, serviceKey);
 
   } catch (e) {
     showError(e.message);
@@ -206,8 +220,9 @@ function startProgress() {
   }, 1000);
 }
 
-async function pollForReport(company, person, dept) {
+async function pollForReport(company, person, dept, serviceKey) {
   const slug = company.replace(/ /g, "_").replace(/　/g, "_").replace(/\//g, "-");
+  const serviceLabel = serviceKey === "human_research" ? "HR" : "PI";
   const startTime = Date.now();
   const MAX_WAIT = 8 * 60 * 1000;
 
@@ -225,7 +240,7 @@ async function pollForReport(company, person, dept) {
       const r = await fetch(`${BASE_URL}/reports/index.json?t=${Date.now()}`);
       if (!r.ok) return;
       const index = await r.json();
-      const found = index.find(x => x.file && x.file.startsWith(slug));
+      const found = index.find(x => x.file && x.file.startsWith(slug) && x.file.includes(`_${serviceLabel}_`));
       if (found) {
         clearInterval(pollingTimer);
         clearInterval(progressTimer);
