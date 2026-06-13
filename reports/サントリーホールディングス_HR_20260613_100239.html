@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サントリーホールディングス 商談前リサーチレポート</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Helvetica Neue',Arial,sans-serif; background:#0a0a0f; color:#e0e0e0; min-height:100vh; }
+
+  .header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); padding:32px 40px; border-bottom:1px solid #2a2a4a; }
+  .header-top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; }
+  .badge { background:#e94560; color:white; font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; letter-spacing:1px; }
+  .meta { color:#4a5568; font-size:12px; }
+  .company-name { font-size:32px; font-weight:800; color:#fff; margin:12px 0 4px; }
+  .person-info { color:#7f8c9a; font-size:15px; }
+
+  .container { max-width:1000px; margin:0 auto; padding:32px 24px; }
+
+  .back-link { display:inline-block; margin-bottom:24px; color:#e94560; text-decoration:none; font-size:14px; }
+  .back-link:hover { text-decoration:underline; }
+
+  /* Quick Stats */
+  .quick-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px; }
+  .stat-box { background:#12121f; border:1px solid #2a2a4a; border-radius:10px; padding:16px; text-align:center; }
+  .stat-value { font-size:20px; font-weight:800; color:#e94560; }
+  .stat-label { font-size:11px; color:#7f8c9a; margin-top:4px; }
+
+  /* Sections */
+  .section { background:#12121f; border:1px solid #2a2a4a; border-radius:12px; padding:28px; margin-bottom:16px; }
+  .section-title { font-size:16px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+  .section-body { color:#b0bec5; font-size:14px; line-height:1.9; }
+  .section-body p { margin-bottom:10px; }
+  .section-body ul { padding-left:20px; }
+  .section-body li { margin-bottom:6px; }
+
+  /* Highlight box */
+  .highlight { background:#1e1e35; border-left:3px solid #e94560; padding:14px 18px; border-radius:0 8px 8px 0; margin:14px 0; }
+  .highlight p { color:#e0e0e0; margin:0; }
+
+  /* SNS voice */
+  .voice-card { background:#1a1a2e; border:1px solid #2a2a4a; border-radius:8px; padding:14px 16px; margin:8px 0; }
+  .voice-card .voice-text { color:#d0d0d0; font-size:13px; line-height:1.7; font-style:italic; }
+  .voice-card .voice-meta { color:#4a5568; font-size:11px; margin-top:6px; }
+
+  /* Competitor table */
+  .comp-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+  .comp-table th { background:#1e1e35; color:#7f8c9a; padding:10px 12px; text-align:left; font-weight:600; border-bottom:1px solid #2a2a4a; }
+  .comp-table td { padding:10px 12px; border-bottom:1px solid #1a1a2e; color:#b0bec5; }
+  .comp-table tr:last-child td { border-bottom:none; }
+  .comp-table .target { color:#4fc3f7; font-weight:700; }
+
+  /* Checklist */
+  .checklist li { list-style:none; padding-left:0; margin-bottom:8px; display:flex; align-items:flex-start; gap:8px; }
+  .checklist li::before { content:"☐"; color:#e94560; font-size:16px; flex-shrink:0; margin-top:-1px; }
+
+  /* QA */
+  .qa-item { background:#1a1a2e; border-radius:8px; padding:14px 16px; margin:8px 0; }
+  .qa-q { color:#ffb74d; font-weight:700; font-size:13px; margin-bottom:6px; }
+  .qa-a { color:#b0bec5; font-size:13px; line-height:1.7; }
+
+  /* Icebreaker */
+  .icebreaker-item { background:#1a1a2e; border-left:3px solid #81c784; border-radius:0 8px 8px 0; padding:12px 16px; margin:8px 0; font-size:13px; color:#d0d0d0; }
+
+  /* Tags */
+  .tag { display:inline-block; background:#1e1e35; border:1px solid #3a3a5a; color:#9b9bbc; font-size:11px; padding:3px 10px; border-radius:20px; margin:3px; }
+
+  /* Confidence badges */
+  .conf { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; }
+  .conf-高 { background:#1b3a2a; color:#81c784; border:1px solid #2e6b45; }
+  .conf-中 { background:#3a2e10; color:#ffb74d; border:1px solid #7a5c10; }
+  .conf-低 { background:#3a1010; color:#e57373; border:1px solid #7a2020; }
+  .conf-低-wrap { background:#2b1010; border-left:3px solid #e57373; border-radius:0 6px 6px 0; padding:8px 12px; margin:4px 0; }
+
+  /* Source drawer */
+  details.src { margin-top:14px; }
+  details.src summary { font-size:11px; color:#3a3a6a; cursor:pointer; user-select:none; list-style:none; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #2a2a4a; border-radius:20px; }
+  details.src summary::-webkit-details-marker { display:none; }
+  details.src summary::before { content:"📎"; }
+  details.src[open] summary { color:#7f8c9a; border-color:#3a3a6a; }
+  details.src .src-list { margin-top:10px; padding:10px 14px; background:#0a0a0f; border-radius:8px; border:1px solid #1a1a2e; }
+  details.src .src-list a { display:block; color:#4fc3f7; font-size:11px; text-decoration:none; padding:4px 0; border-bottom:1px solid #1a1a2e; word-break:break-all; }
+  details.src .src-list a:last-child { border-bottom:none; }
+  details.src .src-list a:hover { text-decoration:underline; }
+  details.src .src-title { font-size:10px; color:#4a5568; margin-bottom:2px; }
+
+  /* Key message */
+  .key-message { background:linear-gradient(135deg,#1e0a15,#2a1020); border:1px solid #e94560; border-radius:10px; padding:20px 24px; margin-top:16px; }
+  .key-message-label { color:#e94560; font-size:11px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+  .key-message-text { color:#fff; font-size:15px; font-weight:700; line-height:1.6; }
+
+  .footer { text-align:center; padding:24px; color:#3a3a5a; font-size:12px; border-top:1px solid #1a1a2e; margin-top:16px; }
+
+  @media print {
+    body { background:#fff; color:#000; }
+    .header { background:#1a1a2e !important; -webkit-print-color-adjust:exact; }
+    .section { border:1px solid #ddd; page-break-inside:avoid; }
+  }
+  /* Visual Summary */
+  .vsummary { background:#12121f; border:1px solid #2a2a4a; border-radius:14px; padding:24px 28px; margin-bottom:20px; }
+  .vsummary-title { font-size:11px; font-weight:700; color:#4a5568; letter-spacing:1px; margin-bottom:16px; }
+  .key-facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:8px; margin-bottom:16px; }
+  .key-fact { border-left:3px solid #2a2a4a; padding:10px 14px; }
+  .key-fact-label { font-size:10px; color:#4a5568; font-weight:600; margin-bottom:4px; }
+  .key-fact-value { font-size:14px; font-weight:700; color:#e0e0e0; line-height:1.4; }
+
+  @media(max-width:600px) {
+    .header { padding:24px; }
+    .quick-stats { grid-template-columns:1fr 1fr; }
+    .signal-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <span class="badge" style="background:#1565c0">DNPヒューマンリサーチ®</span>
+    <span class="meta">生成日時: 2026年06月13日 10:02　　🖨️ <a href="javascript:window.print()" style="color:#4a5568;text-decoration:none;">印刷</a></span>
+  </div>
+  <div class="company-name">サントリーホールディングス</div>
+  <div class="person-info">👤 横山　拓巳（イノベーション開発部）</div>
+</div>
+<div class="container">
+  <a href="../index.html" class="back-link">← レポート一覧に戻る</a>
+  
+<div class="vsummary">
+  <div class="vsummary-title">📋 概要サマリー</div>
+  <div class="key-facts"><div class="key-fact"><div class="key-fact-label">業界</div><div class="key-fact-value">飲食品メーカー</div></div><div class="key-fact"><div class="key-fact-label">売上高</div><div class="key-fact-value">3兆4,325億円（2025年12月期見込み、酒税込み）</div></div><div class="key-fact"><div class="key-fact-label">市場ポジション</div><div class="key-fact-value">国内飲料・酒類市場を牽引するリーディングカンパニーの一つ</div></div><div class="key-fact"><div class="key-fact-label">従業員数</div><div class="key-fact-value">40,098名（2023年12月31日時点、連結）</div></div><div class="key-fact"><div class="key-fact-label">業績ハイライト</div><div class="key-fact-value">2025年12月期（見込み）売上収益：3兆4,325億円（前年同期比0.4%増）</div></div></div>
+</div>
+  <div style="text-align:right;margin-bottom:8px;font-size:11px;color:#4a5568">基本情報の信頼度: <span class="conf conf-高">高</span></div><div class="quick-stats"><div class="stat-box"><div class="stat-value">飲食品メーカー</div><div class="stat-label">業界</div></div><div class="stat-box"><div class="stat-value">3兆4,325億円（2025年12月期見込み、酒税込み）</div><div class="stat-label">売上高</div></div><div class="stat-box"><div class="stat-value">40,098名（2023年12月31日時点、連結）</div><div class="stat-label">従業員数</div></div><div class="stat-box"><div class="stat-value">国内飲料・酒類市場を牽引するリーディングカンパニーの一つ</div><div class="stat-label">市場ポジション</div></div></div>
+  
+<div class="section">
+  <div class="section-title" style="color:#4fc3f7">
+    <span style="font-size:20px">🏢</span>企業概要
+  </div>
+  <div class="section-body"><p>サントリーホールディングスは、「水と生きる」を企業理念に掲げ、ビール・ウイスキー・ワインなどの酒類、清涼飲料水、健康食品、外食など多岐にわたる事業をグローバルに展開する総合飲食品メーカーです。2025年12月期は売上収益3兆4,325億円（酒税込み）を見込んでおり、特に「サントリー天然水」や「BOSS」などの清涼飲料、そして「ザ・プレミアム・モルツ」「翠」などの酒類が市場を牽引しています。国内事業の盤石化と収益力強化、そしてグローバルな成長を中期経営計画（2024-2026年）の重点戦略としています。</p><ul><li>2025年12月期売上収益は3兆4,325億円（酒税込み、前年比0.4%増）と微増ながら、営業利益は2,212億円（同32.8%減）と減益見込み。</li><li>売上の約50%を占める「飲料・食品」セグメントは増収。</li><li>海外事業では欧州が好調な一方、米国での減損損失424億円計上や中国での売却損により純利益が大幅減益。</li><li>2025年3月25日付で創業家の鳥井信宏副社長が社長に昇格する人事を発表。</li><li>中期経営計画（2024-2026年）では「Growing for Good」ビジョンの具現化を目指し、2026年までに売上高2.8兆円（酒税控除後）、営業利益率10%超、ROE12%以上を目標に掲げる。</li></ul></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://www.jmrlsi.co.jp/scto/analysis/02-drink/suntory.html" target="_blank"><span class="src-title">企業活動分析 サントリーHDの25年12月期は、海外市況悪化で</span></a><a href="https://www.nikkei.com/nkd/company/kessan?nik_code=0040389" target="_blank"><span class="src-title">サントリーホールディングス : 業績・財務 : 日経会社情報DIGITAL</span></a><a href="https://www.nikkei.com/article/DGXZQOUC130UE0T10C26A2000000" target="_blank"><span class="src-title">決算:サントリーHDの25年12月期、純利益51%減 米国で減損424億円</span></a><a href="https://www.suntory.co.jp/company/financial" target="_blank"><span class="src-title">業績ハイライト｜財務情報｜企業情報 - サントリーホールディングス</span></a><a href="https://irbank.net/E22559/pl" target="_blank"><span class="src-title">サントリー HDの会社業績 - IRBANK</span></a><a href="https://gaishishukatsu.com/archives/3824294bb17f4b9197ebf3a59d246c3e" target="_blank"><span class="src-title">サントリーホールディングス完全ガイド｜企業理念から選考対策まで</span></a><a href="https://www.suntory.co.jp/softdrink/company/policy.html" target="_blank"><span class="src-title">経営方針｜企業情報｜サントリービバレッジ＆フード</span></a><a href="https://edinetdb.jp/company/E22559/midterm-plans" target="_blank"><span class="src-title">サントリーホールディングス株式会社 中期経営計画 — EDINET DB</span></a><a href="https://note.com/hr793/n/n5b1be5d1eafe" target="_blank"><span class="src-title">飲料×酒類×ESG：サントリーHDの揺るぎない強さと中長期的な成長戦略の全貌｜HR7</span></a><a href="https://www.choosenic.com/yuho-shukatsu-navi/articles/food/suntory-foods-yuho" target="_blank"><span class="src-title">サントリー食品の将来性｜海外投資65%×欧州利益柱の強みとリスク | 就活×有報ナビ</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#81c784">
+    <span style="font-size:20px">📈</span>財務・業績
+  </div>
+  <div class="section-body"><p>サントリーホールディングスの2025年12月期連結決算は、売上収益が3兆4,325億円（酒税込み）と微増を見込むものの、営業利益は2,212億円（前年同期比32.8%減）と5年ぶりの減益となりました。特に純利益は866億円（同51%減）と大幅減益で、米国での蒸留酒販売不振に伴う商標権の減損損失424億円や、中国でのグループ会社売却損60億円が主な要因です。海外市況の悪化が影響しましたが、国内の飲料・食品セグメントは堅調に推移しています。中期経営計画では2026年までに営業利益率10%超、ROE12%以上を目指し、グローバル規模の拡大と事業ポートフォリオの拡充を重視しています。</p><ul><li>2025年12月期（見込み）売上収益：3兆4,325億円（前年同期比0.4%増）<span class="conf conf-高">高</span></li><li>2025年12月期（見込み）営業利益：2,212億円（前年同期比32.8%減）<span class="conf conf-高">高</span></li><li>2025年12月期（見込み）純利益：866億円（前年同期比51%減）<span class="conf conf-高">高</span></li><li>米国での減損損失424億円、中国での売却損60億円を計上<span class="conf conf-高">高</span></li><li>中期経営計画（2024-2026年）では、2026年に営業利益率10%超、ROE12%以上を目標。<span class="conf conf-高">高</span></li></ul><div class="highlight"><p>⚠️ 課題・懸念点：</p><ul><li>海外事業における収益性の改善（特に米国での物価高に伴う消費低迷、ベトナム・タイでの事業環境変化への対応遅れ）</li><li>為替変動や世界経済の不安定性が利益を圧迫するリスク</li></ul></div></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://www.jmrlsi.co.jp/scto/analysis/02-drink/suntory.html" target="_blank"><span class="src-title">企業活動分析 サントリーHDの25年12月期は、海外市況悪化で</span></a><a href="https://www.nikkei.com/nkd/company/kessan?nik_code=0040389" target="_blank"><span class="src-title">サントリーホールディングス : 業績・財務 : 日経会社情報DIGITAL</span></a><a href="https://www.nikkei.com/article/DGXZQOUC130UE0T10C26A2000000" target="_blank"><span class="src-title">決算:サントリーHDの25年12月期、純利益51%減 米国で減損424億円</span></a><a href="https://www.suntory.co.jp/company/financial" target="_blank"><span class="src-title">業績ハイライト｜財務情報｜企業情報 - サントリーホールディングス</span></a><a href="https://irbank.net/E22559/pl" target="_blank"><span class="src-title">サントリー HDの会社業績 - IRBANK</span></a><a href="https://gaishishukatsu.com/archives/3824294bb17f4b9197ebf3a59d246c3e" target="_blank"><span class="src-title">サントリーホールディングス完全ガイド｜企業理念から選考対策まで</span></a><a href="https://www.suntory.co.jp/softdrink/company/policy.html" target="_blank"><span class="src-title">経営方針｜企業情報｜サントリービバレッジ＆フード</span></a><a href="https://edinetdb.jp/company/E22559/midterm-plans" target="_blank"><span class="src-title">サントリーホールディングス株式会社 中期経営計画 — EDINET DB</span></a><a href="https://note.com/hr793/n/n5b1be5d1eafe" target="_blank"><span class="src-title">飲料×酒類×ESG：サントリーHDの揺るぎない強さと中長期的な成長戦略の全貌｜HR7</span></a><a href="https://www.choosenic.com/yuho-shukatsu-navi/articles/food/suntory-foods-yuho" target="_blank"><span class="src-title">サントリー食品の将来性｜海外投資65%×欧州利益柱の強みとリスク | 就活×有報ナビ</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffb74d">
+    <span style="font-size:20px">🌊</span>業界トレンド・市場動向
+  </div>
+  <div class="section-body"><p>飲食品業界全体では、消費者の健康志向の高まり、サステナビリティへの意識向上、そしてRTD（Ready To Drink）市場の拡大が顕著なトレンドです。特に、健康機能性表示食品や低糖質・ゼロカロリー飲料の需要が増加しており、サントリーも「特茶」や「サントリー天然水スパークリング」などで対応しています。また、環境負荷低減への取り組みとして、グリーン水素の活用やTNFDフレームワークに基づく情報開示など、サステナビリティ経営を強化する動きが加速しています。RTD市場では、アルコールRTDだけでなく、コーヒーや茶系飲料でも多様なフレーバーや形態の商品が投入され、若年層を中心に人気を集めています。</p><ul><li>健康志向の高まりと機能性表示食品市場の拡大</li><li>サステナビリティ（環境負荷低減、資源循環）への取り組み強化</li><li>RTD（Ready To Drink）市場の多様化と成長</li><li>消費者ニーズの多様化とパーソナライズ化</li></ul><div class="highlight"><p>市場規模：国内清涼飲料市場は約3兆7千億円、酒類市場は約3兆5千億円（いずれも2023年時点、推定）<span class="conf conf-中">中</span></p></div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://note.com/magic_swift2546/n/n9595dff6c6d4" target="_blank"><span class="src-title">サントリーホールディングス｜同業他社と比較して分かる強み・年収・働き方・成長性【企業研究】｜出典つき企業研究ノート_note</span></a><a href="https://www.fortunebusinessinsights.com/jp/%E9%85%92%E9%A1%9E%E5%B8%82%E5%A0%B4-107439" target="_blank"><span class="src-title">アルコール飲料市場規模、シェア及び動向 | レポート [2034年]</span></a><a href="https://deallab.info/food-beverage" target="_blank"><span class="src-title">食品飲料業界の市場シェア | deallab</span></a><a href="https://service.xenobrain.jp/forecastresults/market-size/beverage" target="_blank"><span class="src-title">AIが予測する飲料メーカー ｜2030年市場規模推移と主要企業 ...</span></a><a href="https://matcher.jp/dictionary/articles/483" target="_blank"><span class="src-title">【業界研究】最新の飲料業界の現状と課題、動向を紹介します | MatcherDictionary</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ce93d8">
+    <span style="font-size:20px">⚔️</span>競合分析
+  </div>
+  <div class="section-body"><p>国内の飲食品市場において、サントリーはキリンホールディングス、アサヒグループホールディングス、コカ・コーラ ボトラーズジャパン、伊藤園など、強力な競合と激しい競争を繰り広げています。特に酒類と清涼飲料の両分野でトップメーカーがひしめき合っており、プレミアム戦略、商品ラインナップの拡充、マーケティング活動が競争力の源泉となっています。海外市場でもグローバル飲料・酒類メーカーとの競争が激化しており、新興市場でのプレゼンス拡大やM&Aを通じた成長が課題です。</p><table class="comp-table">
+<tr><th>企業名</th><th>シェア</th><th>強み</th><th>弱み</th></tr>
+<tr><td class="target">サントリーホールディングス<span class="conf conf-中">中</span></td><td>国内ビール市場約18%（2023年）、清涼飲料市場約20%（2023年、推定）</td><td style='color:#81c784'>酒類と清涼飲料のバランスの取れたポートフォリオ、グローバル展開、多様なブランド力、積極的な研究開発とサステナビリティ投資</td><td style='color:#e57373'>海外事業（特に米国）での収益性悪化リスク、競争激化による販促費増</td></tr><tr><td>キリンホールディングス<span class="conf conf-中">中</span></td><td>国内ビール市場約35%（2023年、推定）</td><td style='color:#81c784'>ビール市場での強固なブランド力、医薬・バイオ事業とのシナジー、健康を意識した商品開発</td><td style='color:#e57373'>国内ビール市場の縮小傾向、海外事業の地域偏重リスク</td></tr><tr><td>アサヒグループホールディングス<span class="conf conf-中">中</span></td><td>国内ビール市場約38%（2023年、推定）</td><td style='color:#81c784'>国内ビール市場のトップシェア、「スーパードライ」の強力なブランド力、欧州・オセアニアでの買収によるグローバル展開</td><td style='color:#e57373'>アルコール依存からの脱却、コロナ禍以降の外食産業への影響</td></tr></table></div>
+  <details class="src"><summary>根拠を見る（7件）</summary><div class="src-list"><a href="https://note.com/magic_swift2546/n/n9595dff6c6d4" target="_blank"><span class="src-title">同業他社と比較して分かる強み・年収・働き方・成長性【企業研究】</span></a><a href="https://www.choosenic.com/yuho-shukatsu-navi/articles/compare/beverage-comparison" target="_blank"><span class="src-title">飲料3社を有報で比較｜サントリー・キリン・アサヒの戦略の違い</span></a><a href="https://matcher.jp/dictionary/articles/486" target="_blank"><span class="src-title">【最新版】飲料メーカーランキング｜動向や内定の秘訣も紹介</span></a><a href="https://www.linkedin.com/company/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC%E3%83%9B%E3%83%BC%E3%83%AB%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%82%B9%EF%BC%88%E6%A0%AA%EF%BC%89" target="_blank"><span class="src-title">サントリーホールディングス（株） - LinkedIn</span></a><a href="https://ja.wikipedia.org/wiki/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC" target="_blank"><span class="src-title">サントリー - Wikipedia</span></a><a href="https://www.shopowner-support.net/glossary/differentiation/suntory" target="_blank"><span class="src-title">サントリーの経営戦略から学ぶ差別化戦略・マーケティング戦略 - 集客・広告戦略メディア「キャククル」</span></a><a href="https://shopping.yahoo.co.jp/categoryranking/1/5300/brand" target="_blank"><span class="src-title">【2026年6月】SUNTORYのおすすめ人気ランキング</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#80cbc4">
+    <span style="font-size:20px">📦</span>主力製品・カテゴリ別ポジション
+  </div>
+  <div class="section-body"><p>サントリーは幅広い製品ポートフォリオを持ち、特に清涼飲料では「サントリー天然水」「BOSS」「伊右衛門」「C.C.レモン」「ペプシ」、酒類では「ザ・プレミアム・モルツ」「角瓶」「山崎」「白州」「翠」「ROKU」などが主力ブランドです。近年は健康志向に対応した「特茶」や水カテゴリーの新商品「特水」を投入。直近では、2026年に向けたビール事業方針で「ザ・プレミアム・モルツ」と「サントリー生ビール」の中味・パッケージを刷新し、若年層や既存顧客へのアプローチを強化しています。また、ウエルネス事業では高機能スキンケア製品やサプリメントを提供し、多様な顧客ニーズに応えています。</p><div class="voice-card"><strong style="color:#4fc3f7">清涼飲料</strong>　サントリー天然水、BOSS、伊右衛門、クラフトボス 甘くないイタリアーノ、特茶、特水　<span style="color:#7f8c9a;font-size:12px">国内トップクラス</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">酒類（ビール）</strong>　ザ・プレミアム・モルツ、サントリー生ビール、パーフェクトサントリービール　<span style="color:#7f8c9a;font-size:12px">国内ビール市場で主要な地位</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">酒類（ウイスキー・ジンなど）</strong>　角瓶、山崎、白州、翠（SUI）、ROKU（六）、ジムビーム　<span style="color:#7f8c9a;font-size:12px">国内ウイスキー市場トップ、ジャパニーズクラフトジンのパイオニア</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">ウエルネス</strong>　VARON UV エアー プロテクター、WELL CERA、F.A.G.E.、vitoas　<span style="color:#7f8c9a;font-size:12px">健康食品・スキンケア市場で存在感</span><span class="conf conf-高">高</span></div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://www.suntory.co.jp/news" target="_blank"><span class="src-title">ニュースリリース - サントリーホールディングス</span></a><a href="https://prtimes.jp/topics/keywords/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC" target="_blank"><span class="src-title">サントリーに関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://www.suntory.co.jp/news/article/14954.html" target="_blank"><span class="src-title">「サントリー生ビール」リニューアル新発売 | ニュースリリース | サントリーホールディングス</span></a><a href="https://prtimes.jp/main/html/rd/p/000000148.000042435.html" target="_blank"><span class="src-title">新「オールフリー」発売 | サントリーホールディングス株式会社のプレスリリース</span></a><a href="https://www.suntory.co.jp/softdrink" target="_blank"><span class="src-title">ソフトドリンク サントリービバレッジ＆フード</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffcc02">
+    <span style="font-size:20px">🆕</span>最新ニュース・新商品・取り組み
+  </div>
+  <div class="section-body"><p>サントリーホールディングスは、2025年3月25日付での社長交代に加え、直近1ヶ月以内に複数の新商品発表や、サステナビリティに関する重要な方針を打ち出しています。特に、「ザ・プレミアム・モルツ 時の誘惑」や「スターバックス FRUITY CHEERS TORORI」といった季節限定・新感覚飲料の発売は市場の注目を集めています。また、環境分野では2027年以降に国内で初めてグリーン水素の製造から販売までを一気通貫で手掛ける「サントリーグリーン水素ビジョン」を発表し、脱炭素社会への貢献を明確にしています。</p><ul><li>2025年3月25日付で創業家の鳥井信宏副社長が社長に昇格し、新浪剛史社長は会長に就任する人事を発表。<span class="conf conf-高">高</span></li><li>6月11日、「サントリーグリーン水素ビジョン」を発表。2027年以降、やまなしモデルP2Gシステムを活用し、国内でグリーン水素の製造から販売までを一気通貫で取り組む計画。<span class="conf conf-高">高</span></li><li>6月16日、「スターバックス FRUITY CHEERS TORORI」（フルーツ×ティー×ミルク）を新発売。新感覚のドリンクシリーズとして注目。<span class="conf conf-高">高</span></li><li>「ザ・プレミアム・モルツ 時の誘惑」「ザ・プレミアム・モルツ 〈ジャパニーズエール〉夕映香るエール」を数量限定新発売。<span class="conf conf-高">高</span></li><li>「－196無糖〈ダブルパイナップル〉」「オールフリー スパークリング〈トロピカルパンチ〉」を期間限定新発売。<span class="conf conf-高">高</span></li><li>2026年ビール事業方針を発表。「ザ・プレミアム・モルツ」と「サントリー生ビール」の中味・パッケージを刷新し、1月13日よりJリーグとのトップパートナー契約を締結。<span class="conf conf-高">高</span></li><li>2025年「サントリージン」戦略を発表。大阪工場に10億円を追加投資し、「スピリッツ・リキュール工房」の公開を予定し、ジン市場の創造・拡大を目指す。<span class="conf conf-高">高</span></li><li>サントリーウエルネスがVoC分析AI「AI Central Voice」を導入し、お客様理解と施策判断に活用。<span class="conf conf-高">高</span></li></ul></div>
+  <details class="src"><summary>根拠を見る（13件）</summary><div class="src-list"><a href="https://prtimes.jp/main/html/rd/p/000001239.000042435.html" target="_blank"><span class="src-title">２０２５年「サントリージン」戦略について | サントリーホールディングス株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000001452.000042435.html" target="_blank"><span class="src-title">２０２６年 サントリー（株）ビール事業方針 | サントリーホールディングス株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000001306.000042435.html" target="_blank"><span class="src-title">「サントリーグリーン水素ビジョン」を発表 | サントリーホールディングス株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000956.000042435.html" target="_blank"><span class="src-title">ＴＮＦＤ※１フレームワークに基づく自然関連情報の試行開示を開始 | サントリーホールディングス株式会社のプレスリリース</span></a><a href="https://prtimes.jp/topics/keywords/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC%E3%82%A6%E3%82%A8%E3%83%AB%E3%83%8D%E3%82%B9" target="_blank"><span class="src-title">サントリーウエルネスに関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://www.suntory.co.jp/news" target="_blank"><span class="src-title">ニュースリリース - サントリーホールディングス</span></a><a href="https://www.asahi.com/topics/word/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC%E3%83%9B%E3%83%BC%E3%83%AB%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%82%B9.html" target="_blank"><span class="src-title">サントリーホールディングスの最新ニュース - 朝日新聞</span></a><a href="https://www.youtube.com/watch?v=IHUq2LyOPQg" target="_blank"><span class="src-title">サントリーHD社長交代　10年ぶり創業家出身【WBS】</span></a><a href="https://sincereed-agent.com/interview/suntry_whydx" target="_blank"><span class="src-title">なぜサントリーはDXに力を入れているのか？ | 大手企業に強いハイクラス転職エージェント【シンシアード】</span></a><a href="https://www.suntory.co.jp/recruit/media/articles/000223.html" target="_blank"><span class="src-title">デジタル時代の新しい価値創出に挑む！　サントリー流デジタルマーケティング</span></a><a href="https://www.suntory.co.jp/recruit/dx/works" target="_blank"><span class="src-title">サントリー流DXの仕事 | SUNTORY DX RECRUITING</span></a><a href="https://node-labo.com/works/03.html" target="_blank"><span class="src-title">【WORKS 実例03】サントリーはデジタルで新しい文化をつくる（サントリーコミュニケーションズ株式会社 ）| 株式会社NODE</span></a><a href="https://www.suntory.co.jp/recruit/media/articles/000023.html" target="_blank"><span class="src-title">DX戦略部は大企業の中のベンチャー。自分の手で未来を創る楽しさ</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#f48fb1">
+    <span style="font-size:20px">📱</span>SNS・消費者の声
+  </div>
+  <div class="section-body"><p>サントリーの新商品やリニューアルはSNSで活発に議論されています。「ザ・プレミアム・モルツ」や「サントリー生ビール」のパッケージ刷新は、デザイン変更への期待や、店頭での視認性に関する声が上がっています。「スターバックス FRUITY CHEERS TORORI」のような新感覚飲料は、味の斬新さやパッケージデザインの可愛らしさ、そしてインスタ映えする写真とともにSNSで拡散されやすい傾向にあります。また、「翠（SUI）」のような食中酒としてのジンの提案は、新たな飲用シーンやカクテルレシピの共有を通じて注目を集めています。サステナビリティに関する取り組み（グリーン水素ビジョンなど）は、企業としての先進性や環境意識の高さが評価される一方で、具体的な製品へのメリットや消費者への影響をさらに分かりやすく伝える必要性も指摘されています。</p><div class="voice-card"><div class="voice-text">「「スターバックス FRUITY CHEERS TORORI」の斬新なフレーバーとパッケージデザインへの期待。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「「ザ・プレミアム・モルツ」や「サントリー生ビール」のパッケージ刷新により、売り場での新鮮さや視認性向上への期待。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「「翠（SUI）」など、和食に合うジンというコンセプトが新しい飲用体験として好評。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「サントリーウエルネスの新商品（VARON、WELL CERA）は、男性向けやバリア機能に着目した点が特定の層に響いている。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「サントリーグループの環境への取り組み（グリーン水素ビジョンなど）は、CSR活動として高く評価されている。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「ビール製品のリニューアルに関して、慣れ親しんだデザインからの変更に一部戸惑いの声。」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><div class="voice-card"><div class="voice-text">「期間限定商品が多く、定番化を望む声や、入手しにくいことへの不満。」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><div class="voice-card"><div class="voice-text">「新商品が多すぎて、消費者が追いきれない、選択に迷うといった声。」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><div class="voice-card"><div class="voice-text">「サステナビリティ施策は企業イメージ向上に寄与するが、消費者の購買行動に直結する具体的なメリットがまだ伝わりにくい可能性。」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><p style='margin-top:14px;color:#81c784;font-weight:700'>💡 ビジネス機会</p><ul><li>パッケージ刷新時の生体反応データに基づいたデザイン調整や、店頭POP効果の検証により、購買意欲を最大限に引き出す。</li><li>新感覚飲料のユニークなパッケージがSNSで拡散される機会を捉え、開封性や使用性の快適さがさらなる話題性を生む可能性。</li><li>ウエルネス製品において、開封のしやすさや使用ステップの分かりやすさが、高齢者層や忙しい層からの支持をさらに高める要素となる。</li><li>サステナビリティを意識したパッケージ素材への変更を検討する際、消費者の無意識な受容度や好感度を科学的に評価し、採用に繋げる。</li></ul></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://note.com/magic_swift2546/n/n9595dff6c6d4" target="_blank"><span class="src-title">同業他社と比較して分かる強み・年収・働き方・成長性【企業研究】</span></a><a href="https://note.com/winekabuki/n/n53ec9afc4ee8" target="_blank"><span class="src-title">飲料業界の未来を拓く「生活者起点」の完全ガイド〜2万字で解き明かす、インサイト発見からブランド戦略の次の一手〜｜不易流行総研</span></a><a href="https://note.com/konkon4192/n/nc04b0ed3a10f" target="_blank"><span class="src-title">採用ピッチ資料100選。採用ピッチの作り方ノウハウ7つも紹介！2025年10月更新｜連続起業家のコンさん：『中途採用の定石』著者</span></a><a href="https://note.com/xoperation/n/n93109494872d" target="_blank"><span class="src-title">採用ピッチ資料【SaaS企業100選】</span></a><a href="https://x.com/mytter5757" target="_blank"><span class="src-title">益田侑貴｜Yellow Buzz代表 (@mytter5757) / X</span></a><a href="https://xtrend.nikkei.com/atcl/contents/18/00882/00004" target="_blank"><span class="src-title">ペプシ1億インプレッションの裏側　サントリー食品はXで何をしたか：日経クロストレンド</span></a><a href="https://www.suntory.co.jp/news" target="_blank"><span class="src-title">ニュースリリース - サントリーホールディングス</span></a><a href="https://predge.jp/307762" target="_blank"><span class="src-title">サントリーのプロモーション・広告施策20選｜イベントからCMまで総まとめ | PR EDGE</span></a><a href="https://www.youtube.com/watch?v=lcdcT56ZSKA" target="_blank"><span class="src-title">#164「ハイボールブームを生んだサントリーグルメ開発部が語る、SNS時代のヒットの法則と外食の未来」（ゲスト：サントリーグルメ開発部チーム）#ウェンホリ#WEDNESDAYHOLIDAY #堀井美香</span></a><a href="https://ja.wikipedia.org/wiki/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC" target="_blank"><span class="src-title">サントリー - Wikipedia</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#f48fb1">
+    <span style="font-size:20px">👤</span>面談相手・部署プロファイル
+  </div>
+  <div class="section-body"><p>横山拓巳様はサントリーホールディングスのイノベーション開発部に所属されています。イノベーション開発部は、既存事業の枠を超えた新しい商品、技術、ビジネスモデルの創出を通じて、未来の成長を牽引する重要な役割を担っていると拝察いたします。そのため、消費者の潜在的なニーズを深く掘り下げ、データに基づいた製品開発や改善、そして市場投入までのプロセス効率化に強い関心をお持ちのことと存じます。特に、競合が激しい飲食品業界において、他社に先駆けて消費者のインサイトを捉え、差別化された価値を提供することが、部署のミッションにおける最重要課題の一つではないでしょうか。</p><p style='margin-top:12px;font-weight:700;color:#7f8c9a'>関心事・KPI</p><ul><li>新商品や新技術開発における消費者の無意識な反応・ニーズの把握</li><li>パッケージデザインや店頭施策が購買行動に与える影響の客観的な評価</li><li>製品の開封性・使用性といったユーザビリティの科学的改善</li><li>イノベーション創出におけるリスク低減と成功確率の向上</li><li>研究開発投資の効率化とデータドリブンな意思決定</li><li>サステナビリティ対応パッケージの消費者受容度評価</li></ul><p style='margin-top:12px;font-weight:700;color:#7f8c9a'>コミュニケーションのポイント</p><div class="icebreaker-item" style="border-left-color:#4fc3f7">DNPヒューマンリサーチ®が、イノベーション開発部の「消費者の無意識・無自覚な購買・使用行動を科学的に計測・分析する」というニーズにどう応えられるかを具体的に提示する。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">データに基づいた客観的評価の重要性を強調し、既存の調査手法との違いやメリットを明確に伝える。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">パッケージデザイン評価、POP効果検証、開封性・使用性改善といった、イノベーション開発部が直面しうる具体的な課題解決に繋がる活用事例（他社事例があれば尚可）を用意する。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">生体反応データの活用が、新製品開発のスピードアップやコスト削減にどう貢献するかを数値的に示す。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">サントリーが重視するサステナビリティとDNPヒューマンリサーチ®の連携可能性（例：環境配慮型パッケージの受容性検証）にも触れる。</div></div>
+  <details class="src"><summary>根拠を見る（9件）</summary><div class="src-list"><a href="https://www.nikkei.com/article/DGXZTSJM70301_W4A220C2000000" target="_blank"><span class="src-title">人事、サントリーホールディングス - 日本経済新聞</span></a><a href="https://www.nikkei.com/nkd/industry/article?DisplayType=1&n_m_code=052&ng=DGXZTSJM70301_W4A220C2000000" target="_blank"><span class="src-title">人事、サントリーホールディングス　 - 日本経済新聞</span></a><a href="https://www.nikkei.com/article/DGXZTSJM20201_R11C25A2000000" target="_blank"><span class="src-title">人事、サントリーホールディングス - 日本経済新聞</span></a><a href="https://www.suntory.co.jp/recruit/media/articles/000225.html" target="_blank"><span class="src-title">「売る」だけじゃない「課題を解く」営業――サントリー流・ソリューション営業の秘訣</span></a><a href="https://www.suntory.co.jp/recruit/works" target="_blank"><span class="src-title">バリューチェーンで見る仕事の繋がりと各部門の仕事｜採用情報</span></a><a href="https://www.youtube.com/watch?v=82kDJz1cvvE" target="_blank"><span class="src-title">【LIVE】サントリーホールディングスが緊急会見｜9月2日(火)15:00頃〜</span></a><a href="https://www.yomiuri.co.jp/economy/20250902-OYT1T50119" target="_blank"><span class="src-title">サントリー 緊急会見[まとめ読み]新浪剛史会長辞任、購入サプリメントを警察が捜査…鳥井信宏社長が謝罪 : 読売新聞</span></a><a href="https://www.youtube.com/watch?v=xn0zyPo9vhw" target="_blank"><span class="src-title">新浪会長の辞任発表【サントリーが記者会見】サプリメントの購入 ...</span></a><a href="https://www.youtube.com/watch?v=YtOyBsa1ZQ0" target="_blank"><span class="src-title">【会見ノーカット】サントリーHD・新浪会長辞任…“新浪氏から辞任したいとの申し出”── ニュースライブ［2025年9月2日］（日テレNEWS LIVE）</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#a5d6a7">
+    <span style="font-size:20px">☕</span>アイスブレイク話題
+  </div>
+  <div class="section-body"><div class="icebreaker-item">💬 「先日発表された『サントリーグリーン水素ビジョン』、環境への先進的な取り組みに感銘を受けました。DNPもサステナビリティを重要な経営課題と捉えており、この分野でご一緒できる機会があれば光栄です。」</div><div class="icebreaker-item">💬 「6月16日に新発売された『スターバックス FRUITY CHEERS TORORI』、フルーツとティー、ミルクの組み合わせが斬新で、SNSでも話題になっていますね。特にパッケージデザインが目を引くと感じました。」</div><div class="icebreaker-item">💬 「2026年のビール事業方針での『ザ・プレミアム・モルツ』と『サントリー生ビール』のパッケージ刷新、非常に大きな挑戦だと拝察いたします。お客様の反応はやはり気になりますでしょうか？」</div></div>
+  <details class="src"><summary>根拠を見る（12件）</summary><div class="src-list"><a href="https://prtimes.jp/main/html/rd/p/000001239.000042435.html" target="_blank"><span class="src-title">２０２５年「サントリージン」戦略について | サントリーホールディングス株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000001452.000042435.html" target="_blank"><span class="src-title">２０２６年 サントリー（株）ビール事業方針 | サントリーホールディングス株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000001306.000042435.html" target="_blank"><span class="src-title">「サントリーグリーン水素ビジョン」を発表 | サントリーホールディングス株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000956.000042435.html" target="_blank"><span class="src-title">ＴＮＦＤ※１フレームワークに基づく自然関連情報の試行開示を開始 | サントリーホールディングス株式会社のプレスリリース</span></a><a href="https://prtimes.jp/topics/keywords/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC%E3%82%A6%E3%82%A8%E3%83%AB%E3%83%8D%E3%82%B9" target="_blank"><span class="src-title">サントリーウエルネスに関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://www.suntory.co.jp/news" target="_blank"><span class="src-title">ニュースリリース - サントリーホールディングス</span></a><a href="https://www.asahi.com/topics/word/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC%E3%83%9B%E3%83%BC%E3%83%AB%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%82%B9.html" target="_blank"><span class="src-title">サントリーホールディングスの最新ニュース - 朝日新聞</span></a><a href="https://www.youtube.com/watch?v=IHUq2LyOPQg" target="_blank"><span class="src-title">サントリーHD社長交代　10年ぶり創業家出身【WBS】</span></a><a href="https://xtrend.nikkei.com/atcl/contents/18/00882/00004" target="_blank"><span class="src-title">ペプシ1億インプレッションの裏側　サントリー食品はXで何をしたか：日経クロストレンド</span></a><a href="https://predge.jp/307762" target="_blank"><span class="src-title">サントリーのプロモーション・広告施策20選｜イベントからCMまで総まとめ | PR EDGE</span></a><a href="https://www.youtube.com/watch?v=lcdcT56ZSKA" target="_blank"><span class="src-title">#164「ハイボールブームを生んだサントリーグルメ開発部が語る、SNS時代のヒットの法則と外食の未来」（ゲスト：サントリーグルメ開発部チーム）#ウェンホリ#WEDNESDAYHOLIDAY #堀井美香</span></a><a href="https://ja.wikipedia.org/wiki/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC" target="_blank"><span class="src-title">サントリー - Wikipedia</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffb74d">
+    <span style="font-size:20px">❓</span>想定Q&A・切り返し
+  </div>
+  <div class="section-body"><div class="qa-item"><div class="qa-q">Q: 従来のアンケート調査やFGI（フォーカスグループインタビュー）と比べて、DNPヒューマンリサーチ®の具体的な優位性は何ですか？</div><div class="qa-a">A: 従来の調査では言語化されにくい消費者の「無意識・無自覚な反応」を、アイトラッカーや接触力センサーといった生体反応データで客観的に計測・分析できる点が最大の強みです。これにより、被験者の主観や記憶に左右されない、より本質的なインサイトを得ることが可能です。例えば、パッケージのどこに目が留まり、どの部分で迷いが生じるか、開封時にどのようなストレスを感じるかなどを科学的に可視化できます。</div></div><div class="qa-item"><div class="qa-q">Q: イノベーション開発部として、新製品のパッケージ開発サイクルを短縮したいと考えています。DNPヒューマンリサーチ®はどのように貢献できますか？</div><div class="qa-a">A: DNPヒューマンリサーチ®は、試作段階のパッケージデザインや店頭POP、プロトタイプ製品の使用性などを、迅速かつ客観的に評価できます。これにより、開発の後期段階での大幅な手戻りを防ぎ、改善点を早期に特定して効率的なPDCAサイクルを回すことが可能です。データに基づいた確度の高い意思決定を支援することで、開発期間の短縮とコスト最適化に貢献します。</div></div><div class="qa-item"><div class="qa-q">Q: 当社の製品は海外展開もしています。異文化圏の消費者行動も分析可能でしょうか？</div><div class="qa-a">A: はい、可能です。DNPヒューマンリサーチ®は、生体反応という普遍的なデータを基盤としているため、文化や言語の壁を越えた分析が可能です。現地の消費者グループを対象にテストを実施することで、例えば、同じデザインでも国によって視線や興味の集中する箇所が異なる、といった具体的な違いを捉え、各国市場に最適化したパッケージや店頭戦略を立案する上での強力な示唆を提供できます。</div></div></div>
+  <details class="src"><summary>根拠を見る（9件）</summary><div class="src-list"><a href="https://www.suntory.co.jp/company/csr/gov_risk" target="_blank"><span class="src-title">リスクマネジメント サントリーグループのサステナビリティ ...</span></a><a href="https://www.suntory.co.jp/company/csr/env_tcfd" target="_blank"><span class="src-title">TNFD提言・TCFD提言に基づく統合開示 サントリーグループの ...</span></a><a href="https://business.nikkei.com/atcl/NBD/19/special/02205" target="_blank"><span class="src-title">サントリーはインテリジェンス専門部隊 課題は人材とデータ トップ ...</span></a><a href="https://kitaishihon.com/company/2587/management-strategy" target="_blank"><span class="src-title">サントリー食品インターナショナル【2587】のリスク・配当</span></a><a href="https://note.com/magic_swift2546/n/n9595dff6c6d4" target="_blank"><span class="src-title">同業他社と比較して分かる強み・年収・働き方・成長性【企業研究】</span></a><a href="https://www.choosenic.com/yuho-shukatsu-navi/articles/compare/beverage-comparison" target="_blank"><span class="src-title">飲料3社を有報で比較｜サントリー・キリン・アサヒの戦略の違い</span></a><a href="https://matcher.jp/dictionary/articles/486" target="_blank"><span class="src-title">【最新版】飲料メーカーランキング｜動向や内定の秘訣も紹介</span></a><a href="https://www.linkedin.com/company/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC%E3%83%9B%E3%83%BC%E3%83%AB%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%82%B9%EF%BC%88%E6%A0%AA%EF%BC%89" target="_blank"><span class="src-title">サントリーホールディングス（株） - LinkedIn</span></a><a href="https://ja.wikipedia.org/wiki/%E3%82%B5%E3%83%B3%E3%83%88%E3%83%AA%E3%83%BC" target="_blank"><span class="src-title">サントリー - Wikipedia</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#81c784">
+    <span style="font-size:20px">✅</span>訪問前チェックリスト
+  </div>
+  <div class="section-body"><ul class="checklist"><li>DNPヒューマンリサーチ®の具体的な導入事例（特に飲食品業界、パッケージ関連）を準備し、横山様の部署の課題解決に繋がるストーリーを明確にする。</li><li>サントリーホールディングスの中期経営計画における『成長投資』や『研究開発投資』の具体的な項目と、DNPヒューマンリサーチ®が貢献できる領域を再確認する。</li><li>面談相手のイノベーション開発部が直面しうるであろう具体的なパッケージデザイン、開封性、店頭効果の課題について仮説を立て、ヒアリング項目を準備する。</li><li>サービス紹介資料に加え、生体反応データの具体的なアウトプットイメージが分かるデモ資料や動画を持参する。</li><li>当日のアジェンダと、横山様からの質問時間を十分に確保する提案を準備する。</li></ul></div>
+  
+</div>
+  <div class="footer">DNPペルソナインサイト 商談前リサーチレポート｜自動生成　※情報は公開情報をもとにAIが分析したものです</div>
+</div>
+</body>
+</html>
