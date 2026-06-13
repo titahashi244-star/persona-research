@@ -77,12 +77,13 @@ export default {
     }
 
     // 生成（デフォルト）
-    const { company_name, person_name, department, service_key } = body;
+    const { company_name, person_name, department, service_key, reference_urls } = body;
     const res = await githubDispatch(env, "generate-report.yml", {
       company_name,
-      person_name:  person_name  || "",
-      department:   department   || "",
-      service_key:  service_key  || "persona_insight",
+      person_name:     person_name     || "",
+      department:      department      || "",
+      service_key:     service_key     || "persona_insight",
+      reference_urls:  reference_urls  || "",
     });
 
     if (!res.ok) {

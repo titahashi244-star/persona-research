@@ -18,6 +18,10 @@ on:
         description: 'サービス (persona_insight / human_research)'
         required: false
         default: 'persona_insight'
+      reference_urls:
+        description: '参考記事URL（カンマ区切り、最大5件）'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -47,6 +51,7 @@ jobs:
           PERSON_NAME: ${{ github.event.inputs.person_name }}
           DEPARTMENT: ${{ github.event.inputs.department }}
           SERVICE_KEY: ${{ github.event.inputs.service_key }}
+          REFERENCE_URLS: ${{ github.event.inputs.reference_urls }}
         run: python generate_report.py
 
       - name: Commit and push report

@@ -314,6 +314,8 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
 【リサーチデータ】
 {json.dumps(research, ensure_ascii=False, indent=2)[:15000]}
 
+{"【参考記事（ユーザー指定・最優先で活用すること）】担当者のインタビューや発言は person_profile の known_statements / philosophy / career_hooks に反映すること。" + json.dumps(research.get("reference_articles",[]), ensure_ascii=False, indent=2)[:4000] if research.get("reference_articles") else ""}
+
 【信頼度ルール】
 各事実・数値には confidence フィールドを付けてください:
 - "高": 検索結果に明確な根拠あり（決算資料・公式IR・報道等で確認済み）
@@ -844,16 +846,42 @@ def update_index(company_name: str, person_name: str, department: str, filename:
 # MAIN
 # ============================================================
 if __name__ == "__main__":
-    company_name = os.environ["COMPANY_NAME"]
-    person_name  = os.environ.get("PERSON_NAME", "")
-    department   = os.environ.get("DEPARTMENT", "")
-    service_key  = os.environ.get("SERVICE_KEY", "persona_insight")
+    company_name    = os.environ["COMPANY_NAME"]
+    person_name     = os.environ.get("PERSON_NAME", "")
+    department      = os.environ.get("DEPARTMENT", "")
+    service_key     = os.environ.get("SERVICE_KEY", "persona_insight")
+    reference_urls  = [u.strip() for u in os.environ.get("REFERENCE_URLS", "").split(",") if u.strip().startswith("http")]
 
     print(f"▶ リサーチ開始: {company_name} / {person_name} / {department} / {service_key}")
 
     tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
     research = search_all(tavily, company_name, person_name, department)
     print(f"✓ Web検索完了 ({len([v for v in research.values() if v])}カテゴリ)")
+
+    # 参考記事URLの本文取得
+    if reference_urls:
+        print(f"▶ 参考記事取得: {reference_urls}")
+        try:
+            import urllib.request
+            extract_res = urllib.request.urlopen(
+                urllib.request.Request(
+                    "https://api.tavily.com/extract",
+                    data=json.dumps({"api_key": os.environ["TAVILY_API_KEY"], "urls": reference_urls[:5]}).encode(),
+                    headers={"Content-Type": "application/json"},
+                    method="POST"
+                )
+            )
+            extract_data = json.loads(extract_res.read())
+            research["reference_articles"] = [
+                {"url": r.get("url",""), "title": r.get("title",""), "content": (r.get("raw_content","") or "")[:2000]}
+                for r in extract_data.get("results", [])
+            ]
+            print(f"✓ 参考記事取得完了 ({len(research['reference_articles'])}件)")
+        except Exception as e:
+            print(f"  参考記事取得エラー: {e}")
+            research["reference_articles"] = []
+    else:
+        research["reference_articles"] = []
 
     data = analyze_with_gemini(company_name, person_name, department, research, service_key)
     print("✓ Gemini分析完了")

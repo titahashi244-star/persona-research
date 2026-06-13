@@ -133,6 +133,13 @@
       <input type="text" id="department" placeholder="例: マーケティング部 部長">
     </div>
     <div class="form-group">
+      <label>📎 参考記事・インタビューURL（任意・複数可）</label>
+      <textarea id="refUrls" rows="3" placeholder="インタビュー記事、IR資料、担当者のプロフィールページなど&#10;1行に1URL（最大5件）"
+        style="width:100%;background:#0a0a0f;border:1px solid #2a2a4a;border-radius:8px;padding:12px 16px;color:#e0e0e0;font-size:13px;resize:vertical;font-family:inherit;line-height:1.6"></textarea>
+      <div style="font-size:11px;color:#3a3a5a;margin-top:4px">貼ったURLの本文をAIが読み込み、レポートに反映します</div>
+    </div>
+
+    <div class="form-group">
       <label>提案商材 *</label>
       <select class="service-select" id="service">
         <option value="persona_insight">DNPペルソナインサイト</option>
@@ -314,6 +321,8 @@ async function generateReport() {
   const person     = document.getElementById("person").value.trim();
   const dept       = document.getElementById("department").value.trim();
   const serviceKey = document.getElementById("service").value;
+  const refUrls    = (document.getElementById("refUrls").value || "")
+    .split("\n").map(u => u.trim()).filter(u => u.startsWith("http")).slice(0, 5).join(",");
 
   if (!company) { alert("会社名を入力してください"); return; }
 
@@ -334,6 +343,7 @@ async function generateReport() {
         person_name: person,
         department: dept,
         service_key: serviceKey,
+        reference_urls: refUrls,
       })
     });
 
