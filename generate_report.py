@@ -224,7 +224,8 @@ def search_all(tavily: TavilyClient, company_name: str, person_name: str, depart
         ("ir",                  f"{company_name} IR 中期経営計画 2025 OR 2026",              {},                                              False),
         ("news",                f"{company_name} 新発表 リリース",                            {**FRESHER, "include_domains": PRESS_RELEASE_DOMAINS}, True),
         ("news_general",        f"{company_name} ニュース 発表 2025 OR 2026",                 FRESHER,                                         True),
-        ("products",            f"{company_name} 新商品 新発売 2025 OR 2026",                 FRESH,                                           True),
+        ("products",            f"{company_name} 新商品 新発売 発売開始 2025 OR 2026",         FRESH,                                           True),
+        ("products_launched",   f"{company_name} 発売しました 発売開始 好評 売上 ヒット 2025 OR 2026", FRESH,                                    True),
         ("products_ranking",    f"{company_name} 商品 売上ランキング カテゴリ シェア",         {},                                              False),
         ("industry",            f"{company_name} 業界 市場規模 市場動向",                     {},                                              False),
         ("competitors",         f"{company_name} 競合他社 比較 シェア",                       {},                                              False),
@@ -254,6 +255,16 @@ def search_all(tavily: TavilyClient, company_name: str, person_name: str, depart
             merged.append(item)
     results["news"] = merged[:8]
     del results["news_general"]
+
+    # products + products_launched をマージ（発売後情報を先頭に）
+    seen2 = set()
+    merged2 = []
+    for item in results.get("products_launched", []) + results.get("products", []):
+        if item["url"] not in seen2:
+            seen2.add(item["url"])
+            merged2.append(item)
+    results["products"] = merged2[:8]
+    del results["products_launched"]
 
     return results
 
@@ -304,6 +315,8 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
 - 【厳守】時制の判定：今日 {today} より前の日付の出来事は「発売した」「発表した」と過去形で書くこと。「発売予定」「これから」「予定」は今日より未来の日付にのみ使うこと
 - 例：2026/10/07発売 → 今日が2026/06/13なら「2026年10月7日に発売予定」が正しい。2026/03/24発売 → 「2026年3月24日に発売済み」が正しい
 - 検索結果に「プレスリリース」とあっても、その発売日・実施日が過去なら既に起きた事実として扱うこと
+- 同じ商品について「発売予告」と「発売後レビュー・売上記事」の両方がある場合、発売後の情報を優先して「発売済み」と記述すること
+- 発売予告プレスリリースのみの場合は「〇月発売予定（プレスリリース時点）」と注記し、実際の発売状況は確認が必要と明記すること
 
 【今回提案するDNPサービス: {service["name"]}】
 {service["description"]}
