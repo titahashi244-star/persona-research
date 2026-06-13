@@ -164,6 +164,19 @@ async function generateReport() {
 
   if (!company) { alert("会社名を入力してください"); return; }
 
+  const confirmMsg = [
+    `以下の内容でレポートを生成します。`,
+    ``,
+    `会社名：${company}`,
+    person ? `担当者：${person}` : null,
+    dept   ? `部署　：${dept}`   : null,
+    `商材　：${document.getElementById("service").options[document.getElementById("service").selectedIndex].text}`,
+    ``,
+    `よろしいですか？`
+  ].filter(x => x !== null).join("\n");
+
+  if (!confirm(confirmMsg)) return;
+
   const btn = document.getElementById("generateBtn");
   btn.disabled = true;
   showStatus("GitHub Actionsを起動中...", "");
