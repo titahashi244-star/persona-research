@@ -149,37 +149,80 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
 # ============================================================
 # SEARCH
 # ============================================================
+PRESS_RELEASE_DOMAINS = [
+    "prtimes.jp", "atpress.ne.jp", "valuepress.co.jp",
+    "prwire.jp", "digitalpr.jp", "release.nikkei.co.jp",
+]
+
+SNS_REVIEW_DOMAINS = [
+    "kakaku.com", "cosme.net", "@cosme.net", "amazon.co.jp",
+    "tabelog.com", "rakuten.co.jp", "twitter.com", "x.com",
+    "togetter.com", "note.com",
+]
+
 def search_all(tavily: TavilyClient, company_name: str, person_name: str, department: str) -> dict:
-    queries = {
-        "financials":    f"{company_name} 決算 売上 営業利益 業績 2024 2025",
-        "ir":            f"{company_name} IR 投資家向け説明会 中期経営計画 成長戦略",
-        "news":          f"{company_name} 最新ニュース プレスリリース 2025",
-        "products":      f"{company_name} 新商品 新サービス 製品ラインナップ カテゴリ 売上ランキング",
-        "industry":      f"{company_name} 業界 市場規模 市場動向 シェア",
-        "competitors":   f"{company_name} 競合他社 競合製品 比較 シェア争い",
-        "competitor_products": f"{company_name} 競合 商品比較 差別化 強み弱み",
-        "sns_consumer":  f"{company_name} 消費者 口コミ レビュー SNS Twitter 評判 本音",
-        "sns_trend":     f"{company_name} X Twitter Instagram 話題 キャンペーン トレンド 2025",
-        "person":        f"{company_name} {person_name} {department}" if person_name else f"{company_name} {department} 責任者 キーパーソン",
-        "person_sns":    f"{person_name} {company_name} インタビュー 登壇 発言 講演" if person_name else "",
-        "initiatives":   f"{company_name} DX デジタル マーケティング 取り組み 戦略 2024 2025",
-        "issues":        f"{company_name} 課題 問題 リスク 懸念 弱点 改善",
-    }
+    # 鮮度重視（直近30日）の検索設定
+    FRESH = {"days": 30}
+
+    queries = [
+        # key, query, extra_kwargs
+        ("financials",         f"{company_name} 決算 売上 営業利益 業績",                          {}),
+        ("ir",                 f"{company_name} IR 中期経営計画 成長戦略",                         {}),
+        ("news",               f"{company_name} 新発表 新戦略 リリース",                           {**FRESH, "include_domains": PRESS_RELEASE_DOMAINS}),
+        ("news_general",       f"{company_name} ニュース 発表",                                   FRESH),
+        ("products",           f"{company_name} 新商品 新サービス 発売",                           FRESH),
+        ("products_ranking",   f"{company_name} 商品 売上ランキング カテゴリ シェア",               {}),
+        ("industry",           f"{company_name} 業界 市場規模 市場動向 シェア",                    {}),
+        ("competitors",        f"{company_name} 競合他社 比較 シェア",                             {}),
+        ("competitor_products",f"{company_name} 競合 商品比較 差別化",                             {}),
+        ("sns_consumer",       f"{company_name} 口コミ 評判 レビュー 本音",                        {**FRESH, "include_domains": SNS_REVIEW_DOMAINS}),
+        ("sns_trend",          f"{company_name} 話題 キャンペーン トレンド バズ",                  FRESH),
+        ("person",             f"{company_name} {person_name} {department}" if person_name else f"{company_name} {department} 責任者", {}),
+        ("person_sns",         f"{person_name} {company_name} インタビュー 登壇 発言" if person_name else "", {}),
+        ("initiatives",        f"{company_name} DX マーケティング 取り組み",                       FRESH),
+        ("issues",             f"{company_name} 課題 リスク 懸念 弱点",                            {}),
+    ]
 
     results = {}
-    for key, query in queries.items():
+    for key, query, kwargs in queries:
         if not query.strip():
             results[key] = []
             continue
         try:
-            r = tavily.search(query, max_results=5, search_depth="advanced")
+            r = tavily.search(query, max_results=5, search_depth="advanced", **kwargs)
             results[key] = [
                 {"title": x["title"], "content": x["content"][:600], "url": x["url"]}
                 for x in r["results"]
             ]
+            print(f"  ✓ {key}: {len(results[key])}件")
         except Exception as e:
-            results[key] = []
-            print(f"  Search warn ({key}): {e}")
+            # include_domains で結果0件の場合はdomains指定なしで再試行
+            if "include_domains" in kwargs:
+                try:
+                    fallback_kwargs = {k: v for k, v in kwargs.items() if k != "include_domains"}
+                    r = tavily.search(query, max_results=5, search_depth="advanced", **fallback_kwargs)
+                    results[key] = [
+                        {"title": x["title"], "content": x["content"][:600], "url": x["url"]}
+                        for x in r["results"]
+                    ]
+                    print(f"  ✓ {key} (fallback): {len(results[key])}件")
+                except Exception as e2:
+                    results[key] = []
+                    print(f"  Search warn ({key}): {e2}")
+            else:
+                results[key] = []
+                print(f"  Search warn ({key}): {e}")
+
+    # news + news_general をマージしてnewsに統合
+    seen = set()
+    merged = []
+    for item in results.get("news", []) + results.get("news_general", []):
+        if item["url"] not in seen:
+            seen.add(item["url"])
+            merged.append(item)
+    results["news"] = merged[:8]
+    del results["news_general"]
+
     return results
 
 
@@ -217,6 +260,11 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
     prompt = f"""
 あなたは大日本印刷（DNP）の凄腕B2B営業担当です。
 「この会社のことを業界の誰よりも深く理解している」という印象を与えられるレベルの商談前レポートを作成してください。
+
+【重要】深さより鮮度を優先してください。
+- 直近1ヶ月以内の新商品・ニュースリリース・キャンペーン情報を必ず含める
+- SNSの声は「最近話題になっていること」を具体的に記述する
+- 古い情報より新しい情報を優先する
 
 【今回提案するDNPサービス: {service["name"]}】
 {service["description"]}
