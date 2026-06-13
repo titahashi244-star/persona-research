@@ -106,10 +106,6 @@ REPORT_TEMPLATE = """<!DOCTYPE html>
   .key-fact {{ border-left:3px solid #2a2a4a; padding:10px 14px; }}
   .key-fact-label {{ font-size:10px; color:#4a5568; font-weight:600; margin-bottom:4px; }}
   .key-fact-value {{ font-size:14px; font-weight:700; color:#e0e0e0; line-height:1.4; }}
-  .opening-box {{ background:#1a1a2e; border:1px solid #3a3a6a; border-radius:8px; padding:14px 18px; }}
-  .opening-label {{ font-size:10px; color:#7f8c9a; font-weight:700; letter-spacing:0.5px; margin-bottom:6px; }}
-  .opening-text {{ font-size:14px; color:#e0e0e0; line-height:1.7; }}
-  .opening-caution {{ font-size:10px; color:#3a3a5a; margin-top:6px; }}
 
   @media(max-width:600px) {{
     .header {{ padding:24px; }}
@@ -387,7 +383,6 @@ def bullets(items: list) -> str:
 
 
 def build_visual_summary(data: dict) -> str:
-    angles = data.get("proposal_angles", {})
     qs = data.get("quick_stats", {})
     fin = data.get("financials", {})
 
@@ -410,20 +405,10 @@ def build_visual_summary(data: dict) -> str:
         for l, v in facts if v and v != "—"
     )
 
-    # 冒頭メモ（AI参考）
-    opening = angles.get("opening_line", "")
-    opening_html = f"""
-<div class="opening-box">
-  <div class="opening-label">🎤 商談冒頭メモ（AI参考・要確認）</div>
-  <div class="opening-text">{opening}</div>
-  <div class="opening-caution">※ AIによる提案です。事実確認の上ご使用ください</div>
-</div>""" if opening else ""
-
     return f"""
 <div class="vsummary">
   <div class="vsummary-title">📋 概要サマリー</div>
   <div class="key-facts">{facts_html}</div>
-  {opening_html}
 </div>"""
 
 
