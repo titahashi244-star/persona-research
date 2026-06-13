@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コマニー　オフィス 商談前リサーチレポート</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Helvetica Neue',Arial,sans-serif; background:#0a0a0f; color:#e0e0e0; min-height:100vh; }
+
+  .header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); padding:32px 40px; border-bottom:1px solid #2a2a4a; }
+  .header-top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; }
+  .badge { background:#e94560; color:white; font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; letter-spacing:1px; }
+  .meta { color:#4a5568; font-size:12px; }
+  .company-name { font-size:32px; font-weight:800; color:#fff; margin:12px 0 4px; }
+  .person-info { color:#7f8c9a; font-size:15px; }
+
+  .container { max-width:1000px; margin:0 auto; padding:32px 24px; }
+
+  .back-link { display:inline-block; margin-bottom:24px; color:#e94560; text-decoration:none; font-size:14px; }
+  .back-link:hover { text-decoration:underline; }
+
+  /* Quick Stats */
+  .quick-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px; }
+  .stat-box { background:#12121f; border:1px solid #2a2a4a; border-radius:10px; padding:16px; text-align:center; }
+  .stat-value { font-size:20px; font-weight:800; color:#e94560; }
+  .stat-label { font-size:11px; color:#7f8c9a; margin-top:4px; }
+
+  /* Sections */
+  .section { background:#12121f; border:1px solid #2a2a4a; border-radius:12px; padding:28px; margin-bottom:16px; }
+  .section-title { font-size:16px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+  .section-body { color:#b0bec5; font-size:14px; line-height:1.9; }
+  .section-body p { margin-bottom:10px; }
+  .section-body ul { padding-left:20px; }
+  .section-body li { margin-bottom:6px; }
+
+  /* Highlight box */
+  .highlight { background:#1e1e35; border-left:3px solid #e94560; padding:14px 18px; border-radius:0 8px 8px 0; margin:14px 0; }
+  .highlight p { color:#e0e0e0; margin:0; }
+
+  /* SNS voice */
+  .voice-card { background:#1a1a2e; border:1px solid #2a2a4a; border-radius:8px; padding:14px 16px; margin:8px 0; }
+  .voice-card .voice-text { color:#d0d0d0; font-size:13px; line-height:1.7; font-style:italic; }
+  .voice-card .voice-meta { color:#4a5568; font-size:11px; margin-top:6px; }
+
+  /* Competitor table */
+  .comp-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+  .comp-table th { background:#1e1e35; color:#7f8c9a; padding:10px 12px; text-align:left; font-weight:600; border-bottom:1px solid #2a2a4a; }
+  .comp-table td { padding:10px 12px; border-bottom:1px solid #1a1a2e; color:#b0bec5; }
+  .comp-table tr:last-child td { border-bottom:none; }
+  .comp-table .target { color:#4fc3f7; font-weight:700; }
+
+  /* Checklist */
+  .checklist li { list-style:none; padding-left:0; margin-bottom:8px; display:flex; align-items:flex-start; gap:8px; }
+  .checklist li::before { content:"☐"; color:#e94560; font-size:16px; flex-shrink:0; margin-top:-1px; }
+
+  /* QA */
+  .qa-item { background:#1a1a2e; border-radius:8px; padding:14px 16px; margin:8px 0; }
+  .qa-q { color:#ffb74d; font-weight:700; font-size:13px; margin-bottom:6px; }
+  .qa-a { color:#b0bec5; font-size:13px; line-height:1.7; }
+
+  /* Icebreaker */
+  .icebreaker-item { background:#1a1a2e; border-left:3px solid #81c784; border-radius:0 8px 8px 0; padding:12px 16px; margin:8px 0; font-size:13px; color:#d0d0d0; }
+
+  /* Tags */
+  .tag { display:inline-block; background:#1e1e35; border:1px solid #3a3a5a; color:#9b9bbc; font-size:11px; padding:3px 10px; border-radius:20px; margin:3px; }
+
+  /* Confidence badges */
+  .conf { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; }
+  .conf-高 { background:#1b3a2a; color:#81c784; border:1px solid #2e6b45; }
+  .conf-中 { background:#3a2e10; color:#ffb74d; border:1px solid #7a5c10; }
+  .conf-低 { background:#3a1010; color:#e57373; border:1px solid #7a2020; }
+  .conf-低-wrap { background:#2b1010; border-left:3px solid #e57373; border-radius:0 6px 6px 0; padding:8px 12px; margin:4px 0; }
+
+  /* Source drawer */
+  details.src { margin-top:14px; }
+  details.src summary { font-size:11px; color:#3a3a6a; cursor:pointer; user-select:none; list-style:none; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #2a2a4a; border-radius:20px; }
+  details.src summary::-webkit-details-marker { display:none; }
+  details.src summary::before { content:"📎"; }
+  details.src[open] summary { color:#7f8c9a; border-color:#3a3a6a; }
+  details.src .src-list { margin-top:10px; padding:10px 14px; background:#0a0a0f; border-radius:8px; border:1px solid #1a1a2e; }
+  details.src .src-list a { display:block; color:#4fc3f7; font-size:11px; text-decoration:none; padding:4px 0; border-bottom:1px solid #1a1a2e; word-break:break-all; }
+  details.src .src-list a:last-child { border-bottom:none; }
+  details.src .src-list a:hover { text-decoration:underline; }
+  details.src .src-title { font-size:10px; color:#4a5568; margin-bottom:2px; }
+
+  /* Key message */
+  .key-message { background:linear-gradient(135deg,#1e0a15,#2a1020); border:1px solid #e94560; border-radius:10px; padding:20px 24px; margin-top:16px; }
+  .key-message-label { color:#e94560; font-size:11px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+  .key-message-text { color:#fff; font-size:15px; font-weight:700; line-height:1.6; }
+
+  .footer { text-align:center; padding:24px; color:#3a3a5a; font-size:12px; border-top:1px solid #1a1a2e; margin-top:16px; }
+
+  @media print {
+    body { background:#fff; color:#000; }
+    .header { background:#1a1a2e !important; -webkit-print-color-adjust:exact; }
+    .section { border:1px solid #ddd; page-break-inside:avoid; }
+  }
+  /* Visual Summary */
+  .vsummary { background:linear-gradient(135deg,#12121f 0%,#1a1a2e 100%); border:1px solid #2a2a4a; border-radius:14px; padding:24px 28px; margin-bottom:20px; }
+  .vsummary-metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:#2a2a4a; border-radius:10px; overflow:hidden; margin-bottom:16px; }
+  .vsummary-metric { background:#12121f; padding:14px 18px; }
+  .vsummary-metric-label { font-size:10px; color:#4a5568; font-weight:700; letter-spacing:0.5px; margin-bottom:5px; text-transform:uppercase; }
+  .vsummary-metric-value { font-size:14px; font-weight:700; color:#e0e0e0; line-height:1.4; }
+  .vsummary-location { background:#0d0d1a; border:1px solid #1e1e3a; border-radius:8px; padding:12px 16px; display:flex; gap:20px; flex-wrap:wrap; margin-bottom:14px; }
+  .vsummary-location-item { font-size:12px; color:#7f8c9a; }
+  .vsummary-location-item strong { color:#b0bec5; margin-right:6px; }
+  .quick-links { display:flex; flex-wrap:wrap; gap:8px; }
+  .quick-link { display:inline-flex; align-items:center; gap:6px; background:#0a0a0f; border:1px solid #2a2a4a; border-radius:20px; padding:6px 14px; color:#4fc3f7; font-size:12px; text-decoration:none; transition:border-color 0.2s; }
+  .quick-link:hover { border-color:#4fc3f7; }
+
+  @media(max-width:600px) {
+    .header { padding:24px; }
+    .quick-stats { grid-template-columns:1fr 1fr; }
+    .signal-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <span class="badge" style="background:#e94560">DNPペルソナインサイト</span>
+    <span class="meta">生成日時: 2026年06月13日 20:05　　🖨️ <a href="javascript:window.print()" style="color:#4a5568;text-decoration:none;">印刷</a></span>
+  </div>
+  <div class="company-name">コマニー　オフィス</div>
+  <div class="person-info">👤 担当者未定</div>
+</div>
+<div class="container">
+  <a href="../index.html" class="back-link">← レポート一覧に戻る</a>
+  
+<div class="vsummary">
+  <div style="text-align:right;font-size:11px;color:#4a5568;margin-bottom:10px">基本情報の信頼度: <span class="conf conf-高">高</span></div>
+  <div class="vsummary-metrics"><div class="vsummary-metric"><div class="vsummary-metric-label">INDUSTRY</div><div class="vsummary-metric-value">パーティション製造・間仕切り</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">REVENUE</div><div class="vsummary-metric-value">37,739百万円（2025年12月期）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">POSITION</div><div class="vsummary-metric-value">パーティション業界のリーディングカンパニー</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">EMPLOYEES</div><div class="vsummary-metric-value">1,260名（2025年12月現在、連結）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">FOUNDED</div><div class="vsummary-metric-value">1961年8月18日</div></div></div>
+  <div class="vsummary-location"><span class="vsummary-location-item"><strong>🏢 本社</strong>石川県小松市工業団地一丁目93番地（本社）</span><span class="vsummary-location-item"><strong>📍 拠点</strong>全国に30以上の事業所・営業拠点（北海道から沖縄まで）、東京本社機能あり</span></div>
+  <div class="quick-links"><a class="quick-link" href="https://job.mynavi.jp/28/pc/search/corp57457/outline.html" target="_blank">🔗 公式HP｜コマニー(株)の会社概要 | マイナビ2028</a><a class="quick-link" href="https://prtimes.jp/topics/keywords/%E3%82%B3%E3%83%9E%E3%83%8B%E3%83%BC" target="_blank">🔗 プレスリリース｜コマニーに関するプレスリリース・ニュースリリースのPR TI</a><a class="quick-link" href="https://www.comany.co.jp/ir/financial/highlight" target="_blank">🔗 IR・投資家情報｜業績ハイライト | 財務情報 | コマニー株式会社</a></div>
+</div>
+  
+<div class="section">
+  <div class="section-title" style="color:#4fc3f7">
+    <span style="font-size:20px">🏢</span>企業概要
+  </div>
+  <div class="section-body"><p>コマニー株式会社は1961年創業以来、パーティションの専門メーカーとして、オフィス、工場、医療・福祉施設、教育機関など、多岐にわたる空間の「間づくり」を提供しています。特に、デザイン性、耐震性、遮音性に優れた製品で業界を牽引し、2025年12月期には連結売上高377.39億円を達成。近年は「Well-beingな空間づくり」を追求し、パリ協定1.5℃目標への貢献や従業員エンゲージメント向上にも力を入れています。「全従業員の物心両面の幸福を追求し、人類、社会の進歩発展に貢献する」という経営理念のもと、社会にとってより良い価値創造を目指しています。</p><ul><li>2025年12月期連結売上高377.39億円、従業員数1,260名を誇るパーティション業界のリーディングカンパニー</li><li>「間づくり」を哲学とし、オフィス、工場、医療・福祉、教育など多様な施設に最適な空間ソリューションを提供</li><li>「Well-beingな空間づくり」をキーワードに、働き方や学び方の変化に対応した価値提案を強化</li><li>SBTiによるパリ協定1.5℃目標への貢献や2050年ネットゼロ目標など、サステナビリティ経営を推進</li><li>従業員が企画するオフィスリノベーションなど、インナーブランディングや従業員満足度向上にも注力</li></ul></div>
+  <details class="src"><summary>根拠を見る（14件）</summary><div class="src-list"><a href="https://job.mynavi.jp/28/pc/search/corp57457/outline.html" target="_blank"><span class="src-title">コマニー(株)の会社概要 | マイナビ2028</span></a><a href="https://job.career-tasu.jp/corp/00012574" target="_blank"><span class="src-title">コマニー株式会社の企業情報 | インターンシップ・新卒採用情報からES・面接対策まで掲載！キャリタス就活</span></a><a href="https://www.comany.co.jp/company/outline" target="_blank"><span class="src-title">会社概要 | 企業情報 | コマニー株式会社</span></a><a href="https://jobnavi-i.jp/detail_company?id=680" target="_blank"><span class="src-title">コマニー株式会社 - いしかわ就活スマートナビ</span></a><a href="https://www.comany.co.jp/company/network/tokyo" target="_blank"><span class="src-title">東京事務所所在地 | 事務所・拠点 | 企業情報 | コマニー株式会社</span></a><a href="https://www.comany.co.jp/wp/wp-content/uploads/2021/08/a55ba3d2edaccf4157bd5cb117fa608b.pdf" target="_blank"><span class="src-title">[PDF] 2021年3月期 決算説明資料 - コマニー</span></a><a href="https://www.comany.co.jp/ir/financial/highlight" target="_blank"><span class="src-title">業績ハイライト | 財務情報 | コマニー株式会社</span></a><a href="https://www.imamura.co.jp/investment/pdf/analystreport/7945.pdf" target="_blank"><span class="src-title">[PDF] コマニー（7945） - 今村証券</span></a><a href="https://www.nikkei.com/article/DGXZRST0537341Q2A510C2000000" target="_blank"><span class="src-title">コマニーの22年3月期、純利益21.6%増 - 日本経済新聞</span></a><a href="https://web.fisco.jp/platform/companies/0794500" target="_blank"><span class="src-title">コマニー 【7945】 : 株価・チャート・企業概要</span></a><a href="https://www2.jpx.co.jp/disc/79450/140120180427423414.pdf" target="_blank"><span class="src-title">[PDF] 中期経営計画策定に関するお知らせ - 東証</span></a><a href="https://irbank.net/7945/ir" target="_blank"><span class="src-title">コマニー（7945）のIR情報・決算資料 | IRBANK</span></a><a href="https://www.dreamnews.jp/press/0000300191" target="_blank"><span class="src-title">コマニー社員の立候補者でつくられたチームでリニューアル内容を企画　築39年のセンターオフィスをリノベーション 　7月1日（月）10時よりオープニングセレモニーを開催 | コマニー株式会社のプレスリリース</span></a><a href="https://ir-compass.com/type/business-plan" target="_blank"><span class="src-title">中期経営計画の資料一覧 | IRコンパス | IR資料に特化した事例まとめサイト</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#81c784">
+    <span style="font-size:20px">📈</span>財務・業績
+  </div>
+  <div class="section-body"><p>コマニー株式会社は、2025年12月期において連結売上高37,739百万円、営業利益1,492百万円を計上し、前期（2024年12月期）と比較して売上・利益ともに堅調な成長を見せています。これは、建築需要の持ち直しに加え、新たな働き方に対応するオフィス空間の見直しや工場市場での設備投資回復が追い風となったと推測されます。間仕切り市場におけるリーディングカンパニーとしての地位を維持しつつ、持続的な成長に向けた事業展開を進めている状況です。</p><ul><li>2025年12月期の連結売上高は37,739百万円（前期比12.2%増）<span class="conf conf-高">高</span></li><li>2025年12月期の連結営業利益は1,492百万円（前期比21.1%増）<span class="conf conf-高">高</span></li><li>「Well-beingな空間づくり」や多様な働き方に対応する製品・ソリューションへの投資を継続<span class="conf conf-中">中</span></li><li class="conf-低-wrap">MBOによる非上場化（2022年）以降、経営の自由度を高め、事業構造改革を推進している可能性<span class="conf conf-低">低</span></li></ul><div class="highlight"><p>⚠️ 課題・懸念点：</p><ul><li>過去には原材料価格の高騰や物流費の増加が利益を圧迫する要因として挙げられており、現在の経済情勢下でもコスト管理は継続的な課題である可能性が高い（時期不明）</li><li>国内人口減少や働き方の変化によるオフィス市場の潜在的な縮小懸念は、新たな収益基盤の確立を促す要因となっている（時期不明）</li></ul></div></div>
+  <details class="src"><summary>根拠を見る（9件）</summary><div class="src-list"><a href="https://www.comany.co.jp/wp/wp-content/uploads/2021/08/a55ba3d2edaccf4157bd5cb117fa608b.pdf" target="_blank"><span class="src-title">[PDF] 2021年3月期 決算説明資料 - コマニー</span></a><a href="https://www.comany.co.jp/ir/financial/highlight" target="_blank"><span class="src-title">業績ハイライト | 財務情報 | コマニー株式会社</span></a><a href="https://www.imamura.co.jp/investment/pdf/analystreport/7945.pdf" target="_blank"><span class="src-title">[PDF] コマニー（7945） - 今村証券</span></a><a href="https://www.nikkei.com/article/DGXZRST0537341Q2A510C2000000" target="_blank"><span class="src-title">コマニーの22年3月期、純利益21.6%増 - 日本経済新聞</span></a><a href="https://web.fisco.jp/platform/companies/0794500" target="_blank"><span class="src-title">コマニー 【7945】 : 株価・チャート・企業概要</span></a><a href="https://www2.jpx.co.jp/disc/79450/140120180427423414.pdf" target="_blank"><span class="src-title">[PDF] 中期経営計画策定に関するお知らせ - 東証</span></a><a href="https://irbank.net/7945/ir" target="_blank"><span class="src-title">コマニー（7945）のIR情報・決算資料 | IRBANK</span></a><a href="https://www.dreamnews.jp/press/0000300191" target="_blank"><span class="src-title">コマニー社員の立候補者でつくられたチームでリニューアル内容を企画　築39年のセンターオフィスをリノベーション 　7月1日（月）10時よりオープニングセレモニーを開催 | コマニー株式会社のプレスリリース</span></a><a href="https://ir-compass.com/type/business-plan" target="_blank"><span class="src-title">中期経営計画の資料一覧 | IRコンパス | IR資料に特化した事例まとめサイト</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffb74d">
+    <span style="font-size:20px">🌊</span>業界トレンド・市場動向
+  </div>
+  <div class="section-body"><p>パーティション業界は、ポストコロナ時代の多様な働き方（ハイブリッドワーク、ABWなど）の浸透により、オフィス空間の柔軟性や多機能性へのニーズが大きく変化しています。特に、従業員の心身の健康と幸福を追求する「ウェルビーイング」の概念が空間づくりに深く取り入れられ、単なる仕切りではなく、コミュニケーションや集中を促す「間」の価値が重視される傾向にあります。また、製造業の設備投資や医療・教育施設での改修需要も堅調で、SDGs達成に向けた環境配慮型の製品やサービスへの関心も高まっています。</p><ul><li>多様な働き方に対応するフレキシブルなオフィス空間設計（集中ブース、コラボレーションエリア等）への需要増加</li><li>「ウェルビーイング」を重視した、快適性・生産性向上に寄与する空間ソリューションへの注目</li><li>サステナビリティ（環境配慮、省エネ、CO2排出削減）に対応した建材・製品への移行</li><li>工場、医療・福祉、教育施設など、オフィス以外の市場での「間づくり」を通じた新たな価値創造</li></ul><div class="highlight"><p>市場規模：具体的な市場規模・成長率は提示されたデータからは不明。<span class="conf conf-低">低</span></p></div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://www.comany.co.jp/wp/wp-content/uploads/2021/08/c924a4abc3609d3a4434ef7477b3225a.pdf" target="_blank"><span class="src-title">[PDF] 2021年3月期 第2四半期決算説明 - コマニー</span></a><a href="https://www.imamura.co.jp/investment/pdf/analystreport/7945.pdf" target="_blank"><span class="src-title">[PDF] コマニー（7945） - 今村証券</span></a><a href="https://www.comany.co.jp/sdgs/jigyousenryaku" target="_blank"><span class="src-title">これからの事業戦略 | サステナビリティ | コマニー株式会社</span></a><a href="https://jobtalk.jp/companies/2960/answers?question_codes=sales" target="_blank"><span class="src-title">コマニーの業績/売上/事業の将来性と成長性(全20件)【転職会議】</span></a><a href="https://service.xenobrain.jp/forecastresults/market-size/partition-maker" target="_blank"><span class="src-title">AIが予測するパーテーションメーカー ｜2030年市場規模推移と主要企業ランキング</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ce93d8">
+    <span style="font-size:20px">⚔️</span>競合分析
+  </div>
+  <div class="section-body"><p>コマニーはパーティション業界のリーディングカンパニーとして、長年の実績と高い技術力で市場を牽引しています。特にデザイン性、耐震性、遮音性といった機能面での差別化を図っていますが、小松ウオール工業をはじめとする主要競合に加え、オフィス家具メーカーやシャッターメーカーからの参入もみられ、市場競争は激化傾向にあります。顧客の多様なニーズに応えるため、製品機能だけでなく、空間ソリューションとしての総合提案力が求められています。</p><table class="comp-table">
+<tr><th>企業名</th><th>シェア</th><th>強み</th><th>弱み</th></tr>
+<tr><td class="target">コマニー　オフィス<span class="conf conf-高">高</span></td><td>不明</td><td style='color:#81c784'>パーティション業界のリーディングカンパニー。デザイン性、耐震性、遮音性に強み。多様な空間への「間づくり」哲学。</td><td style='color:#e57373'>特筆すべき弱点はデータからは不明だが、価格競争の激化や新たなニーズへの迅速な対応が常に課題となる可能性。</td></tr><tr><td>小松ウオール工業<span class="conf conf-高">高</span></td><td>不明</td><td style='color:#81c784'>コマニーと並ぶパーティション業界のリーディングカンパニーとしての地位を確立。</td><td style='color:#e57373'>不明</td></tr><tr><td>オフィス家具メーカー・シャッターメーカー等<span class="conf conf-中">中</span></td><td>不明</td><td style='color:#81c784'>既存の顧客基盤やブランド力、関連製品との連携による総合提案力。</td><td style='color:#e57373'>パーティション専業ではないため、専門性や品揃えの幅で劣る可能性。</td></tr></table></div>
+  <details class="src"><summary>根拠を見る（9件）</summary><div class="src-list"><a href="https://www.openwork.jp/a0910000000Frfv/compa/a0C1000001On0Ya" target="_blank"><span class="src-title">コマニーとオフィスコーポレーションの比較 「社員クチコミ ...</span></a><a href="https://www.comany.co.jp" target="_blank"><span class="src-title">コマニー株式会社</span></a><a href="https://service.xenobrain.jp/forecastresults/market-size/partition-maker" target="_blank"><span class="src-title">AIが予測するパーテーションメーカー ｜2030年市場規模推移 ...</span></a><a href="https://jobtalk.jp/companies/2960/answers?question_codes=sales" target="_blank"><span class="src-title">コマニーの業績・売上・事業の将来性と成長性の口コミ（20件）</span></a><a href="https://www.executivecentre.com/ja-jp/blog-article/serviced-offices-comparison-in-japan" target="_blank"><span class="src-title">サービスオフィス大手15社を比較！シェア・レンタルと比べたメリットとは | エグゼクティブセンター</span></a><a href="https://www.partition-construction.com/catalogue/comany.html" target="_blank"><span class="src-title">【パーテーション工事】コマニー株式会社の口コミ評判や特徴</span></a><a href="https://socialinterior.com/column/114_partitioncompany" target="_blank"><span class="src-title">パーテーションを取り扱っている会社16選｜導入を迷ったら？</span></a><a href="https://www.dreamnews.jp/press/0000340812" target="_blank"><span class="src-title">コマニーがパーティション分野で国内初のEPD認証取得 ～透明性 ...</span></a><a href="https://sdgs.media/blog/3983" target="_blank"><span class="src-title">【企業のSDGs事例】SDGsビジネスアワードを受賞した ...</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#80cbc4">
+    <span style="font-size:20px">📦</span>主力製品・カテゴリ別ポジション
+  </div>
+  <div class="section-body"><p>コマニーの主力製品は、オフィスや公共施設向けの様々なパーティションです。特に、高耐震間仕切「Synchron」やプラットフォーム型間仕切「WEDGE Platform Partition」など、機能性とデザイン性を両立した製品を展開。近年は、多様な働き方に対応する「Remote cabin」のような個室型ワークブースの好調や、「Well-beingな空間づくり」を追求するソリューション全体に注力しています。クリーンルームや医療施設向けドアなど、特殊空間向け製品も幅広く提供し、市場における盤石な地位を築いています。</p><div class="voice-card"><strong style="color:#4fc3f7">オフィス向けパーティション</strong>　高耐震間仕切Synchron、WEDGE Platform Partition、Remote cabin（個室ワークブース）　<span style="color:#7f8c9a;font-size:12px">高機能・デザイン性で差別化。市場を牽引する主力製品群。</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">特殊空間向けパーティション・ドア</strong>　エコクリーンルーム、医療施設向け木製ドア　<span style="color:#7f8c9a;font-size:12px">特定の専門市場で高いシェアと実績を持つ。</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">空間ソリューション</strong>　Well-beingな空間づくり、オフィスデザイン　<span style="color:#7f8c9a;font-size:12px">製品単体ではなく、空間全体の価値提案を強化する戦略的中核。</span><span class="conf conf-高">高</span></div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://www.comany.co.jp" target="_blank"><span class="src-title">コマニー株式会社</span></a><a href="https://www.comany.co.jp/news/product" target="_blank"><span class="src-title">商品情報 | コマニー株式会社</span></a><a href="https://www.dreamnews.jp/press/0000340812" target="_blank"><span class="src-title">コマニーがパーティション分野で国内初のEPD認証取得 ～透明性 ...</span></a><a href="https://www.comany.co.jp/news/2026/04/14/27193" target="_blank"><span class="src-title">2026年4月16日から新設定色「コーディネートカラー」15色を発売</span></a><a href="https://prtimes.jp/main/html/searchrlp/company_id/143047" target="_blank"><span class="src-title">コマニー株式会社のプレスリリース - PR TIMES</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffcc02">
+    <span style="font-size:20px">🆕</span>最新ニュース・新商品・取り組み
+  </div>
+  <div class="section-body"><p>コマニーは直近1ヶ月（2026年05月14日～2026年06月13日）において、サステナビリティへのコミットメント、自社オフィス改革、そして業界イベントでのプレゼンス強化に関する重要な発表を行っています。特に、「Factory Pride Award」受賞は、同社の工場における「間づくり」の価値が外部から高く評価されたことを示しています。</p><ul><li>2026年06月02日、コマニーが「Factory Pride Award」にて第一回グランプリと観客賞をダブル受賞。工場現場に“間づくり”による新たな工場価値を創出したことが評価されました。<span class="conf conf-高">高</span></li><li>2026年06月01日、コマニーがパリ協定1.5℃目標に貢献、「SBTi」より2030年に向けた新たな目標を追加認定。同時に自社目標として2050年ネットゼロ達成を目指すことを発表しました。<span class="conf conf-高">高</span></li><li>2026年06月02日のプレスリリースで、築39年のセンターオフィスを従業員立候補者チームが企画・リノベーションし、7月1日（月）にオープニングセレモニーを開催予定であることが発表されました。<span class="conf conf-高">高</span></li><li>2026年06月02日～04日に開催された「オルガテック東京2026」へ出展し、「自分らしく働く」重要性を体感するブースを展開しました。<span class="conf conf-高">高</span></li></ul></div>
+  <details class="src"><summary>根拠を見る（13件）</summary><div class="src-list"><a href="https://prtimes.jp/topics/keywords/%E3%82%B3%E3%83%9E%E3%83%8B%E3%83%BC" target="_blank"><span class="src-title">コマニーに関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://prtimes.jp/main/html/rd/p/000000020.000143047.html" target="_blank"><span class="src-title">コマニー株式会社がオルガテック東京2025にて「自分らしく働く」重要性を体感するブースを展開 | コマニー株式会社のプレスリリース</span></a><a href="https://prtimes.jp/story/detail/b6PV0eImP9x" target="_blank"><span class="src-title">工場にカフェ？ コマニーが描く“働きやすさ”とウェルビーイングの新しいカタチ｜コマニー株式会社のストーリー｜PR TIMES STORY</span></a><a href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E3%82%B0%E3%83%AA%E3%83%83%E3%83%89%E3%83%AF%E3%83%BC%E3%82%AF" target="_blank"><span class="src-title">グリッドワークに関するプレスリリース・ニュースリリース</span></a><a href="https://prtimes.jp/topics/keywords/%E3%82%AA%E3%83%AB%E3%82%AC%E3%83%86%E3%83%83%E3%82%AF%E6%9D%B1%E4%BA%AC" target="_blank"><span class="src-title">オルガテック東京に関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://www.dreamnews.jp/press/0000340812" target="_blank"><span class="src-title">コマニーがパーティション分野で国内初のEPD認証取得　 ～透明性ある環境データの提供で、持続可能なオフィスづくりを支援～ | コマニー株式会社のプレスリリース</span></a><a href="https://www.dreamnews.jp/press/0000300191" target="_blank"><span class="src-title">コマニー社員の立候補者でつくられたチームでリニューアル内容を ...</span></a><a href="https://www.comany.co.jp/news/2026/03/04/27010" target="_blank"><span class="src-title">2026年3月13日にコマニー能美工場オフィスのオープニング ...</span></a><a href="https://www.comany.co.jp" target="_blank"><span class="src-title">コマニー株式会社</span></a><a href="https://www.sojitz.com/jp/news/article/topics-20250411.html" target="_blank"><span class="src-title">双日、「DX銘柄2025」に選定｜ニュースルーム｜双日株式会社</span></a><a href="https://www.sony.jp/professional/event/20260210.html" target="_blank"><span class="src-title">「オフィス空間のDXと新しいコミュニケーションスタイル」開催のご案内 | ソニー</span></a><a href="https://www.gon-dola.com/show_case/8372" target="_blank"><span class="src-title">複数領域の課題を丸ごと解決！統合型支援で広がる ...</span></a><a href="https://www.kankeiren.or.jp/kansai-dx/digital-month/2025" target="_blank"><span class="src-title">関西デジタル・マンス2025 イベント一覧 | 関西デジタル・マンス | 関西DX戦略Next | 公益社団法人 関西経済連合会</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#f48fb1">
+    <span style="font-size:20px">📱</span>SNS・消費者の声
+  </div>
+  <div class="section-body"><p>検索データにコマニーに関する具体的なSNSの投稿は含まれていませんが、直近のプレスリリース内容から市場や顧客からのポジティブな反応が推測されます。「Factory Pride Award」受賞や、SBTi認定による環境目標達成への取り組み、従業員が企画したオフィスリノベーションなどは、企業への信頼感や共感を高める要因となり得ます。特に「ウェルビーイング」や「働きがい」といったテーマは、個人の働き方や企業文化への関心が高い現代において、SNS上で肯定的に受け止められやすいと考えられます。</p><div class="voice-card"><div class="voice-text">「「Factory Pride Award」受賞は、工場という特定の空間における「間づくり」の具体的な価値が評価され、技術力や革新性への賞賛に繋がる可能性があります。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「SBTi認定や2050年ネットゼロ目標は、環境意識の高い層や企業から高く評価され、サステナブルな企業イメージを強化する声が上がる可能性があります。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「従業員が企画したオフィスリノベーションは、「働きがいのある会社」としての評判を高め、企業文化や従業員エンゲージメントの高さに注目が集まる可能性があります。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「具体的なネガティブな声は見られません。」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><p style='margin-top:14px;color:#81c784;font-weight:700'>💡 ビジネス機会</p><ul><li>「間づくり」や「ウェルビーイング」といったキーワードは、SNSで共感を呼びやすいテーマです。顧客や従業員が「間づくり」を通じて得た具体的な「心地よさ」や「生産性向上」の体験談を可視化することで、DNPペルソナインサイトで深掘りしたインサイトを効果的に発信できる可能性があります。</li><li>オルガテック東京2026出展で見せた「自分らしく働く」テーマについて、来場者の感想や対話形式でのフィードバックを収集し、今後の製品開発やマーケティングに活かす機会があります。</li></ul></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://note.com/calm_tucan2717/n/nebf4cbb9b0c5" target="_blank"><span class="src-title">オフィスコムは怪しい？評判の真相を口コミから徹底解説！【楽天・Amazon】｜でもでもサーチ※この記事にはPRが含まれます／一部AIにより作成</span></a><a href="https://note.com/fuji_note_/n/n6e80ac7190cc" target="_blank"><span class="src-title">【保存版】オフィスコムの評判・口コミまとめ｜爆速配送の実態と失敗しない購入術を徹底解説｜Yuko｜レビューブロガー</span></a><a href="https://note.com/linxtorage/n/n5e6a4646702a" target="_blank"><span class="src-title">多床病室のカーテンを廃止し可動式仕切りを導入するメリットとは？｜佐藤隆洋（Link Storage）</span></a><a href="https://note.com/review_navi/n/nf761039467db" target="_blank"><span class="src-title">オフィスコムは怪しい？口コミ評判と安全性を解説！｜レピコ ※PRが含まれます</span></a><a href="https://note.com/hashtag/%E7%9F%9B%E7%9B%BE" target="_blank"><span class="src-title">「#矛盾」の人気タグ記事一覧｜note ――つくる、つながる、とどける。</span></a><a href="https://www.comany.co.jp" target="_blank"><span class="src-title">コマニー株式会社</span></a><a href="https://conceptglamour.com/project/465" target="_blank"><span class="src-title">コマニー株式会社 様 | PR会社コンセプトグラマー</span></a><a href="https://www.partition-lab.jp/news/11483" target="_blank"><span class="src-title">【2025年を振り返る】2026年はオフィス創りを企業の成長戦略に活かす！「成長エンジン」と「選ばれるための空間」へ | パーテーションラボ</span></a><a href="https://www.itoki.jp/resources/column/article/office-trend-2026" target="_blank"><span class="src-title">【2026年】最新オフィストレンド！イトーキがご提案する空間づくりと新製品 | 資料・コンテンツ | ITOKI</span></a><a href="https://www.kokuyo-furniture.co.jp/contents/2025-articlestrend-01.html" target="_blank"><span class="src-title">【2025年】人気記事で見るオフィスと働き方のトレンド (2025年上半期)｜コクヨのコラム</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#f48fb1">
+    <span style="font-size:20px">👤</span>面談相手・部署プロファイル
+  </div>
+  <div class="section-body"><p>面談相手は未定ですが、コマニーの事業内容と直近の取り組みから、新商品開発部門、マーケティング部門、経営企画部門、あるいは人事・総務部門の責任者または担当者が想定されます。「間づくり」を通じて顧客や従業員の「ウェルビーイング」を追求する同社において、言葉にならない潜在的なニーズやインサイトの把握は、製品開発や空間提案の質の向上、ひいては企業価値向上に直結する課題と推測されます。</p><p style='margin-top:12px;font-weight:700;color:#7f8c9a'>関心事・KPI</p><ul><li>エンドユーザー（オフィスワーカー、工場作業員、医療従事者など）の深層ニーズ、本音の把握</li><li>「Well-beingな空間づくり」を具現化するための、ワーカーの本質的な欲求やペインポイントの理解</li><li>新商品・サービス開発における、市場投入前のコンセプトやデザインに対する客観的な評価・改善点</li><li>競合との差別化に繋がる、コマニー独自の「間づくり」の価値の再発見と言語化</li><li>デジタルマーケティング施策の効果最大化に向けた、より具体的でリアルなターゲットペルソナの構築</li></ul><p style='margin-top:12px;font-weight:700;color:#7f8c9a'>コミュニケーションのポイント</p><div class="icebreaker-item" style="border-left-color:#4fc3f7">コマニーの「間づくり」哲学や「社会貢献」「ウェルビーイング」といった経営理念への深い理解と共感を示す。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">DNPペルソナインサイトが、お客様の言葉にならない「本音」をどう引き出し、コマニーの事業（特に新商品開発や空間提案）に具体的に活かせるかを、事例を交えて説明する。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">直近のオルガテック東京2026出展やセンターオフィスリノベーションの取り組みに触れ、顧客・従業員インサイト把握への高い関心を示唆する。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">「社会にとって何がよいか」というコマニーの視点に立ち、DNPの技術がいかに社会貢献に寄与できるかを語る。</div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%9E%E3%83%8B%E3%83%BC" target="_blank"><span class="src-title">コマニー - Wikipedia</span></a><a href="https://www.comany.co.jp/company/outline" target="_blank"><span class="src-title">会社概要 | 企業情報 | コマニー株式会社</span></a><a href="https://www.dreamnews.jp/press/0000340812" target="_blank"><span class="src-title">コマニーがパーティション分野で国内初のEPD認証取得 ～透明性 ...</span></a><a href="https://miit.jp/works/comany" target="_blank"><span class="src-title">社員総数1200名分の1が、”写真対話”することで生まれる力 【コマニー株式会社 導入後インタビュー】 - miit:コミュニケーションを深化させる、写真心理学サービス</span></a><a href="https://sdgs.media/blog/3983" target="_blank"><span class="src-title">【企業のSDGs事例】SDGsビジネスアワードを受賞した ...</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#a5d6a7">
+    <span style="font-size:20px">☕</span>アイスブレイク話題
+  </div>
+  <div class="section-body"><div class="icebreaker-item">💬 「直近のオルガテック東京2026へのご出展、誠におめでとうございます。特に『自分らしく働く』というテーマは、まさに現代の働き方を象徴するものと感じました。具体的にどのような展示で来場者の皆様に『自分らしさ』を体感いただいたのでしょうか？」</div><div class="icebreaker-item">💬 「この度は『Factory Pride Award』グランプリと観客賞のダブル受賞、心よりお祝い申し上げます。工場現場における『間づくり』で、特に評価されたポイントや、現場の方々の反応について、差し支えなければお聞かせいただけますか？」</div><div class="icebreaker-item">💬 「築39年のセンターオフィスを従業員の皆様が企画されてリノベーションされるとのこと、従業員エンゲージメントの高さに感銘を受けました。7月のオープニングが楽しみですね。社員の皆様から特にどのような『こんな空間が欲しい』という声があったのでしょうか？」</div></div>
+  <details class="src"><summary>根拠を見る（13件）</summary><div class="src-list"><a href="https://prtimes.jp/topics/keywords/%E3%82%B3%E3%83%9E%E3%83%8B%E3%83%BC" target="_blank"><span class="src-title">コマニーに関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://prtimes.jp/main/html/rd/p/000000020.000143047.html" target="_blank"><span class="src-title">コマニー株式会社がオルガテック東京2025にて「自分らしく働く」重要性を体感するブースを展開 | コマニー株式会社のプレスリリース</span></a><a href="https://prtimes.jp/story/detail/b6PV0eImP9x" target="_blank"><span class="src-title">工場にカフェ？ コマニーが描く“働きやすさ”とウェルビーイングの新しいカタチ｜コマニー株式会社のストーリー｜PR TIMES STORY</span></a><a href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E3%82%B0%E3%83%AA%E3%83%83%E3%83%89%E3%83%AF%E3%83%BC%E3%82%AF" target="_blank"><span class="src-title">グリッドワークに関するプレスリリース・ニュースリリース</span></a><a href="https://prtimes.jp/topics/keywords/%E3%82%AA%E3%83%AB%E3%82%AC%E3%83%86%E3%83%83%E3%82%AF%E6%9D%B1%E4%BA%AC" target="_blank"><span class="src-title">オルガテック東京に関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://www.dreamnews.jp/press/0000340812" target="_blank"><span class="src-title">コマニーがパーティション分野で国内初のEPD認証取得　 ～透明性ある環境データの提供で、持続可能なオフィスづくりを支援～ | コマニー株式会社のプレスリリース</span></a><a href="https://www.dreamnews.jp/press/0000300191" target="_blank"><span class="src-title">コマニー社員の立候補者でつくられたチームでリニューアル内容を ...</span></a><a href="https://www.comany.co.jp/news/2026/03/04/27010" target="_blank"><span class="src-title">2026年3月13日にコマニー能美工場オフィスのオープニング ...</span></a><a href="https://www.comany.co.jp" target="_blank"><span class="src-title">コマニー株式会社</span></a><a href="https://conceptglamour.com/project/465" target="_blank"><span class="src-title">コマニー株式会社 様 | PR会社コンセプトグラマー</span></a><a href="https://www.partition-lab.jp/news/11483" target="_blank"><span class="src-title">【2025年を振り返る】2026年はオフィス創りを企業の成長戦略に活かす！「成長エンジン」と「選ばれるための空間」へ | パーテーションラボ</span></a><a href="https://www.itoki.jp/resources/column/article/office-trend-2026" target="_blank"><span class="src-title">【2026年】最新オフィストレンド！イトーキがご提案する空間づくりと新製品 | 資料・コンテンツ | ITOKI</span></a><a href="https://www.kokuyo-furniture.co.jp/contents/2025-articlestrend-01.html" target="_blank"><span class="src-title">【2025年】人気記事で見るオフィスと働き方のトレンド (2025年上半期)｜コクヨのコラム</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffb74d">
+    <span style="font-size:20px">❓</span>想定Q&A・切り返し
+  </div>
+  <div class="section-body"><div class="qa-item"><div class="qa-q">Q: DNPペルソナインサイトで得られる『生活者の本音』は、従来の定量・定性調査（アンケート、FGIなど）とどう違うのですか？</div><div class="qa-a">A: 従来の調査では、生活者自身も気づいていない、あるいは言葉にしにくい潜在的な感情や無意識のニーズを引き出すのは困難でした。DNPペルソナインサイトは、日本の膨大な統計データとDNP独自のデータを学習したAIが、仮想生活者（ペルソナ）と自然な対話を行うことで、そうした深層心理レベルのインサイトを効率的かつ体系的に言語化できる点が大きな違いです。単なる意見ではなく、『なぜそう思うのか』という思考の背景まで深く探求できます。</div></div><div class="qa-item"><div class="qa-q">Q: 当社の『間づくり』という抽象的なコンセプトに、具体的にDNPペルソナインサイトはどのように貢献できますか？</div><div class="qa-a">A: コマニー様の『間づくり』は、まさに空間が人に与える影響を追求する哲学だと理解しております。DNPペルソナインサイトは、例えば、新製品のパーティションや空間ソリューションを開発する際に、オフィスワーカー、工場作業員、病院の患者さんなど、ターゲットとなる方々が『どのような空間に真の心地よさや生産性、安心感を感じるのか』という具体的なインサイトを明らかにできます。これにより、『間づくり』の本質的な価値を、顧客視点での言語化と科学的な裏付けをもって深掘りし、製品コンセプトの精度向上や、より響く営業・マーケティングメッセージの開発に貢献します。</div></div><div class="qa-item"><div class="qa-q">Q: AIによるペルソナ生成の信頼性や、アウトプットの活用イメージについて教えてください。</div><div class="qa-a">A: DNPペルソナインサイトは、日本全体のビッグデータに加え、DNPが長年培ってきたマーケティング知見に基づく独自データを学習しているため、生成されるペルソナは極めてリアルで信頼性が高いと評価いただいております。アウトプットは、詳細なペルソナプロファイルに加え、対話ログやそこから抽出された『インサイトサマリー』として提供されます。これにより、コマニー様の商品開発部門では新製品のコンセプト検証、マーケティング部門ではターゲット像の具体化と訴求軸の発見、経営企画部門では将来の空間ニーズ予測など、多岐にわたる場面でご活用いただけます。特に『Well-beingな空間づくり』において、具体的な顧客体験設計のヒントを提供できると確信しております。</div></div></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://www.comany.co.jp/sdgs/creating" target="_blank"><span class="src-title">コマニーが捉える間づくりとは | サステナビリティ</span></a><a href="https://www.tinkermode.jp/casestudy/comany" target="_blank"><span class="src-title">事例・コマニー株式会社｜MODE, Inc.</span></a><a href="https://design.comany.co.jp/about" target="_blank"><span class="src-title">私たちについて - オフィスの内装・デザインならコマニー</span></a><a href="https://www.tsukuba-sdgs.jp/data/doc/1653964539_doc_9_0.pdf" target="_blank"><span class="src-title">[PDF] 空間をつくるということ それは、そこで過ごす人たちの 物語が ...</span></a><a href="https://www.gon-dola.com/show_case/8372" target="_blank"><span class="src-title">複数領域の課題を丸ごと解決！統合型支援で広がる ...</span></a><a href="https://www.openwork.jp/a0910000000Frfv/compa/a0C1000001On0Ya" target="_blank"><span class="src-title">コマニーとオフィスコーポレーションの比較 「社員クチコミ ...</span></a><a href="https://www.comany.co.jp" target="_blank"><span class="src-title">コマニー株式会社</span></a><a href="https://service.xenobrain.jp/forecastresults/market-size/partition-maker" target="_blank"><span class="src-title">AIが予測するパーテーションメーカー ｜2030年市場規模推移 ...</span></a><a href="https://jobtalk.jp/companies/2960/answers?question_codes=sales" target="_blank"><span class="src-title">コマニーの業績・売上・事業の将来性と成長性の口コミ（20件）</span></a><a href="https://www.executivecentre.com/ja-jp/blog-article/serviced-offices-comparison-in-japan" target="_blank"><span class="src-title">サービスオフィス大手15社を比較！シェア・レンタルと比べたメリットとは | エグゼクティブセンター</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#81c784">
+    <span style="font-size:20px">✅</span>訪問前チェックリスト
+  </div>
+  <div class="section-body"><ul class="checklist"><li>コマニー様のWebサイトで最新の製品情報、納入事例、特に「Well-beingな空間づくり」や「オフィスデザイン」に関するコンテンツを再確認する。</li><li>DNPペルソナインサイトの活用事例の中で、オフィス環境改善、新商品開発、働き方改革といったテーマに特に関連性の高い事例をピックアップし、簡潔に説明できるよう準備する。</li><li>今回の提案が、コマニー様の『間づくり』哲学、『社会貢献』『ウェルビーイング』といった経営理念とどのように結びつき、具体的な課題解決に貢献できるかを明確にしたストーリーラインを構築する。</li><li>DNPペルソナインサイトの概要資料、活用事例集（特に空間・働き方関連）、そして必要に応じてデモ環境へのアクセス情報を準備する。</li><li>面談相手が不明なため、マーケティング、商品開発、経営企画、人事・総務といった複数の部署のニーズに対応できるよう、汎用的なヒアリング項目や質問事項を準備しておく。</li></ul></div>
+  
+</div>
+  <div class="footer">DNPペルソナインサイト 商談前リサーチレポート｜自動生成　※情報は公開情報をもとにAIが分析したものです</div>
+</div>
+</body>
+</html>
