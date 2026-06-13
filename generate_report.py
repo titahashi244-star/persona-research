@@ -338,7 +338,47 @@ def build_quick_stats(data: dict) -> str:
     return f'<div class="quick-stats">{boxes}</div>'
 
 
-def build_html(company_name: str, person_name: str, department: str, data: dict, service_key: str = "persona_insight") -> str:
+def build_sources_html(research: dict) -> str:
+    category_labels = {
+        "financials": "財務・業績",
+        "ir": "IR・中期経営計画",
+        "news": "最新ニュース",
+        "products": "製品・サービス",
+        "industry": "業界・市場動向",
+        "competitors": "競合分析",
+        "competitor_products": "競合製品比較",
+        "sns_consumer": "SNS・消費者の声",
+        "sns_trend": "SNSトレンド",
+        "person": "面談相手・部署",
+        "person_sns": "面談相手SNS・発言",
+        "initiatives": "DX・マーケティング取り組み",
+        "issues": "課題・リスク",
+    }
+    seen_urls = set()
+    items_html = ""
+    for key, label in category_labels.items():
+        results = research.get(key, [])
+        links = []
+        for r in results:
+            url = r.get("url", "")
+            title = r.get("title", url)
+            if url and url not in seen_urls:
+                seen_urls.add(url)
+                links.append(f'<li><a href="{url}" target="_blank" style="color:#4fc3f7;font-size:12px;word-break:break-all">{title}</a></li>')
+        if links:
+            items_html += f'<div style="margin-bottom:14px"><p style="color:#7f8c9a;font-size:11px;font-weight:700;letter-spacing:0.5px;margin-bottom:6px">{label}</p><ul style="padding-left:16px">{"".join(links)}</ul></div>'
+    if not items_html:
+        return ""
+    return f"""
+<div class="section" style="margin-top:16px">
+  <div class="section-title" style="color:#4a5568">
+    <span style="font-size:20px">🔗</span>参考URL・エビデンス
+  </div>
+  <div class="section-body">{items_html}</div>
+</div>"""
+
+
+def build_html(company_name: str, person_name: str, department: str, data: dict, service_key: str = "persona_insight", research: dict = None) -> str:
     service = SERVICES.get(service_key, SERVICES["persona_insight"])
     sections = []
 
@@ -433,6 +473,12 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
     cl_html = f'<ul class="checklist">{"".join(f"<li>{i}</li>" for i in cl_items)}</ul>'
     sections.append(render_section("✅", "訪問前チェックリスト", "#81c784", cl_html))
 
+    # 13. 参考URL
+    if research:
+        sources = build_sources_html(research)
+        if sources:
+            sections.append(sources)
+
     person_display = f"{person_name}（{department}）" if person_name else department or "担当者未定"
     badge_color = service.get("badge_color", "#e94560")
 
@@ -485,7 +531,7 @@ if __name__ == "__main__":
     data = analyze_with_gemini(company_name, person_name, department, research, service_key)
     print("✓ Gemini分析完了")
 
-    html = build_html(company_name, person_name, department, data, service_key)
+    html = build_html(company_name, person_name, department, data, service_key, research)
 
     os.makedirs("reports", exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
