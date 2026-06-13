@@ -1,0 +1,48 @@
+name: Generate Persona Research Report
+
+on:
+  workflow_dispatch:
+    inputs:
+      company_name:
+        description: '会社名'
+        required: true
+      person_name:
+        description: '担当者名'
+        required: true
+      department:
+        description: '部署'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate report
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          COMPANY_NAME: ${{ github.event.inputs.company_name }}
+          PERSON_NAME: ${{ github.event.inputs.person_name }}
+          DEPARTMENT: ${{ github.event.inputs.department }}
+        run: python generate_report.py
+
+      - name: Commit and push report
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Actions"
+          git add reports/
+          git diff --staged --quiet || git commit -m "レポート生成: ${{ github.event.inputs.company_name }}"
+          git push

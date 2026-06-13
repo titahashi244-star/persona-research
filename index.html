@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商談前リサーチ｜DNPペルソナインサイト</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+
+  /* Header */
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 32px 40px; border-bottom: 1px solid #2a2a4a; }
+  .header-badge { background: #e94560; color: white; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 1px; display: inline-block; margin-bottom: 12px; }
+  .header h1 { font-size: 26px; font-weight: 800; color: #fff; }
+  .header p { color: #7f8c9a; font-size: 13px; margin-top: 6px; }
+
+  /* Container */
+  .container { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+
+  /* Form */
+  .form-card { background: #12121f; border: 1px solid #2a2a4a; border-radius: 14px; padding: 32px; margin-bottom: 40px; }
+  .form-card h2 { font-size: 16px; font-weight: 700; color: #4fc3f7; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+  .form-group { margin-bottom: 18px; }
+  label { display: block; font-size: 12px; color: #7f8c9a; margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px; }
+  input { width: 100%; background: #0a0a0f; border: 1px solid #2a2a4a; border-radius: 8px; padding: 12px 16px; color: #e0e0e0; font-size: 14px; transition: border-color 0.2s; }
+  input:focus { outline: none; border-color: #e94560; }
+  input::placeholder { color: #3a3a5a; }
+  .btn { width: 100%; background: #e94560; color: white; border: none; border-radius: 8px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: background 0.2s; letter-spacing: 0.5px; }
+  .btn:hover { background: #c73652; }
+  .btn:disabled { background: #3a3a5a; cursor: not-allowed; }
+
+  /* Status */
+  .status { display: none; background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 10px; padding: 20px 24px; margin-top: 16px; }
+  .status.visible { display: flex; align-items: center; gap: 14px; }
+  .spinner { width: 24px; height: 24px; border: 3px solid #2a2a4a; border-top-color: #e94560; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .status-text { font-size: 14px; color: #b0bec5; }
+  .status-sub { font-size: 12px; color: #4a5568; margin-top: 4px; }
+  .progress-bar { width: 100%; background: #2a2a4a; border-radius: 4px; height: 4px; margin-top: 12px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #e94560; border-radius: 4px; width: 0%; transition: width 0.5s ease; }
+
+  /* Success */
+  .success { display: none; background: #0d2b1a; border: 1px solid #1b5e35; border-radius: 10px; padding: 20px 24px; margin-top: 16px; }
+  .success.visible { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .success-text { font-size: 14px; color: #81c784; font-weight: 600; }
+  .success-sub { font-size: 12px; color: #4a8a5a; margin-top: 2px; }
+  .view-btn { background: #e94560; color: white; border: none; border-radius: 6px; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; white-space: nowrap; }
+
+  /* Reports list */
+  .reports-section h2 { font-size: 16px; font-weight: 700; color: #7f8c9a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .report-item { background: #12121f; border: 1px solid #2a2a4a; border-radius: 10px; padding: 18px 20px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; transition: border-color 0.2s; }
+  .report-item:hover { border-color: #e94560; }
+  .report-company { font-size: 15px; font-weight: 700; color: #fff; }
+  .report-person { font-size: 12px; color: #7f8c9a; margin-top: 3px; }
+  .report-date { font-size: 11px; color: #3a3a5a; margin-top: 4px; }
+  .report-link { color: #e94560; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .report-link:hover { text-decoration: underline; }
+  .empty { text-align: center; color: #3a3a5a; font-size: 14px; padding: 32px; background: #12121f; border: 1px dashed #2a2a4a; border-radius: 10px; }
+
+  /* Error */
+  .error { display: none; background: #2b0d0d; border: 1px solid #5e1b1b; border-radius: 10px; padding: 16px 20px; margin-top: 16px; color: #e57373; font-size: 13px; }
+  .error.visible { display: block; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">DNP PERSONA INSIGHT</div>
+  <h1>🔍 商談前リサーチ自動化</h1>
+  <p>会社名・担当者・部署を入力するだけで、商談前レポートを自動生成します</p>
+</div>
+
+<div class="container">
+
+  <!-- Form -->
+  <div class="form-card">
+    <h2>📋 リサーチ情報を入力</h2>
+    <div class="form-group">
+      <label>会社名 *</label>
+      <input type="text" id="company" placeholder="例: 株式会社〇〇" required>
+    </div>
+    <div class="form-group">
+      <label>担当者名</label>
+      <input type="text" id="person" placeholder="例: 山田 太郎">
+    </div>
+    <div class="form-group">
+      <label>部署・役職</label>
+      <input type="text" id="department" placeholder="例: マーケティング部 部長">
+    </div>
+    <button class="btn" id="generateBtn" onclick="generateReport()">レポートを生成する</button>
+
+    <!-- Loading -->
+    <div class="status" id="status">
+      <div class="spinner"></div>
+      <div style="flex:1">
+        <div class="status-text" id="statusText">GitHub Actionsを起動中...</div>
+        <div class="status-sub" id="statusSub">完成まで約2〜3分かかります</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="success" id="success">
+      <div>
+        <div class="success-text">✅ レポートが完成しました！</div>
+        <div class="success-sub" id="successCompany"></div>
+      </div>
+      <a class="view-btn" id="reportLink" href="#" target="_blank">レポートを見る →</a>
+    </div>
+
+    <!-- Error -->
+    <div class="error" id="errorBox"></div>
+  </div>
+
+  <!-- Reports list -->
+  <div class="reports-section">
+    <h2>📁 生成済みレポート</h2>
+    <div id="reportsList"><div class="empty">まだレポートがありません</div></div>
+  </div>
+
+</div>
+
+<script>
+// ========== 設定: GitHubリポジトリ情報 ==========
+const GITHUB_OWNER = "YOUR_GITHUB_USERNAME";   // ← あなたのGitHubユーザー名
+const GITHUB_REPO  = "persona-research";        // ← リポジトリ名
+const GITHUB_PAT   = "YOUR_GITHUB_PAT";        // ← GitHub Personal Access Token
+// ================================================
+
+const BASE_URL = `https://${GITHUB_OWNER}.github.io/${GITHUB_REPO}`;
+const API_BASE = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
+
+let pollingTimer = null;
+let progressTimer = null;
+
+async function generateReport() {
+  const company = document.getElementById("company").value.trim();
+  const person  = document.getElementById("person").value.trim();
+  const dept    = document.getElementById("department").value.trim();
+
+  if (!company) { alert("会社名を入力してください"); return; }
+
+  const btn = document.getElementById("generateBtn");
+  btn.disabled = true;
+  showStatus("GitHub Actionsを起動中...", "");
+  hideSuccess();
+  hideError();
+
+  try {
+    const res = await fetch(`${API_BASE}/actions/workflows/generate-report.yml/dispatches`, {
+      method: "POST",
+      headers: {
+        "Authorization": `token ${GITHUB_PAT}`,
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ref: "main",
+        inputs: { company_name: company, person_name: person, department: dept }
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`GitHub API エラー (${res.status}): ${err}`);
+    }
+
+    startProgress();
+    pollForReport(company, person, dept);
+
+  } catch (e) {
+    showError(e.message);
+    btn.disabled = false;
+    hideStatus();
+  }
+}
+
+function startProgress() {
+  let pct = 0;
+  const fill = document.getElementById("progressFill");
+  const messages = [
+    [5,  "Web検索中（決算・業績）..."],
+    [20, "Web検索中（最新ニュース）..."],
+    [40, "Web検索中（SNS・トレンド）..."],
+    [55, "Gemini AIで分析中..."],
+    [75, "レポートを生成中..."],
+    [90, "GitHubにコミット中..."],
+  ];
+  let msgIdx = 0;
+  progressTimer = setInterval(() => {
+    pct = Math.min(pct + 0.5, 95);
+    fill.style.width = pct + "%";
+    if (msgIdx < messages.length && pct >= messages[msgIdx][0]) {
+      setStatusText(messages[msgIdx][1]);
+      msgIdx++;
+    }
+  }, 1000);
+}
+
+async function pollForReport(company, person, dept) {
+  const slug = company.replace(/ /g, "_").replace(/　/g, "_").replace(/\//g, "-");
+  const startTime = Date.now();
+  const MAX_WAIT = 5 * 60 * 1000;
+
+  pollingTimer = setInterval(async () => {
+    if (Date.now() - startTime > MAX_WAIT) {
+      clearInterval(pollingTimer);
+      clearInterval(progressTimer);
+      showError("タイムアウト: GitHub Actionsの画面で状況を確認してください");
+      document.getElementById("generateBtn").disabled = false;
+      hideStatus();
+      return;
+    }
+
+    try {
+      const r = await fetch(`${BASE_URL}/reports/index.json?t=${Date.now()}`);
+      if (!r.ok) return;
+      const index = await r.json();
+      const found = index.find(x => x.file && x.file.startsWith(slug));
+      if (found) {
+        clearInterval(pollingTimer);
+        clearInterval(progressTimer);
+        document.getElementById("progressFill").style.width = "100%";
+        setTimeout(() => {
+          hideStatus();
+          showSuccess(company, `${BASE_URL}/reports/${found.file}`);
+          document.getElementById("generateBtn").disabled = false;
+          loadReports();
+        }, 500);
+      }
+    } catch (_) {}
+  }, 10000);
+}
+
+function showStatus(text, sub) {
+  document.getElementById("status").classList.add("visible");
+  setStatusText(text);
+  document.getElementById("statusSub").textContent = sub || "完成まで約2〜3分かかります";
+}
+function setStatusText(t) { document.getElementById("statusText").textContent = t; }
+function hideStatus() { document.getElementById("status").classList.remove("visible"); }
+
+function showSuccess(company, url) {
+  document.getElementById("success").classList.add("visible");
+  document.getElementById("successCompany").textContent = company + " のレポートが完成しました";
+  document.getElementById("reportLink").href = url;
+}
+function hideSuccess() { document.getElementById("success").classList.remove("visible"); }
+
+function showError(msg) {
+  const el = document.getElementById("errorBox");
+  el.textContent = "❌ " + msg;
+  el.classList.add("visible");
+}
+function hideError() { document.getElementById("errorBox").classList.remove("visible"); }
+
+async function loadReports() {
+  try {
+    const r = await fetch(`${BASE_URL}/reports/index.json?t=${Date.now()}`);
+    if (!r.ok) return;
+    const index = await r.json();
+    const list = document.getElementById("reportsList");
+    if (!index.length) { list.innerHTML = '<div class="empty">まだレポートがありません</div>'; return; }
+    list.innerHTML = index.map(item => {
+      const date = new Date(item.created_at).toLocaleString("ja-JP", { month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit" });
+      return `
+      <div class="report-item">
+        <div>
+          <div class="report-company">${item.company}</div>
+          <div class="report-person">👤 ${item.person || "—"}（${item.department || "—"}）</div>
+          <div class="report-date">🕐 ${date}</div>
+        </div>
+        <a class="report-link" href="${BASE_URL}/reports/${item.file}" target="_blank">見る →</a>
+      </div>`;
+    }).join("");
+  } catch (_) {}
+}
+
+loadReports();
+</script>
+</body>
+</html>
