@@ -231,8 +231,9 @@ def search_all(tavily: TavilyClient, company_name: str, person_name: str, depart
         ("competitor_products", f"{company_name} 競合 商品比較 差別化",                       {},                                              False),
         ("sns_consumer",        f"{company_name} 口コミ 評判 レビュー 本音",                  {**FRESH, "include_domains": SNS_REVIEW_DOMAINS},True),
         ("sns_trend",           f"{company_name} 話題 キャンペーン トレンド 2025 OR 2026",    FRESHER,                                         True),
-        ("person",              f"{company_name} {person_name} {department}" if person_name else f"{company_name} {department} 責任者", {}, False),
-        ("person_sns",          f"{person_name} {company_name} インタビュー 登壇 発言" if person_name else "", {}, False),
+        ("person",              f"{company_name} {person_name} {department} 経歴 インタビュー" if person_name else f"{company_name} {department} 責任者 インタビュー", {}, False),
+        ("person_solo",         f"{person_name} インタビュー 講演 登壇 発言 著書 受賞 考え方 ビジョン" if person_name else "", {}, False),
+        ("person_sns",          f"{person_name} {company_name} SNS X Twitter 発言 投稿" if person_name else "", {}, False),
         ("initiatives",         f"{company_name} DX マーケティング 取り組み 2025 OR 2026",    FRESH,                                           True),
         ("issues",              f"{company_name} 課題 リスク 懸念 弱点",                      {},                                              False),
     ]
@@ -382,14 +383,17 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
     "opportunities": ["SNS動向から見えるビジネス機会1", "機会2"]
   }},
   "person_profile": {{
-    "summary": "面談相手・部署の役割と特徴（3〜4文）",
-    "likely_interests": ["関心事・KPIと思われる項目1", "関心事2", "関心事3"],
-    "communication_tips": ["コミュニケーション上のポイント1", "ポイント2"]
+    "summary": "検索結果に基づいたその人固有のプロフィール（経歴・役職・実績・発言スタイルなど。情報がない場合は部署の役割推測にとどめ『公開情報なし』と明記）",
+    "known_statements": ["インタビュー・講演・SNS等で実際に発言した内容（出典付き）。なければ空配列", "発言2"],
+    "philosophy": "その人の経営観・仕事観・重視する価値観（発言・著書・インタビューから。不明なら空文字）",
+    "career_hooks": ["経歴の中で商談に使えるフック1（例：前職がXX、XX賞受賞など）", "フック2"],
+    "likely_interests": ["その人の発言・担当領域から推測される関心事・KPI1", "関心事2", "関心事3"],
+    "communication_tips": ["その人の発言スタイル・性格から導いたコミュニケーション上のポイント1", "ポイント2"]
   }},
   "icebreakers": [
-    "アイスブレイクに使える話題1（最近のニュース・製品から具体的に）",
-    "アイスブレイク話題2",
-    "アイスブレイク話題3"
+    "その人の最近の発言・活動・趣味・出身など個人情報ベースのアイスブレイク（情報あれば）",
+    "会社の直近ニュース・製品から具体的なアイスブレイク話題",
+    "業界トレンドや時事ネタで共感を得やすい話題"
   ],
   "anticipated_qa": [
     {{
@@ -679,11 +683,19 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
     # 8. 面談相手プロファイル
     p = data.get("person_profile", {})
     tips_html = "".join(f'<div class="icebreaker-item" style="border-left-color:#4fc3f7">{t}</div>' for t in p.get("communication_tips", []))
+    hooks_html = bullets(p.get("career_hooks", []))
+    statements = p.get("known_statements", [])
+    stmt_html = "".join(f'<div class="qa-item" style="margin:6px 0"><div class="qa-a" style="color:#ffe082">「{s}」</div></div>' for s in statements if s) if statements else ""
+    philosophy = p.get("philosophy", "")
+    phil_html = f'<div style="background:#1a1a2e;border-left:3px solid #f48fb1;padding:10px 14px;border-radius:6px;margin-top:8px;color:#e0e0e0;font-size:13px;line-height:1.7">{philosophy}</div>' if philosophy else ""
     sections.append(render_section("👤", "面談相手・部署プロファイル", "#f48fb1",
         f"<p>{p.get('summary','')}</p>"
-        f"<p style='margin-top:12px;font-weight:700;color:#7f8c9a'>関心事・KPI</p>{bullets(p.get('likely_interests',[]))}"
-        f"<p style='margin-top:12px;font-weight:700;color:#7f8c9a'>コミュニケーションのポイント</p>{tips_html}",
-        src("person", "person_sns")))
+        + (f"<p style='margin-top:14px;font-weight:700;color:#f48fb1'>💬 実際の発言・インタビューより</p>{stmt_html}" if stmt_html else "")
+        + (f"<p style='margin-top:12px;font-weight:700;color:#7f8c9a'>経営観・ビジョン</p>{phil_html}" if philosophy else "")
+        + (f"<p style='margin-top:12px;font-weight:700;color:#7f8c9a'>商談に使えるフック</p>{hooks_html}" if hooks_html else "")
+        + f"<p style='margin-top:12px;font-weight:700;color:#7f8c9a'>関心事・KPI</p>{bullets(p.get('likely_interests',[]))}"
+        + f"<p style='margin-top:12px;font-weight:700;color:#7f8c9a'>コミュニケーションのポイント</p>{tips_html}",
+        src("person", "person_solo", "person_sns")))
 
     # 9. アイスブレイク話題
     ib_html = "".join(f'<div class="icebreaker-item">💬 {i}</div>' for i in data.get("icebreakers", []))
