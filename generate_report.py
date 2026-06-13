@@ -220,8 +220,8 @@ def search_all(tavily: TavilyClient, company_name: str, person_name: str, depart
     queries = [
         # key, query, kwargs, filter_pdf
         ("profile",             f"{company_name} 本社 所在地 事業所 工場 設立 従業員",        {},                                              False),
-        ("financials",          f"{company_name} 決算 売上 営業利益 業績",                    {},                                              False),
-        ("ir",                  f"{company_name} IR 中期経営計画",                            {},                                              False),
+        ("financials",          f"{company_name} 決算 売上 営業利益 業績 2025 OR 2026",      {},                                              False),
+        ("ir",                  f"{company_name} IR 中期経営計画 2025 OR 2026",              {},                                              False),
         ("news",                f"{company_name} 新発表 リリース",                            {**FRESHER, "include_domains": PRESS_RELEASE_DOMAINS}, True),
         ("news_general",        f"{company_name} ニュース 発表 2025 OR 2026",                 FRESHER,                                         True),
         ("products",            f"{company_name} 新商品 新発売 2025 OR 2026",                 FRESH,                                           True),

@@ -258,12 +258,21 @@ async function lookupCompany() {
     if (!data.results || data.results.length === 0) {
       results.innerHTML = '<div style="color:#7f8c9a;font-size:13px">検索結果が見つかりませんでした。会社名を確認してください。</div>';
     } else {
-      const isOfficialUrl = url => {
+      const NON_OFFICIAL = ["wikipedia","prtimes","nikkei","yahoo","amazon","rakuten",
+                            "kakaku","tabelog","indeed","linkedin","facebook","twitter",
+                            "instagram","tiktok","youtube","mynavi","rikunabi","hotpepper",
+                            "google","bing","doda","wantedly","glassdoor","jobtalk"];
+      const urlScore = url => {
         const u = url.toLowerCase();
-        return !["wikipedia", "prtimes", "nikkei", "yahoo", "amazon", "rakuten",
-                 "kakaku", "tabelog", "indeed", "linkedin"].some(s => u.includes(s));
+        if (NON_OFFICIAL.some(s => u.includes(s))) return -1;
+        const path = new URL(url).pathname;
+        const depth = path.split("/").filter(Boolean).length;
+        return 10 - depth; // パスが浅いほど高スコア（トップページ優先）
       };
-      const official = data.results.find(r => isOfficialUrl(r.url));
+      const official = data.results
+        .map(r => ({ ...r, score: urlScore(r.url) }))
+        .filter(r => r.score >= 0)
+        .sort((a, b) => b.score - a.score)[0];
       const officialHtml = official ? `
         <div style="background:#0d2b1a;border:1px solid #1b5e35;border-radius:10px;padding:14px 18px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px">
           <div>
