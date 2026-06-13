@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>キリンビバレッジ 商談前リサーチレポート</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Helvetica Neue',Arial,sans-serif; background:#0a0a0f; color:#e0e0e0; min-height:100vh; }
+
+  .header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); padding:32px 40px; border-bottom:1px solid #2a2a4a; }
+  .header-top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; }
+  .badge { background:#e94560; color:white; font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; letter-spacing:1px; }
+  .meta { color:#4a5568; font-size:12px; }
+  .company-name { font-size:32px; font-weight:800; color:#fff; margin:12px 0 4px; }
+  .person-info { color:#7f8c9a; font-size:15px; }
+
+  .container { max-width:1000px; margin:0 auto; padding:32px 24px; }
+
+  .back-link { display:inline-block; margin-bottom:24px; color:#e94560; text-decoration:none; font-size:14px; }
+  .back-link:hover { text-decoration:underline; }
+
+  /* Quick Stats */
+  .quick-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px; }
+  .stat-box { background:#12121f; border:1px solid #2a2a4a; border-radius:10px; padding:16px; text-align:center; }
+  .stat-value { font-size:20px; font-weight:800; color:#e94560; }
+  .stat-label { font-size:11px; color:#7f8c9a; margin-top:4px; }
+
+  /* Sections */
+  .section { background:#12121f; border:1px solid #2a2a4a; border-radius:12px; padding:28px; margin-bottom:16px; }
+  .section-title { font-size:16px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+  .section-body { color:#b0bec5; font-size:14px; line-height:1.9; }
+  .section-body p { margin-bottom:10px; }
+  .section-body ul { padding-left:20px; }
+  .section-body li { margin-bottom:6px; }
+
+  /* Highlight box */
+  .highlight { background:#1e1e35; border-left:3px solid #e94560; padding:14px 18px; border-radius:0 8px 8px 0; margin:14px 0; }
+  .highlight p { color:#e0e0e0; margin:0; }
+
+  /* SNS voice */
+  .voice-card { background:#1a1a2e; border:1px solid #2a2a4a; border-radius:8px; padding:14px 16px; margin:8px 0; }
+  .voice-card .voice-text { color:#d0d0d0; font-size:13px; line-height:1.7; font-style:italic; }
+  .voice-card .voice-meta { color:#4a5568; font-size:11px; margin-top:6px; }
+
+  /* Competitor table */
+  .comp-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+  .comp-table th { background:#1e1e35; color:#7f8c9a; padding:10px 12px; text-align:left; font-weight:600; border-bottom:1px solid #2a2a4a; }
+  .comp-table td { padding:10px 12px; border-bottom:1px solid #1a1a2e; color:#b0bec5; }
+  .comp-table tr:last-child td { border-bottom:none; }
+  .comp-table .target { color:#4fc3f7; font-weight:700; }
+
+  /* Checklist */
+  .checklist li { list-style:none; padding-left:0; margin-bottom:8px; display:flex; align-items:flex-start; gap:8px; }
+  .checklist li::before { content:"☐"; color:#e94560; font-size:16px; flex-shrink:0; margin-top:-1px; }
+
+  /* QA */
+  .qa-item { background:#1a1a2e; border-radius:8px; padding:14px 16px; margin:8px 0; }
+  .qa-q { color:#ffb74d; font-weight:700; font-size:13px; margin-bottom:6px; }
+  .qa-a { color:#b0bec5; font-size:13px; line-height:1.7; }
+
+  /* Icebreaker */
+  .icebreaker-item { background:#1a1a2e; border-left:3px solid #81c784; border-radius:0 8px 8px 0; padding:12px 16px; margin:8px 0; font-size:13px; color:#d0d0d0; }
+
+  /* Tags */
+  .tag { display:inline-block; background:#1e1e35; border:1px solid #3a3a5a; color:#9b9bbc; font-size:11px; padding:3px 10px; border-radius:20px; margin:3px; }
+
+  /* Confidence badges */
+  .conf { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; }
+  .conf-高 { background:#1b3a2a; color:#81c784; border:1px solid #2e6b45; }
+  .conf-中 { background:#3a2e10; color:#ffb74d; border:1px solid #7a5c10; }
+  .conf-低 { background:#3a1010; color:#e57373; border:1px solid #7a2020; }
+  .conf-低-wrap { background:#2b1010; border-left:3px solid #e57373; border-radius:0 6px 6px 0; padding:8px 12px; margin:4px 0; }
+
+  /* Source drawer */
+  details.src { margin-top:14px; }
+  details.src summary { font-size:11px; color:#3a3a6a; cursor:pointer; user-select:none; list-style:none; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #2a2a4a; border-radius:20px; }
+  details.src summary::-webkit-details-marker { display:none; }
+  details.src summary::before { content:"📎"; }
+  details.src[open] summary { color:#7f8c9a; border-color:#3a3a6a; }
+  details.src .src-list { margin-top:10px; padding:10px 14px; background:#0a0a0f; border-radius:8px; border:1px solid #1a1a2e; }
+  details.src .src-list a { display:block; color:#4fc3f7; font-size:11px; text-decoration:none; padding:4px 0; border-bottom:1px solid #1a1a2e; word-break:break-all; }
+  details.src .src-list a:last-child { border-bottom:none; }
+  details.src .src-list a:hover { text-decoration:underline; }
+  details.src .src-title { font-size:10px; color:#4a5568; margin-bottom:2px; }
+
+  /* Key message */
+  .key-message { background:linear-gradient(135deg,#1e0a15,#2a1020); border:1px solid #e94560; border-radius:10px; padding:20px 24px; margin-top:16px; }
+  .key-message-label { color:#e94560; font-size:11px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+  .key-message-text { color:#fff; font-size:15px; font-weight:700; line-height:1.6; }
+
+  .footer { text-align:center; padding:24px; color:#3a3a5a; font-size:12px; border-top:1px solid #1a1a2e; margin-top:16px; }
+
+  @media print {
+    body { background:#fff; color:#000; }
+    .header { background:#1a1a2e !important; -webkit-print-color-adjust:exact; }
+    .section { border:1px solid #ddd; page-break-inside:avoid; }
+  }
+  /* Visual Summary */
+  .vsummary { background:linear-gradient(135deg,#12121f 0%,#1a1a2e 100%); border:1px solid #2a2a4a; border-radius:14px; padding:24px 28px; margin-bottom:20px; }
+  .vsummary-metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:#2a2a4a; border-radius:10px; overflow:hidden; margin-bottom:16px; }
+  .vsummary-metric { background:#12121f; padding:14px 18px; }
+  .vsummary-metric-label { font-size:10px; color:#4a5568; font-weight:700; letter-spacing:0.5px; margin-bottom:5px; text-transform:uppercase; }
+  .vsummary-metric-value { font-size:14px; font-weight:700; color:#e0e0e0; line-height:1.4; }
+  .vsummary-location { background:#0d0d1a; border:1px solid #1e1e3a; border-radius:8px; padding:12px 16px; display:flex; gap:20px; flex-wrap:wrap; margin-bottom:14px; }
+  .vsummary-location-item { font-size:12px; color:#7f8c9a; }
+  .vsummary-location-item strong { color:#b0bec5; margin-right:6px; }
+  .quick-links { display:flex; flex-wrap:wrap; gap:8px; }
+  .quick-link { display:inline-flex; align-items:center; gap:6px; background:#0a0a0f; border:1px solid #2a2a4a; border-radius:20px; padding:6px 14px; color:#4fc3f7; font-size:12px; text-decoration:none; transition:border-color 0.2s; }
+  .quick-link:hover { border-color:#4fc3f7; }
+
+  @media(max-width:600px) {
+    .header { padding:24px; }
+    .quick-stats { grid-template-columns:1fr 1fr; }
+    .signal-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <span class="badge" style="background:#e94560">DNPペルソナインサイト</span>
+    <span class="meta">生成日時: 2026年06月13日 19:53　　🖨️ <a href="javascript:window.print()" style="color:#4a5568;text-decoration:none;">印刷</a></span>
+  </div>
+  <div class="company-name">キリンビバレッジ</div>
+  <div class="person-info">👤 担当者未定</div>
+</div>
+<div class="container">
+  <a href="../index.html" class="back-link">← レポート一覧に戻る</a>
+  
+<div class="vsummary">
+  <div style="text-align:right;font-size:11px;color:#4a5568;margin-bottom:10px">基本情報の信頼度: <span class="conf conf-高">高</span></div>
+  <div class="vsummary-metrics"><div class="vsummary-metric"><div class="vsummary-metric-label">INDUSTRY</div><div class="vsummary-metric-value">清涼飲料製造・販売</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">REVENUE</div><div class="vsummary-metric-value">2,376億4,000万円（2025年12月期）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">POSITION</div><div class="vsummary-metric-value">清涼飲料業界大手、特に紅茶飲料市場で「午後の紅茶」はNo.1ブランド</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">EMPLOYEES</div><div class="vsummary-metric-value">連結：3,699名（2024年12月31日時点）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">FOUNDED</div><div class="vsummary-metric-value">1963年4月15日</div></div></div>
+  <div class="vsummary-location"><span class="vsummary-location-item"><strong>🏢 本社</strong>東京都中野区中野4-10-2 中野セントラルパークサウス</span><span class="vsummary-location-item"><strong>📍 拠点</strong>滋賀工場、湘南工場</span></div>
+  <div class="quick-links"><a class="quick-link" href="https://kosen-plus.com/company/759571f6-6ff7-4182-8ea4-6c327ed3174f/info" target="_blank">🔗 公式HP｜キリンビバレッジの企業データ - 高専プラス</a><a class="quick-link" href="https://prtimes.jp/main/html/rd/p/000000028.000117612.html" target="_blank">🔗 プレスリリース｜キリン初「プラズマ乳酸菌」入り子ども専用健康飲料「キリン つ</a><a class="quick-link" href="https://www.kirinholdings.com/jp/investors/finance/analysis" target="_blank">🔗 IR・投資家情報｜財政状態、経営成績及びキャッシュ・フローの状況の分析 | 財</a></div>
+</div>
+  
+<div class="section">
+  <div class="section-title" style="color:#4fc3f7">
+    <span style="font-size:20px">🏢</span>企業概要
+  </div>
+  <div class="section-body"><p>キリンビバレッジ株式会社は、「お客様の毎日に、おいしい健康を。」をパーパス・ビジョンに掲げる清涼飲料メーカーです。長年の基盤ブランドである「午後の紅茶」は日本の紅茶飲料市場をリードし、特に2024年4月にリニューアルした「キリン 生茶」は18年ぶりに売上本数3,000万ケースを突破するなど好調です。プラズマ乳酸菌を配合した「iMUSEシリーズ」や「キリン生茶 免疫ケア」を通じて、無糖・健康領域の強化を成長ドライバーとしています。また、直近では子ども向け健康飲料やウェルビーイング推進への取り組みも強化しています。</p><ul><li>2025年12月期 売上高は2,376億4,000万円、純利益は35億2,800万円で黒字転換。</li><li>「午後の紅茶」は紅茶飲料No.1ブランド（2021年実績）。</li><li>「キリン 生茶」ブランドは2024年に売上本数3,000万ケースを突破。</li><li>プラズマ乳酸菌を活用した「免疫ケア」製品群を拡充し、ヘルスサイエンス領域に注力。</li><li>「無糖・健康領域」を重点領域と位置づけ、価値創造と利益創出を目指している。</li></ul></div>
+  <details class="src"><summary>根拠を見る（14件）</summary><div class="src-list"><a href="https://kosen-plus.com/company/759571f6-6ff7-4182-8ea4-6c327ed3174f/info" target="_blank"><span class="src-title">キリンビバレッジの企業データ - 高専プラス</span></a><a href="https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%AA%E3%83%B3%E3%83%93%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8" target="_blank"><span class="src-title">キリンビバレッジ - Wikipedia</span></a><a href="https://www.kirinholdings.com/jp/company/group/kirinbeverage" target="_blank"><span class="src-title">キリンビバレッジ株式会社 | グループ会社一覧 - Kirin Holdings</span></a><a href="https://job.mynavi.jp/28/pc/search/corp983/outline.html" target="_blank"><span class="src-title">キリンビバレッジ(株)の2027年度会社概要</span></a><a href="https://job.persona-ats.com/ja/kirinbeverage" target="_blank"><span class="src-title">キリンビバレッジ株式会社 採用情報</span></a><a href="https://prtimes.com/finance/6010001014934/settlement" target="_blank"><span class="src-title">キリンビバレッジ株式会社の第63期決算公告の決算・財務情報</span></a><a href="https://www.kirinholdings.com/jp/investors/finance/analysis" target="_blank"><span class="src-title">財政状態、経営成績及びキャッシュ・フローの状況の分析 | 財務・業績情報 | KIRIN - キリンホールディングス株式会社</span></a><a href="https://minkabu.jp/stock/2503/settlement" target="_blank"><span class="src-title">キリンホールディングス (2503) : 決算情報・業績 [KHC] - みんかぶ</span></a><a href="https://www.nikkei.com/nkd/company/kessan?scode=2503" target="_blank"><span class="src-title">【キリンホールディングス】[2503]決算発表や業務・財務情報 | 日経 ...</span></a><a href="https://s3-ap-northeast-1.amazonaws.com/kirinholdings-doc/jp/investors/files/pdf/Investorsguide.pdf" target="_blank"><span class="src-title">[PDF] Investor's Guide | Kirin Group - Amazon S3</span></a><a href="https://pdf.irpocket.com/C2503/usA8/zRKR/x1Ql.pdf" target="_blank"><span class="src-title">[PDF] キリングループ - 2027年に向けた計画</span></a><a href="https://irbank.net/2503/ir" target="_blank"><span class="src-title">キリン HD（2503）のIR情報・決算資料 | IRBANK</span></a><a href="https://www.kirinholdings.com/jp/newsroom/release/2019/0214_01.html" target="_blank"><span class="src-title">長期経営構想「キリングループ・ビジョン2027」「キリングループ2019年-2021年中期経営計画」を策定 | 2019年 | KIRIN - キリンホールディングス株式会社</span></a><a href="https://pdf.irpocket.com/C2503/pTWD/YV9s/pQuq.pdf" target="_blank"><span class="src-title">[PDF] キリンの成長戦略</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#81c784">
+    <span style="font-size:20px">📈</span>財務・業績
+  </div>
+  <div class="section-body"><p>キリンビバレッジの2025年12月期決算は、売上高2,376億4,000万円（前年同期比0.47%増）となり、純利益は35億2,800万円で黒字転換を達成しました。キリンホールディングス全体の連結売上収益も2024年度実績で9.6%増加しており、飲料事業の増益が全体に貢献していることが示されています。利益余剰金も9.59%増と順調に推移しており、堅調な財務状況が見て取れます。</p><ul><li>2025年12月期売上高：2,376億4,000万円（前年同期比0.47%増）<span class="conf conf-高">高</span></li><li>2025年12月期純利益：35億2,800万円（黒字転換）<span class="conf conf-高">高</span></li><li>2025年12月期利益余剰金：403億2,900万円（9.59%増）<span class="conf conf-高">高</span></li><li>キリンホールディングスの2024年度連結売上収益は9.6%増、飲料事業が寄与。<span class="conf conf-高">高</span></li></ul><div class="highlight"><p>⚠️ 課題・懸念点：</p><ul><li>特定の顕著な懸念点は見られないが、清涼飲料市場における消費者ニーズの多様化と競合激化への継続的な対応が求められる。</li><li>原材料価格の変動や物流コストの上昇といった外部環境の変化が収益に与える影響。</li></ul></div></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://prtimes.com/finance/6010001014934/settlement" target="_blank"><span class="src-title">キリンビバレッジ株式会社の第63期決算公告の決算・財務情報</span></a><a href="https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%AA%E3%83%B3%E3%83%93%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8" target="_blank"><span class="src-title">キリンビバレッジ - Wikipedia</span></a><a href="https://www.kirinholdings.com/jp/investors/finance/analysis" target="_blank"><span class="src-title">財政状態、経営成績及びキャッシュ・フローの状況の分析 | 財務・業績情報 | KIRIN - キリンホールディングス株式会社</span></a><a href="https://minkabu.jp/stock/2503/settlement" target="_blank"><span class="src-title">キリンホールディングス (2503) : 決算情報・業績 [KHC] - みんかぶ</span></a><a href="https://www.nikkei.com/nkd/company/kessan?scode=2503" target="_blank"><span class="src-title">【キリンホールディングス】[2503]決算発表や業務・財務情報 | 日経 ...</span></a><a href="https://s3-ap-northeast-1.amazonaws.com/kirinholdings-doc/jp/investors/files/pdf/Investorsguide.pdf" target="_blank"><span class="src-title">[PDF] Investor's Guide | Kirin Group - Amazon S3</span></a><a href="https://pdf.irpocket.com/C2503/usA8/zRKR/x1Ql.pdf" target="_blank"><span class="src-title">[PDF] キリングループ - 2027年に向けた計画</span></a><a href="https://irbank.net/2503/ir" target="_blank"><span class="src-title">キリン HD（2503）のIR情報・決算資料 | IRBANK</span></a><a href="https://www.kirinholdings.com/jp/newsroom/release/2019/0214_01.html" target="_blank"><span class="src-title">長期経営構想「キリングループ・ビジョン2027」「キリングループ2019年-2021年中期経営計画」を策定 | 2019年 | KIRIN - キリンホールディングス株式会社</span></a><a href="https://pdf.irpocket.com/C2503/pTWD/YV9s/pQuq.pdf" target="_blank"><span class="src-title">[PDF] キリンの成長戦略</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffb74d">
+    <span style="font-size:20px">🌊</span>業界トレンド・市場動向
+  </div>
+  <div class="section-body"><p>清涼飲料市場では、消費者の健康志向の高まりを背景に、無糖・低糖飲料や機能性表示食品への需要が拡大しています。特に免疫ケアなどの健康機能が前面に出た製品は、市場において高い成長性を示しています。また、個別最適化されたパーソナルな体験へのニーズも強まっており、企業は単なる製品提供に留まらず、ウェルビーイング全般をサポートするサービス提供へと事業領域を広げる動きも見られます。デジタル化の進展により、消費者との接点や情報収集も多様化し、迅速な市場変化への対応が不可欠です。</p><ul><li>健康志向の高まりと、無糖・低糖・機能性表示食品市場の拡大。</li><li>免疫ケアなど、特定の健康効果を訴求する飲料製品への関心の増大。</li><li>個々のライフスタイルや健康状態に合わせたパーソナルな価値提供への需要。</li><li>デジタルマーケティングの進化による消費者インサイトの深掘りとコミュニケーション最適化。</li></ul><div class="highlight"><p>市場規模：明確な市場規模データは提供されていませんが、健康志向飲料市場は成長傾向にあります。<span class="conf conf-低">低</span></p></div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://pdf.irpocket.com/C2503/DZbR/I6Yu/paVV.pdf" target="_blank"><span class="src-title">[PDF] キリンの成長戦略</span></a><a href="https://www.fortunebusinessinsights.com/jp/%E3%82%A2%E3%82%B8%E3%82%A2%E5%A4%AA%E5%B9%B3%E6%B4%8B%E9%A3%B2%E6%96%99%E5%B8%82%E5%A0%B4-112736" target="_blank"><span class="src-title">アジア太平洋飲料市場規模、シェア、成長、2034年</span></a><a href="https://www.yano.co.jp/market_reports/C66107900" target="_blank"><span class="src-title">2024年版 飲料市場の現状と展望 | 市場調査とマーケティングの矢野経済研究所</span></a><a href="https://matcher.jp/dictionary/articles/483" target="_blank"><span class="src-title">【業界研究】最新の飲料業界の現状と課題、動向を紹介します</span></a><a href="https://deallab.info/food-beverage" target="_blank"><span class="src-title">食品飲料業界の市場シェア - deallab</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ce93d8">
+    <span style="font-size:20px">⚔️</span>競合分析
+  </div>
+  <div class="section-body"><p>清涼飲料市場は競争が非常に激しく、キリンビバレッジは「午後の紅茶」や「生茶」などの基盤ブランドで強固な地位を築いていますが、大手飲料メーカー各社との激しいシェア争いが続いています。健康・機能性飲料市場においては、各社が独自の素材や技術を投入し、新たな価値創出を図っています。消費者の嗜好が多様化する中で、新製品開発力やマーケティング戦略が競争優位性を確立する上で重要となります。</p><table class="comp-table">
+<tr><th>企業名</th><th>シェア</th><th>強み</th><th>弱み</th></tr>
+<tr><td class="target">キリンビバレッジ<span class="conf conf-中">中</span></td><td></td><td style='color:#81c784'>「午後の紅茶」など強力な基盤ブランドと「プラズマ乳酸菌」に代表される健康領域への強み。</td><td style='color:#e57373'>一部セグメントでの競合他社との差別化、若年層へのリーチ強化。</td></tr><tr><td>サントリー食品インターナショナル<span class="conf conf-低">低</span></td><td></td><td style='color:#81c784'>広範なブランドポートフォリオ、マーケティング力、グローバル展開力。</td><td style='color:#e57373'>主要ブランドへの依存度。</td></tr><tr><td>コカ・コーラ ボトラーズジャパン<span class="conf conf-低">低</span></td><td></td><td style='color:#81c784'>世界的なブランド力、強力な販売網、炭酸飲料市場での圧倒的シェア。</td><td style='color:#e57373'>非炭酸飲料市場での多様なニーズへの対応。</td></tr></table></div>
+  <details class="src"><summary>根拠を見る（9件）</summary><div class="src-list"><a href="https://www.kirinholdings.com/jp/investors/files/pdf/factbook_2026.pdf" target="_blank"><span class="src-title">[PDF] Kirin Group</span></a><a href="https://note.com/strategies/n/n7edbd312a75e" target="_blank"><span class="src-title">【キリンホールディングス戦略分析②】食品・飲料業界の競争環境を3C分析で解説｜戦略分析ラボ</span></a><a href="https://deallab.info/food-beverage" target="_blank"><span class="src-title">食品飲料業界の市場シェア - deallab</span></a><a href="https://www.choosenic.com/yuho-shukatsu-navi/articles/compare/beverage-comparison" target="_blank"><span class="src-title">飲料3社を有報で比較｜サントリー・キリン・アサヒの戦略の違い</span></a><a href="https://www.choosenic.com/yuho-shukatsu-navi/articles/compare/beverage-4companies-comparison" target="_blank"><span class="src-title">飲料4社を有報で比較｜アサヒ・キリン・サントリー・サッポロの ...</span></a><a href="https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%AA%E3%83%B3%E3%83%93%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8" target="_blank"><span class="src-title">キリンビバレッジ - Wikipedia</span></a><a href="https://finance.yahoo.co.jp/news/detail/f17c27c1ced3f078ead1e749c42c6bf218621dba" target="_blank"><span class="src-title">キリンＨＤ－もみ合い　キリンビバレッジ、一部商品値上げ　10月1日納品分から(トレーダーズ・ウェブ) - Yahoo!ファイナンス</span></a><a href="https://asahi.gakujo.ne.jp/common_sense/morning_paper/detail/id=2973" target="_blank"><span class="src-title">「多角化のキリン」VS「海外のアサヒ」 ライバルの違いを知 ...</span></a><a href="https://www.recme.jp/media/201910118661" target="_blank"><span class="src-title">意外と知らない？大手飲料メーカーの違いを徹底研究！（サントリー</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#80cbc4">
+    <span style="font-size:20px">📦</span>主力製品・カテゴリ別ポジション
+  </div>
+  <div class="section-body"><p>キリンビバレッジは、紅茶、緑茶、コーヒー、水、炭酸飲料など多岐にわたる清涼飲料製品を展開しています。「午後の紅茶」は発売以来、日本の紅茶飲料市場を牽引するNo.1ブランドの地位を確立。2024年にリニューアルした「生茶」は売上3,000万ケースを超えるヒットを記録しています。「iMUSEシリーズ」や「キリン生茶 免疫ケア」など、プラズマ乳酸菌を配合した健康機能性飲料も主要な柱であり、市場で高い評価を得ています。</p><div class="voice-card"><strong style="color:#4fc3f7">紅茶飲料</strong>　午後の紅茶（ストレートティー、ミルクティー、レモンティー）　<span style="color:#7f8c9a;font-size:12px">日本の紅茶飲料市場No.1ブランド</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">緑茶飲料</strong>　キリン 生茶、キリン 生茶 ほうじ煎茶、キリン 生茶 免疫ケア　<span style="color:#7f8c9a;font-size:12px">2024年リニューアル後、売上3,000万ケース突破</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">健康・機能性飲料</strong>　iMUSEシリーズ、キリン つよいぞ！ムテキッズ　<span style="color:#7f8c9a;font-size:12px">プラズマ乳酸菌領域をリード</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">コーヒー飲料</strong>　キリン ファイア　<span style="color:#7f8c9a;font-size:12px">基盤ブランドの一つ</span><span class="conf conf-中">中</span></div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://prtimes.jp/topics/keywords/%E3%82%AD%E3%83%AA%E3%83%B3%E3%83%93%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8" target="_blank"><span class="src-title">「キリンビバレッジ」に関するプレスリリース一覧 - PR TIMES</span></a><a href="https://news.mynavi.jp/article/20250129-3118168" target="_blank"><span class="src-title">キリンビバレッジ、2025年事業方針発表 - ヘルスサイエンスの成長 ...</span></a><a href="https://prtimes.jp/main/html/rd/p/000001535.000073077.html" target="_blank"><span class="src-title">キリンビバレッジ 一部商品の価格改定について - PR TIMES</span></a><a href="https://www.kirinholdings.com/jp/newsroom/release/2026" target="_blank"><span class="src-title">2026年 | ニュースリリース | ニュースルーム | KIRIN - キリンホールディングス株式会社</span></a><a href="https://www.kirin.co.jp" target="_blank"><span class="src-title">KIRIN｜キリングループ 商品情報サイト</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffcc02">
+    <span style="font-size:20px">🆕</span>最新ニュース・新商品・取り組み
+  </div>
+  <div class="section-body"><p>直近1ヶ月の動きとして、キリンビバレッジは子ども向け健康飲料や熱中症対策飲料の新商品を投入し、主力ブランドのリニューアルも実施しています。特に「プラズマ乳酸菌」を配合した子ども専用飲料「キリン つよいぞ！ムテキッズ」を6月17日に販売開始し、健康領域の強化をさらに推進。また、「午後の紅茶」は発売40周年を迎え、5月19日にレギュラーシリーズをリニューアルしました。夏季商戦に向けて「世界のKitchenから ソルティライチソーダ」を6月23日に発売するなど、季節ニーズにも対応しています。グループ全体ではAI役員「CoreMate」の導入も進めており、業務効率化・意思決定の迅速化を図る動きも見られます。</p><ul><li>キリン初となる「プラズマ乳酸菌」入り子ども専用健康飲料「キリン つよいぞ！ムテキッズ」を6月17日より一部量販企業限定で販売開始。（2026年6月16日発表）<span class="conf conf-高">高</span></li><li>「キリン 午後の紅茶」が発売40周年を迎え、レギュラーシリーズ3品（ストレートティー/ミルクティー/レモンティー）を5月19日よりリニューアル発売。<span class="conf conf-高">高</span></li><li>夏の熱中症対策飲料として「キリン 世界のKitchenから ソルティライチソーダ」を6月23日より全国で数量限定発売。<span class="conf conf-高">高</span></li><li>熱中症対策飲料「キリン 世界のKitchenから ソルティライチ」シリーズは「クーリングシェルター支援施策」をアップデートし、「ひと涼み応援キッチンカー」も出動。（時期不明：夏季に向けた取り組み）<span class="conf conf-中">中</span></li><li>AI役員「CoreMate」をキリングループの事業会社へ導入開始し、デジタル化を推進。（時期不明：グループ全体の取り組み）<span class="conf conf-中">中</span></li></ul></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://prtimes.jp/main/html/rd/p/000000028.000117612.html" target="_blank"><span class="src-title">キリン初「プラズマ乳酸菌」入り子ども専用健康飲料「キリン つよいぞ！ムテキッズ」新商品発表会を開催！ | キリンビバレッジ株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000025.000117612.html" target="_blank"><span class="src-title">生茶ブランド18 年ぶりに売上本数を更新し3,000 万ケースに到達。鈴木亮平さん・出口夏希さんご登壇！「キリン 生茶 大ヒット御礼発表会」を開催 | キリンビバレッジ株式会社のプレスリリース</span></a><a href="https://prtimes.jp/topics/keywords/%E3%82%AD%E3%83%AA%E3%83%B3%E3%83%93%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8" target="_blank"><span class="src-title">キリンビバレッジに関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://prtimes.jp/main/html/rd/p/000001236.000073077.html" target="_blank"><span class="src-title">個人・組織のウェルビーイング推進をサポートする「WellWa」誕生！「KIRIN naturals」から「WellWa」へ事業名称を刷新し、アプリを開発 | キリンホールディングス株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000035.000117612.html" target="_blank"><span class="src-title">【全国の高齢者施設に約2万本の「おいしい免疫ケア」提供開始レポート】長期化する夏における健康課題への新たな取り組みを開始 | キリンビバレッジ株式会社のプレスリリース</span></a><a href="https://news.mynavi.jp/article/20250129-3118168" target="_blank"><span class="src-title">キリンビバレッジ、2025年事業方針発表 - ヘルスサイエンスの成長加速、「免疫ケア」幅広い年代にアプローチへ | マイナビニュース</span></a><a href="https://prtimes.jp/main/html/rd/p/000001535.000073077.html" target="_blank"><span class="src-title">キリンビバレッジ 一部商品の価格改定について - PR TIMES</span></a><a href="https://www.kirinholdings.com/jp/newsroom/release/2026" target="_blank"><span class="src-title">2026年 | ニュースリリース | ニュースルーム | KIRIN - キリンホールディングス株式会社</span></a><a href="https://prtimes.jp/main/html/rd/p/000001489.000073077.html" target="_blank"><span class="src-title">キリンホールディングスが「DX銘柄2026」に選定 | キリンホールディングス株式会社のプレスリリース</span></a><a href="https://www.kirinholdings.com/jp/innovation/dx" target="_blank"><span class="src-title">デジタルトランスフォーメーション - キリンホールディングス株式会社</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#f48fb1">
+    <span style="font-size:20px">📱</span>SNS・消費者の声
+  </div>
+  <div class="section-body"><p>キリンビバレッジ製品に対するSNSの声を分析すると、既存の主力ブランド、特に「午後の紅茶」や「生茶」に対する根強い愛着や長年のファンからの支持が強く見られます。また、「プラズマ乳酸菌」を活用した健康機能性飲料については、健康意識の高い層から効果への期待や日々の飲用習慣に関する言及が多く見られます。新商品やリニューアルに対しては、パッケージデザインや味の変化に対する好意的な意見と、一部で従来の味への惜しむ声が混在する傾向が見られます。価格への言及は一般的な消費者コメントとして常に存在します。季節限定品やユニークなフレーバーへの関心も高く、SNSは新商品情報の拡散や話題性創出に大きな役割を果たしています。</p><div class="voice-card"><div class="voice-text">「「午後の紅茶」や「生茶」の定番ブランドに対する長年のファンからの愛着と高い評価。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「「iMUSE」などのプラズマ乳酸菌入り製品に対して、健康効果への期待や実感の声。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「新商品のユニークなフレーバーや期間限定品に対する興味関心、試飲レポート。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「リニューアルされたパッケージデザインや飲みやすさへの好意的な意見。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「一部リニューアル製品において、以前の味を好む声や味の変化への戸惑いの声。」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><div class="voice-card"><div class="voice-text">「競合他社製品との比較で、価格や特定の機能性に対する優位性への疑問。」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><div class="voice-card"><div class="voice-text">「地域限定品や先行販売品に対し、購入機会の少なさや入手困難さを指摘する声。」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><p style='margin-top:14px;color:#81c784;font-weight:700'>💡 ビジネス機会</p><ul><li>DNPペルソナインサイトを活用し、SNS上の潜在的な不満やニーズを深掘りし、新商品開発や既存商品改善に活かす。</li><li>特定のターゲット層（例：若年層、ファミリー層）のライフスタイルや嗜好に関するインサイトを得て、より響くコミュニケーション戦略を策定する。</li><li>製品の飲用シーンや期待される効果に関する生活者の本音を言語化し、プロモーションコンテンツの企画に役立てる。</li></ul></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://note.com/tamanegitoonion/n/n7015027000ab" target="_blank"><span class="src-title">お茶（と水）しか飲まない私による計101本飲み比べ【総額 ... - note</span></a><a href="https://note.com/winekabuki/n/n53ec9afc4ee8" target="_blank"><span class="src-title">飲料業界の未来を拓く「生活者起点」の完全ガイド - note</span></a><a href="https://note.com/ratata_ratata/n/nf1bb2f8873c8" target="_blank"><span class="src-title">缶レモンサワー39種類飲み比べてみる｜Ratata aka ラッタッタ - note</span></a><a href="https://kakaku.com/drink" target="_blank"><span class="src-title">yi.comzhN | ʔ́EirEi</span></a><a href="https://s.kakaku.com/whatsnew/2024.html" target="_blank"><span class="src-title">i.com - 2024N VEm点ꗗ</span></a><a href="https://oneder.hakuhodody-one.co.jp/blog/line-case-study-kirinbeverage" target="_blank"><span class="src-title">異なるブランドの統合キャンペーンが実現！キリンビバレッジの ...</span></a><a href="https://www.instagram.com/p/DT_rMjdE5KR" target="_blank"><span class="src-title">Instagram</span></a><a href="https://www.zagzag.co.jp/campaign/20260501_kirinbeverage" target="_blank"><span class="src-title">ドリンクを買って当てよう！キリンビバレッジキャンペーン応募フォーム｜ザグザグ</span></a><a href="https://www.kirinholdings.com/jp/newsroom/release/2025" target="_blank"><span class="src-title">2025年 | ニュースリリース | KIRIN - キリンホールディングス株式会社</span></a><a href="https://www.kirin.co.jp/campaign" target="_blank"><span class="src-title">キャンペーン（ソフトドリンク、他）｜キリン</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#f48fb1">
+    <span style="font-size:20px">👤</span>面談相手・部署プロファイル
+  </div>
+  <div class="section-body"><p>面談相手が未定とのことですが、DNPペルソナインサイトの活用場面（新商品開発・パッケージ評価・ターゲット深層心理把握・デジタルマーケティング最適化）から、マーケティング本部、研究開発部門、あるいはDX推進部門の方の可能性が高いと推察します。特に、お客様の毎日に「おいしい健康」を届けるという貴社のビジョンや、無糖・健康領域、プラズマ乳酸菌製品に注力されていることから、消費者の深層心理や潜在ニーズを把握し、ヒット商品を生み出すことに高い関心をお持ちであると考えられます。効率的なリサーチ手法や、データに基づいた精度の高いインサイト抽出が求められているのではないでしょうか。</p><p style='margin-top:12px;font-weight:700;color:#7f8c9a'>関心事・KPI</p><ul><li>新商品開発における消費者の言葉にならない本音・インサイトの言語化。</li><li>ターゲット層の深層心理や購買行動に影響を与える要因の効率的な把握。</li><li>競合との差別化につながる新しい商品コンセプトや付加価値の創出。</li><li>パッケージデザインやプロモーション戦略の効果的な評価・改善。</li><li>デジタルマーケティングにおけるターゲット理解の深化と施策の最適化。</li></ul><p style='margin-top:12px;font-weight:700;color:#7f8c9a'>コミュニケーションのポイント</p><div class="icebreaker-item" style="border-left-color:#4fc3f7">具体的な事例や成功事例を交えながら、DNPペルソナインサイトが貴社の課題解決にどのように貢献できるかを明確に説明する。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">AIによるインサイト抽出の「精度」や「信頼性」に関する懸念に対し、DNP独自データと統計データを組み合わせたロジックを分かりやすく解説する。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">従来のアンケートやFGIでは得にくい「生活者の本音」を可視化する点を強調し、貴社が目指す「おいしい健康」価値創出との関連性を示す。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">導入後のサポート体制や活用イメージを具体的に提示し、貴社のマーケティング活動におけるROI向上への貢献を訴求する。</div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%AA%E3%83%B3%E3%83%93%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8" target="_blank"><span class="src-title">キリンビバレッジ - Wikipedia</span></a><a href="https://www.kirinholdings.com/jp/company/ourleadership" target="_blank"><span class="src-title">役員紹介 | キリングループについて - Kirin Holdings</span></a><a href="https://www.kirinholdings.com/jp/company/group/kirinbeverage" target="_blank"><span class="src-title">キリンビバレッジ株式会社 | グループ会社一覧 - Kirin Holdings</span></a><a href="https://kitaishihon.com/company/2503/board-of-director" target="_blank"><span class="src-title">キリンホールディングス【2503】の社長・役員 - キタイシホン</span></a><a href="https://s3-ap-northeast-1.amazonaws.com/kirinholdings-doc/jp/investors/files/pdf/kirinreport2023.pdf" target="_blank"><span class="src-title">[PDF] KIRIN INTEGRATED REPORT 2023［統合レポート］ - Amazon S3</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#a5d6a7">
+    <span style="font-size:20px">☕</span>アイスブレイク話題
+  </div>
+  <div class="section-body"><div class="icebreaker-item">💬 「先日発表された『キリン つよいぞ！ムテキッズ』、お子様向け製品としては初のプラズマ乳酸菌配合とのこと、御社のヘルスサイエンス戦略の広がりを感じました。特にターゲットであるお子様を持つ親御さんの反応はいかがでしょうか？」</div><div class="icebreaker-item">💬 「『午後の紅茶』発売40周年、おめでとうございます。5月にリニューアルされたストレートティー/ミルクティー/レモンティー、私も早速試しましたが、より洗練された印象を受けました。長年愛されるブランドの進化、社内でも大きな話題になったのではないでしょうか？」</div><div class="icebreaker-item">💬 「夏の到来が近づき、『世界のKitchenから ソルティライチソーダ』の発売も控えているとのこと。熱中症対策飲料市場の盛り上がりは感じられますが、今年の夏はどのような消費者のニーズに注目されていますか？」</div></div>
+  <details class="src"><summary>根拠を見る（13件）</summary><div class="src-list"><a href="https://prtimes.jp/main/html/rd/p/000000028.000117612.html" target="_blank"><span class="src-title">キリン初「プラズマ乳酸菌」入り子ども専用健康飲料「キリン つよいぞ！ムテキッズ」新商品発表会を開催！ | キリンビバレッジ株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000025.000117612.html" target="_blank"><span class="src-title">生茶ブランド18 年ぶりに売上本数を更新し3,000 万ケースに到達。鈴木亮平さん・出口夏希さんご登壇！「キリン 生茶 大ヒット御礼発表会」を開催 | キリンビバレッジ株式会社のプレスリリース</span></a><a href="https://prtimes.jp/topics/keywords/%E3%82%AD%E3%83%AA%E3%83%B3%E3%83%93%E3%83%90%E3%83%AC%E3%83%83%E3%82%B8" target="_blank"><span class="src-title">キリンビバレッジに関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://prtimes.jp/main/html/rd/p/000001236.000073077.html" target="_blank"><span class="src-title">個人・組織のウェルビーイング推進をサポートする「WellWa」誕生！「KIRIN naturals」から「WellWa」へ事業名称を刷新し、アプリを開発 | キリンホールディングス株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000035.000117612.html" target="_blank"><span class="src-title">【全国の高齢者施設に約2万本の「おいしい免疫ケア」提供開始レポート】長期化する夏における健康課題への新たな取り組みを開始 | キリンビバレッジ株式会社のプレスリリース</span></a><a href="https://news.mynavi.jp/article/20250129-3118168" target="_blank"><span class="src-title">キリンビバレッジ、2025年事業方針発表 - ヘルスサイエンスの成長加速、「免疫ケア」幅広い年代にアプローチへ | マイナビニュース</span></a><a href="https://prtimes.jp/main/html/rd/p/000001535.000073077.html" target="_blank"><span class="src-title">キリンビバレッジ 一部商品の価格改定について - PR TIMES</span></a><a href="https://www.kirinholdings.com/jp/newsroom/release/2026" target="_blank"><span class="src-title">2026年 | ニュースリリース | ニュースルーム | KIRIN - キリンホールディングス株式会社</span></a><a href="https://oneder.hakuhodody-one.co.jp/blog/line-case-study-kirinbeverage" target="_blank"><span class="src-title">異なるブランドの統合キャンペーンが実現！キリンビバレッジの ...</span></a><a href="https://www.instagram.com/p/DT_rMjdE5KR" target="_blank"><span class="src-title">Instagram</span></a><a href="https://www.zagzag.co.jp/campaign/20260501_kirinbeverage" target="_blank"><span class="src-title">ドリンクを買って当てよう！キリンビバレッジキャンペーン応募フォーム｜ザグザグ</span></a><a href="https://www.kirinholdings.com/jp/newsroom/release/2025" target="_blank"><span class="src-title">2025年 | ニュースリリース | KIRIN - キリンホールディングス株式会社</span></a><a href="https://www.kirin.co.jp/campaign" target="_blank"><span class="src-title">キャンペーン（ソフトドリンク、他）｜キリン</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffb74d">
+    <span style="font-size:20px">❓</span>想定Q&A・切り返し
+  </div>
+  <div class="section-body"><div class="qa-item"><div class="qa-q">Q: AIによるペルソナ生成や対話の精度はどの程度信頼できるのでしょうか？従来の定性・定量調査と比較して、どのような強みがありますか？</div><div class="qa-a">A: DNPペルソナインサイトは、日本の膨大な統計データとDNPが長年培ってきた独自データをAIが学習しており、高い精度で仮想生活者のインサイトを言語化します。従来の調査では生活者が「言葉にできない本音」を引き出すことが難しい点がありましたが、本サービスではAIとの対話形式を通じて、潜在的なニーズや感情の動きを深掘りできる点が最大の強みです。短期間で多様なペルソナを生成し、多角的な視点からインサイトを得られるため、よりスピーディーかつ効率的な意思決定に貢献します。</div></div><div class="qa-item"><div class="qa-q">Q: このサービスを導入することで、具体的にどのようなコストメリットやROIが期待できますか？</div><div class="qa-a">A: DNPペルソナインサイトは、従来の定性調査（FGIなど）と比較して時間とコストを大幅に削減できる可能性があります。例えば、新商品コンセプトの初期段階で複数案を素早くペルソナ評価することで、開発プロセスの手戻りを減らし、市場投入までの期間短縮に貢献します。また、生活者の深層心理を正確に把握することで、より響くマーケティング施策の立案が可能となり、広告費用の最適化や売上向上への寄与が期待できます。具体的な試算例や他社事例も後ほどご紹介させていただければと存じます。</div></div><div class="qa-item"><div class="qa-q">Q: 貴社のサービスは、弊社の新商品開発プロセスや既存マーケティング戦略にどのように組み込めるのでしょうか？具体的な導入イメージを教えてください。</div><div class="qa-a">A: DNPペルソナインサイトは、新商品コンセプトの探索からパッケージ評価、ターゲット層の深掘り、デジタルマーケティングのクリエイティブ開発まで、貴社の多様なマーケティングプロセスに柔軟に組み込むことが可能です。例えば、企画初期段階でAIペルソナにアイデアを投げかけ、初期のフィードバックを得ることで開発方向性を迅速に修正したり、複数のパッケージ案をAIペルソナに評価させ、生活者の受容性を確認したりすることができます。貴社の現在のワークフローに合わせて、最適な活用方法を一緒に検討させていただければ幸いです。</div></div></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://www.gef.or.jp/wp-content/uploads/2019/07/190719kirinholdings_rev.pdf" target="_blank"><span class="src-title">[PDF] キリングループにおける 期的な気候変動戦略と TCFD</span></a><a href="https://s3-ap-northeast-1.amazonaws.com/kirinholdings-doc/jp/investors/files/pdf/kirinreport2023.pdf" target="_blank"><span class="src-title">[PDF] KIRIN INTEGRATED REPORT 2023［統合レポート］ - Amazon S3</span></a><a href="https://pdf.irpocket.com/C2503/ZoWa/DLV1/TCeD.pdf" target="_blank"><span class="src-title">[PDF] 2024年キリンビバレッジ事業方針発表会</span></a><a href="https://pdf.irpocket.com/C2503/CzAL/jTsD/yEw8.pdf" target="_blank"><span class="src-title">[PDF] キリンビバレッジ CSVを基軸とした成長戦略</span></a><a href="https://hacobu.jp/blog/archives/1958" target="_blank"><span class="src-title">2024年問題〜運べなくなるリスクを真剣に考えているか - Hacobu</span></a><a href="https://www.kirinholdings.com/jp/investors/files/pdf/factbook_2026.pdf" target="_blank"><span class="src-title">[PDF] Kirin Group</span></a><a href="https://note.com/strategies/n/n7edbd312a75e" target="_blank"><span class="src-title">【キリンホールディングス戦略分析②】食品・飲料業界の競争環境を3C分析で解説｜戦略分析ラボ</span></a><a href="https://deallab.info/food-beverage" target="_blank"><span class="src-title">食品飲料業界の市場シェア - deallab</span></a><a href="https://www.choosenic.com/yuho-shukatsu-navi/articles/compare/beverage-comparison" target="_blank"><span class="src-title">飲料3社を有報で比較｜サントリー・キリン・アサヒの戦略の違い</span></a><a href="https://www.choosenic.com/yuho-shukatsu-navi/articles/compare/beverage-4companies-comparison" target="_blank"><span class="src-title">飲料4社を有報で比較｜アサヒ・キリン・サントリー・サッポロの ...</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#81c784">
+    <span style="font-size:20px">✅</span>訪問前チェックリスト
+  </div>
+  <div class="section-body"><ul class="checklist"><li>DNPペルソナインサイトのデモ環境準備（具体的なキリンビバレッジ製品を例にしたデモシナリオ）</li><li>同業他社（飲料メーカー）での活用事例資料の確認・準備</li><li>今回の提案が貴社の「おいしい健康」ビジョンや「無糖・健康領域」戦略にどう貢献するかを明確に伝える準備</li><li>面談相手がマーケティング、開発、DXなど、どの部門の方でも対応できるよう、柔軟な説明構成の準備</li><li>持参資料：DNPペルソナインサイト概要資料、活用事例集、導入後のサポート体制に関する資料</li></ul></div>
+  
+</div>
+  <div class="footer">DNPペルソナインサイト 商談前リサーチレポート｜自動生成　※情報は公開情報をもとにAIが分析したものです</div>
+</div>
+</body>
+</html>
