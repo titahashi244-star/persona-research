@@ -91,6 +91,25 @@
   .service-select { width: 100%; background: #0a0a0f; border: 2px solid #e94560; border-radius: 8px; padding: 12px 16px; color: #e0e0e0; font-size: 14px; font-weight: 600; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23e94560' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; }
   .service-select:focus { outline: none; }
   .service-select option { background: #1a1a2e; }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .header { padding: 20px 16px; }
+    .header h1 { font-size: 20px; }
+    .header p { font-size: 12px; }
+    .container { padding: 20px 12px; }
+    .form-card { padding: 20px 16px; border-radius: 10px; margin-bottom: 24px; }
+    .btn { font-size: 14px; padding: 14px; }
+    .report-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .report-item > div:last-child { display: flex; gap: 8px; width: 100%; }
+    .report-link { flex: 1; text-align: center; background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 6px; padding: 8px 0; }
+    .success.visible { flex-direction: column; align-items: flex-start; }
+    .view-btn { width: 100%; text-align: center; padding: 12px; }
+    .lookup-actions { flex-direction: column; }
+    .lookup-cancel { text-align: center; }
+    input, textarea { font-size: 16px; } /* iOSのズーム防止 */
+    .service-select { font-size: 16px; }
+  }
 </style>
 </head>
 <body>
