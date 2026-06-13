@@ -15,6 +15,31 @@ export default {
       return corsResponse(JSON.stringify({ error: "パスワードが違います" }), 401);
     }
 
+    // URLから会社名抽出
+    if (action === "extract_company") {
+      const { url } = body;
+      try {
+        const r = await fetch("https://api.tavily.com/extract", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ api_key: env.TAVILY_API_KEY, urls: [url] }),
+        });
+        const data = await r.json();
+        const result = (data.results || [])[0];
+        if (!result) return corsResponse(JSON.stringify({ error: "ページを取得できませんでした" }), 404);
+        const title = result.title || "";
+        // タイトルからパイプ・ダッシュ前の部分を会社名として抽出
+        const companyName = title.split(/[|\-–—｜]/)[0].trim();
+        return corsResponse(JSON.stringify({
+          company_name: companyName,
+          title,
+          snippet: (result.raw_content || "").slice(0, 300),
+        }));
+      } catch (e) {
+        return corsResponse(JSON.stringify({ error: e.message }), 500);
+      }
+    }
+
     // 会社確認検索
     if (action === "lookup") {
       const { company_name } = body;
