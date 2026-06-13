@@ -80,7 +80,7 @@ def search_all(tavily: TavilyClient, company_name: str, person_name: str, depart
 
 def analyze_with_gemini(company_name: str, person_name: str, department: str, research: dict) -> dict:
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.0-flash")
 
     prompt = f"""
 あなたはB2B営業コンサルタントです。以下のリサーチデータを分析して、DNPペルソナインサイトの商談前レポートをJSON形式で生成してください。
