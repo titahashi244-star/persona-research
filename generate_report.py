@@ -235,7 +235,8 @@ def search_all(tavily: TavilyClient, company_name: str, person_name: str, depart
         ("person",              f"{company_name} {person_name} {department} 経歴 インタビュー" if person_name else f"{company_name} {department} 責任者 インタビュー", {}, False),
         ("person_solo",         f"{person_name} インタビュー 講演 登壇 発言 著書 受賞 考え方 ビジョン" if person_name else "", {}, False),
         ("person_sns",          f"{person_name} {company_name} SNS X Twitter 発言 投稿" if person_name else "", {}, False),
-        ("initiatives",         f"{company_name} DX マーケティング 取り組み 2025 OR 2026",    FRESH,                                           True),
+        ("initiatives",         f"{company_name} DX デジタル化 マーケティング 取り組み 2025 OR 2026", FRESH,                                     True),
+        ("research_activity",   f"{company_name} 顧客調査 マーケティングリサーチ データ活用 消費者調査 2025 OR 2026", FRESH,                       True),
         ("issues",              f"{company_name} 課題 リスク 懸念 弱点",                      {},                                              False),
     ]
 
@@ -392,6 +393,12 @@ def analyze_with_gemini(company_name: str, person_name: str, department: str, re
       {{"text": "ニュース2", "confidence": "高/中/低"}},
       {{"text": "ニュース3", "confidence": "高/中/低"}},
       {{"text": "ニュース4", "confidence": "高/中/低"}}
+    ],
+    "dx_initiatives": [
+      {{"text": "DX・デジタル化に関する取り組み（具体的に。なければ空配列）", "confidence": "高/中/低"}}
+    ],
+    "research_initiatives": [
+      {{"text": "顧客調査・マーケティングリサーチ・データ活用に関する取り組み（具体的に。なければ空配列）", "confidence": "高/中/低"}}
     ]
   }},
   "sns_voice": {{
@@ -593,6 +600,7 @@ def build_sources_html(research: dict) -> str:
         "person": "面談相手・部署",
         "person_sns": "面談相手SNS・発言",
         "initiatives": "DX・マーケティング取り組み",
+        "research_activity": "顧客調査・データ活用",
         "issues": "課題・リスク",
     }
     seen_urls = set()
@@ -684,9 +692,16 @@ def build_html(company_name: str, person_name: str, department: str, data: dict,
 
     # 6. 最新ニュース
     n = data.get("latest_news", {})
+    dx_items = n.get("dx_initiatives", [])
+    rs_items = n.get("research_initiatives", [])
+    extra_html = ""
+    if dx_items:
+        extra_html += f"<p style='margin-top:14px;font-weight:700;color:#4fc3f7'>💻 DX・デジタル化の取り組み</p>{bullets(dx_items)}"
+    if rs_items:
+        extra_html += f"<p style='margin-top:14px;font-weight:700;color:#80cbc4'>📊 顧客調査・データ活用の取り組み</p>{bullets(rs_items)}"
     sections.append(render_section("🆕", "最新ニュース・新商品・取り組み", "#ffcc02",
-        f"<p>{n.get('summary','')}</p>{bullets(n.get('items',[]))}",
-        src("news", "initiatives")))
+        f"<p>{n.get('summary','')}</p>{bullets(n.get('items',[]))}{extra_html}",
+        src("news", "initiatives", "research_activity")))
 
     # 7. SNS・消費者の声
     sns = data.get("sns_voice", {})
