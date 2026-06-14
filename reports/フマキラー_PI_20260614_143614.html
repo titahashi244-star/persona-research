@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>フマキラー 商談前リサーチレポート</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Helvetica Neue',Arial,sans-serif; background:#0a0a0f; color:#e0e0e0; min-height:100vh; }
+
+  .header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); padding:32px 40px; border-bottom:1px solid #2a2a4a; }
+  .header-top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; }
+  .badge { background:#e94560; color:white; font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; letter-spacing:1px; }
+  .meta { color:#4a5568; font-size:12px; }
+  .company-name { font-size:32px; font-weight:800; color:#fff; margin:12px 0 4px; }
+  .person-info { color:#7f8c9a; font-size:15px; }
+
+  .container { max-width:1000px; margin:0 auto; padding:32px 24px; }
+
+  .back-link { display:inline-block; margin-bottom:24px; color:#e94560; text-decoration:none; font-size:14px; }
+  .back-link:hover { text-decoration:underline; }
+
+  /* Quick Stats */
+  .quick-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px; }
+  .stat-box { background:#12121f; border:1px solid #2a2a4a; border-radius:10px; padding:16px; text-align:center; }
+  .stat-value { font-size:20px; font-weight:800; color:#e94560; }
+  .stat-label { font-size:11px; color:#7f8c9a; margin-top:4px; }
+
+  /* Sections */
+  .section { background:#12121f; border:1px solid #2a2a4a; border-radius:12px; padding:28px; margin-bottom:16px; }
+  .section-title { font-size:16px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+  .section-body { color:#b0bec5; font-size:14px; line-height:1.9; }
+  .section-body p { margin-bottom:10px; }
+  .section-body ul { padding-left:20px; }
+  .section-body li { margin-bottom:6px; }
+
+  /* Highlight box */
+  .highlight { background:#1e1e35; border-left:3px solid #e94560; padding:14px 18px; border-radius:0 8px 8px 0; margin:14px 0; }
+  .highlight p { color:#e0e0e0; margin:0; }
+
+  /* SNS voice */
+  .voice-card { background:#1a1a2e; border:1px solid #2a2a4a; border-radius:8px; padding:14px 16px; margin:8px 0; }
+  .voice-card .voice-text { color:#d0d0d0; font-size:13px; line-height:1.7; font-style:italic; }
+  .voice-card .voice-meta { color:#4a5568; font-size:11px; margin-top:6px; }
+
+  /* Competitor table */
+  .comp-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+  .comp-table th { background:#1e1e35; color:#7f8c9a; padding:10px 12px; text-align:left; font-weight:600; border-bottom:1px solid #2a2a4a; }
+  .comp-table td { padding:10px 12px; border-bottom:1px solid #1a1a2e; color:#b0bec5; }
+  .comp-table tr:last-child td { border-bottom:none; }
+  .comp-table .target { color:#4fc3f7; font-weight:700; }
+
+  /* Checklist */
+  .checklist li { list-style:none; padding-left:0; margin-bottom:8px; display:flex; align-items:flex-start; gap:8px; }
+  .checklist li::before { content:"☐"; color:#e94560; font-size:16px; flex-shrink:0; margin-top:-1px; }
+
+  /* QA */
+  .qa-item { background:#1a1a2e; border-radius:8px; padding:14px 16px; margin:8px 0; }
+  .qa-q { color:#ffb74d; font-weight:700; font-size:13px; margin-bottom:6px; }
+  .qa-a { color:#b0bec5; font-size:13px; line-height:1.7; }
+
+  /* Icebreaker */
+  .icebreaker-item { background:#1a1a2e; border-left:3px solid #81c784; border-radius:0 8px 8px 0; padding:12px 16px; margin:8px 0; font-size:13px; color:#d0d0d0; }
+
+  /* Tags */
+  .tag { display:inline-block; background:#1e1e35; border:1px solid #3a3a5a; color:#9b9bbc; font-size:11px; padding:3px 10px; border-radius:20px; margin:3px; }
+
+  /* Confidence badges */
+  .conf { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; }
+  .conf-高 { background:#1b3a2a; color:#81c784; border:1px solid #2e6b45; }
+  .conf-中 { background:#3a2e10; color:#ffb74d; border:1px solid #7a5c10; }
+  .conf-低 { background:#3a1010; color:#e57373; border:1px solid #7a2020; }
+  .conf-低-wrap { background:#2b1010; border-left:3px solid #e57373; border-radius:0 6px 6px 0; padding:8px 12px; margin:4px 0; }
+
+  /* Source drawer */
+  details.src { margin-top:14px; }
+  details.src summary { font-size:11px; color:#3a3a6a; cursor:pointer; user-select:none; list-style:none; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #2a2a4a; border-radius:20px; }
+  details.src summary::-webkit-details-marker { display:none; }
+  details.src summary::before { content:"📎"; }
+  details.src[open] summary { color:#7f8c9a; border-color:#3a3a6a; }
+  details.src .src-list { margin-top:10px; padding:10px 14px; background:#0a0a0f; border-radius:8px; border:1px solid #1a1a2e; }
+  details.src .src-list a { display:block; color:#4fc3f7; font-size:11px; text-decoration:none; padding:4px 0; border-bottom:1px solid #1a1a2e; word-break:break-all; }
+  details.src .src-list a:last-child { border-bottom:none; }
+  details.src .src-list a:hover { text-decoration:underline; }
+  details.src .src-title { font-size:10px; color:#4a5568; margin-bottom:2px; }
+
+  /* Key message */
+  .key-message { background:linear-gradient(135deg,#1e0a15,#2a1020); border:1px solid #e94560; border-radius:10px; padding:20px 24px; margin-top:16px; }
+  .key-message-label { color:#e94560; font-size:11px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+  .key-message-text { color:#fff; font-size:15px; font-weight:700; line-height:1.6; }
+
+  .footer { text-align:center; padding:24px; color:#3a3a5a; font-size:12px; border-top:1px solid #1a1a2e; margin-top:16px; }
+
+  @media print {
+    body { background:#fff; color:#000; }
+    .header { background:#1a1a2e !important; -webkit-print-color-adjust:exact; }
+    .section { border:1px solid #ddd; page-break-inside:avoid; }
+  }
+  /* Visual Summary */
+  .vsummary { background:linear-gradient(135deg,#12121f 0%,#1a1a2e 100%); border:1px solid #2a2a4a; border-radius:14px; padding:24px 28px; margin-bottom:20px; }
+  .vsummary-metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:#2a2a4a; border-radius:10px; overflow:hidden; margin-bottom:16px; }
+  .vsummary-metric { background:#12121f; padding:14px 18px; }
+  .vsummary-metric-label { font-size:10px; color:#4a5568; font-weight:700; letter-spacing:0.5px; margin-bottom:5px; text-transform:uppercase; }
+  .vsummary-metric-value { font-size:14px; font-weight:700; color:#e0e0e0; line-height:1.4; }
+  .vsummary-location { background:#0d0d1a; border:1px solid #1e1e3a; border-radius:8px; padding:12px 16px; display:flex; gap:20px; flex-wrap:wrap; margin-bottom:14px; }
+  .vsummary-location-item { font-size:12px; color:#7f8c9a; }
+  .vsummary-location-item strong { color:#b0bec5; margin-right:6px; }
+  .quick-links { display:flex; flex-wrap:wrap; gap:8px; }
+  .quick-link { display:inline-flex; align-items:center; gap:6px; background:#0a0a0f; border:1px solid #2a2a4a; border-radius:20px; padding:6px 14px; color:#4fc3f7; font-size:12px; text-decoration:none; transition:border-color 0.2s; }
+  .quick-link:hover { border-color:#4fc3f7; }
+
+  @media(max-width:600px) {
+    .header { padding:24px; }
+    .quick-stats { grid-template-columns:1fr 1fr; }
+    .signal-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <span class="badge" style="background:#e94560">DNPペルソナインサイト</span>
+    <span class="meta">生成日時: 2026年06月14日 14:36　　🖨️ <a href="javascript:window.print()" style="color:#4a5568;text-decoration:none;">印刷</a></span>
+  </div>
+  <div class="company-name">フマキラー</div>
+  <div class="person-info">👤 担当者未定</div>
+</div>
+<div class="container">
+  <a href="../index.html" class="back-link">← レポート一覧に戻る</a>
+  
+<div class="vsummary">
+  <div style="text-align:right;font-size:11px;color:#4a5568;margin-bottom:10px">基本情報の信頼度: <span class="conf conf-高">高</span></div>
+  <div class="vsummary-metrics"><div class="vsummary-metric"><div class="vsummary-metric-label">INDUSTRY</div><div class="vsummary-metric-value">化学、日用品製造（殺虫剤、家庭用品、園芸用品、防疫剤）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">REVENUE</div><div class="vsummary-metric-value">連結 773億6,600万円（2026年3月期）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">POSITION</div><div class="vsummary-metric-value">日本の殺虫剤・家庭用品業界大手の一角（詳細はデータにないため高レベルの特定は不可）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">EMPLOYEES</div><div class="vsummary-metric-value">連結 2,498名（2025年3月現在）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">FOUNDED</div><div class="vsummary-metric-value">1874年（明治7年）</div></div></div>
+  <div class="vsummary-location"><span class="vsummary-location-item"><strong>🏢 本社</strong>東京都千代田区神田美倉町11番地</span><span class="vsummary-location-item"><strong>📍 拠点</strong>広島工場、首都圏、中部、関西、中四国、九州支店、北日本営業所</span></div>
+  <div class="quick-links"><a class="quick-link" href="https://job.mynavi.jp/28/pc/search/corp52819/outline.html" target="_blank">🔗 公式HP｜フマキラー(株)【東証スタンダード上場】の会社概要 | マイ</a><a class="quick-link" href="https://prtimes.jp/main/html/rd/p/000000002.000144208.html" target="_blank">🔗 プレスリリース｜フマキラーが外で頑張る子どもを応援するプロジェクト「PLAY</a><a class="quick-link" href="https://finance-frontend-pc-dist.west.edge.storage-yahoo.jp/disclosure/20250625/20250625599296.pdf" target="_blank">🔗 IR・投資家情報｜[PDF] フマキラー株式会社</a></div>
+</div>
+  
+<div class="section">
+  <div class="section-title" style="color:#4fc3f7">
+    <span style="font-size:20px">🏢</span>企業概要
+  </div>
+  <div class="section-body"><p>フマキラー株式会社は、1874年の創業以来150年以上の歴史を持つ大手日用品メーカーです。「ベープ」シリーズなどの殺虫剤で広く知られ、家庭用品、園芸用品、防疫剤の製造販売および輸出入を手掛けています。2026年3月期には連結売上高773億6,600万円を達成し、特に海外売上高が全体の65.6%を占めるなど、グローバル展開を加速しています。経営理念として「ひとの命を守る　ひとの暮らしを守る　ひとを育む環境を守る」を掲げ、生活者の安全と快適な暮らしに貢献しています。</p><ul><li>創業150年を超える歴史と技術力</li><li>2026年3月期連結売上高773億6,600万円を達成し増収</li><li>海外売上高が507億3,300万円（連結売上高の65.6%）と成長を牽引</li><li>殺虫剤、家庭用品、園芸用品、防疫剤と幅広い事業領域</li><li>「PLAY ACTIVE!」や「つくっ手たべ手プロジェクト」など社会貢献活動にも注力</li></ul></div>
+  <details class="src"><summary>根拠を見る（14件）</summary><div class="src-list"><a href="https://job.mynavi.jp/28/pc/search/corp52819/outline.html" target="_blank"><span class="src-title">フマキラー(株)【東証スタンダード上場】の会社概要 | マイナビ2028</span></a><a href="https://job.mynavi.jp/27/pc/search/corp52819/outline.html" target="_blank"><span class="src-title">フマキラー(株)【東証スタンダード上場】の新卒採用・会社概要 | マイナビ2027</span></a><a href="https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%9E%E3%82%AD%E3%83%A9%E3%83%BC" target="_blank"><span class="src-title">フマキラー - Wikipedia</span></a><a href="https://baseconnect.in/companies/a06b2e0e-23ca-4ccc-94e8-5db7d3d0d007" target="_blank"><span class="src-title">フマキラー株式会社（東京都千代田区 / 東証スタンダード）</span></a><a href="https://www.pref.hiroshima.lg.jp/go-hiroshima-database-kigyo/go-hiroshima-datebase-kigyo/go-data-00742.html" target="_blank"><span class="src-title">フマキラー株式会社 - Go!ひろしま - 広島県</span></a><a href="https://www.fumakilla.co.jp/corporate/2026/05/20260514_kessan.pdf" target="_blank"><span class="src-title">[PDF] 2026年3月期 決算短信〔日本基準〕（連結） - フマキラー</span></a><a href="https://finance.matsui.co.jp/stock/4998/settlement/index" target="_blank"><span class="src-title">フマキラー(4998) 東証スタンダード 決算 | マーケット情報 | 松井証券</span></a><a href="https://finance.yahoo.co.jp/quote/4998.T/financials" target="_blank"><span class="src-title">フマキラー(株)【4998】：決算情報 - Yahoo!ファイナンス</span></a><a href="https://www.fumakilla.co.jp/corporate/2025/11/kessan_20251110.pdf" target="_blank"><span class="src-title">[PDF] 2026年3月期 第2四半期（中間期）決算短信〔日本基準〕（連結）</span></a><a href="https://www.fumakilla.co.jp/corporate/2025/12/77_kessansetsumeikai_20251205.pdf" target="_blank"><span class="src-title">[PDF] 2026年3  期 第2四半期 決算説明資料 - フマキラー株式会社</span></a><a href="https://finance-frontend-pc-dist.west.edge.storage-yahoo.jp/disclosure/20250625/20250625599296.pdf" target="_blank"><span class="src-title">[PDF] フマキラー株式会社</span></a><a href="https://ir-compass.com/docs/business-plan" target="_blank"><span class="src-title">中期経営計画の資料一覧 | IRコンパス | IR資料に特化した事例まとめサイト</span></a><a href="https://ir-compass.com/docs/%E4%B8%AD%E6%9C%9F%E7%B5%8C%E5%96%B6%E8%A8%88%E7%94%BB%E6%8C%AF%E3%82%8A%E8%BF%94%E3%82%8A" target="_blank"><span class="src-title">中期経営計画振り返りの資料一覧 | IRコンパス | IR資料に特化した事例まとめサイト</span></a><a href="https://www.nisshin.com/company/management_plan" target="_blank"><span class="src-title">中期経営計画２０２６ | グループについて | 日清製粉グループ</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#81c784">
+    <span style="font-size:20px">📈</span>財務・業績
+  </div>
+  <div class="section-body"><p>フマキラー株式会社の2026年3月期連結業績は、売上高が773億6,600万円（前年同期比4.8%増）と増収を達成しましたが、営業利益は21億9,000万円（同17.2%減）と減益となりました。これは海外売上高が507億3,300万円と好調に推移した一方で、国内売上高が266億3,300万円と減少したことが影響しています。次期2027年3月期は、売上高848億円、営業利益29億5,000万円と増収増益を見込んでおり、特に海外市場での成長をさらに加速させる方針です。販管費は、海外での積極的な広告投資や人件費の増加が要因で、増加傾向にあります。</p><ul><li>2026年3月期連結売上高：773億6,600万円（前年同期比4.8%増）<span class="conf conf-高">高</span></li><li>2026年3月期連結営業利益：21億9,000万円（前年同期比17.2%減）<span class="conf conf-高">高</span></li><li>海外売上高が507億3,300万円（前年同期比9.8%増）と好調で、連結売上高の65.6%を占める<span class="conf conf-高">高</span></li><li>国内売上高は266億3,300万円（前年同期比3.6%減）と減少傾向<span class="conf conf-高">高</span></li><li>2027年3月期は売上高848億円、営業利益29億5,000万円と増収増益を見込む<span class="conf conf-高">高</span></li></ul><div class="highlight"><p>⚠️ 課題・懸念点：</p><ul><li>国内市場における売上高の減少傾向</li><li>増収であるものの営業利益・経常利益・純利益が減益となった収益性の課題</li></ul></div></div>
+  <details class="src"><summary>根拠を見る（9件）</summary><div class="src-list"><a href="https://www.fumakilla.co.jp/corporate/2026/05/20260514_kessan.pdf" target="_blank"><span class="src-title">[PDF] 2026年3月期 決算短信〔日本基準〕（連結） - フマキラー</span></a><a href="https://finance.matsui.co.jp/stock/4998/settlement/index" target="_blank"><span class="src-title">フマキラー(4998) 東証スタンダード 決算 | マーケット情報 | 松井証券</span></a><a href="https://finance.yahoo.co.jp/quote/4998.T/financials" target="_blank"><span class="src-title">フマキラー(株)【4998】：決算情報 - Yahoo!ファイナンス</span></a><a href="https://www.fumakilla.co.jp/corporate/2025/11/kessan_20251110.pdf" target="_blank"><span class="src-title">[PDF] 2026年3月期 第2四半期（中間期）決算短信〔日本基準〕（連結）</span></a><a href="https://www.fumakilla.co.jp/corporate/2025/12/77_kessansetsumeikai_20251205.pdf" target="_blank"><span class="src-title">[PDF] 2026年3  期 第2四半期 決算説明資料 - フマキラー株式会社</span></a><a href="https://finance-frontend-pc-dist.west.edge.storage-yahoo.jp/disclosure/20250625/20250625599296.pdf" target="_blank"><span class="src-title">[PDF] フマキラー株式会社</span></a><a href="https://ir-compass.com/docs/business-plan" target="_blank"><span class="src-title">中期経営計画の資料一覧 | IRコンパス | IR資料に特化した事例まとめサイト</span></a><a href="https://ir-compass.com/docs/%E4%B8%AD%E6%9C%9F%E7%B5%8C%E5%96%B6%E8%A8%88%E7%94%BB%E6%8C%AF%E3%82%8A%E8%BF%94%E3%82%8A" target="_blank"><span class="src-title">中期経営計画振り返りの資料一覧 | IRコンパス | IR資料に特化した事例まとめサイト</span></a><a href="https://www.nisshin.com/company/management_plan" target="_blank"><span class="src-title">中期経営計画２０２６ | グループについて | 日清製粉グループ</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffb74d">
+    <span style="font-size:20px">🌊</span>業界トレンド・市場動向
+  </div>
+  <div class="section-body"><p>フマキラーが事業を展開する殺虫剤・家庭用品市場は、季節要因や天候に大きく左右される特性があります。2026年3月期第2四半期の決算説明資料によれば、国内の殺虫剤市場全体は微増傾向で推移しています。除菌剤市場は、過去のパンデミックによる急拡大の反動で一旦落ち着きましたが、その後も手軽な除菌・ウイルス対策商品への需要は根強く、一定規模を維持しています。また、近年高まるアウトドア・レジャー需要は、虫よけ・殺虫剤製品にとって新たな成長機会となっています。</p><ul><li>気候変動や異常気象による害虫発生傾向の変化</li><li>健康意識の高まりによる除菌・ウイルス対策製品への継続的ニーズ</li><li>アウトドア・キャンプ人気の高まりによるレジャー向け虫よけ製品需要の増加</li><li>消費者からの安全性・環境配慮への要求の高まり</li></ul><div class="highlight"><p>市場規模：国内殺虫剤市場：2026年予測で901億円規模（当社推定）、国内除菌剤市場：2026年予測で153億円規模（当社推定）<span class="conf conf-高">高</span></p></div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="http://www.irwebcasting.com/20170529/2/b780f9c615/media/20170529_fumakilla_ja_dl_01.pdf" target="_blank"><span class="src-title">[PDF] フマキラー株式会社 - IR Webcasting</span></a><a href="https://www.fumakilla.co.jp/corporate/2025/06/20250605_76_kessansetsumeikai.pdf" target="_blank"><span class="src-title">[PDF] 2025年3月期決算説明資料 - フマキラー株式会社</span></a><a href="https://strainer.jp/notes/3350" target="_blank"><span class="src-title">害虫が蔓延する1920年の日本で創業！国内シェアは３位だが東南アジアで業績を伸ばす「フマキラー」 | ストレイナー</span></a><a href="https://www.hpc-news.co.jp/media/feature/a1678" target="_blank"><span class="src-title">【虫ケア用品・殺虫剤市場】各社新商品発表、「高単価化」更に推進｜業界ニュース</span></a><a href="https://www.quwechan.com/entry/2018/09/21/225212" target="_blank"><span class="src-title">殺虫剤メーカについて調べてみた　アース製薬 事業内容と業績推移 - プログラミングと株式投資のブログ</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ce93d8">
+    <span style="font-size:20px">⚔️</span>競合分析
+  </div>
+  <div class="section-body"><p>フマキラーは、日本の殺虫剤・家庭用品市場において、アース製薬やKINCHO（大日本除虫菊）といった大手企業と競合しています。各社とも長年の歴史と強力なブランド力を持ち、幅広い製品ラインナップで市場を分け合っています。フマキラーは特に技術開発力と海外展開力に強みを持つ一方、国内市場での競争激化とシェア維持が課題となっています。</p><table class="comp-table">
+<tr><th>企業名</th><th>シェア</th><th>強み</th><th>弱み</th></tr>
+<tr><td class="target">フマキラー<span class="conf conf-中">中</span></td><td>不明</td><td style='color:#81c784'>「ベープ」など強力なブランド製品、独自の技術開発力、積極的な海外展開</td><td style='color:#e57373'>国内市場の売上減少傾向、利益率改善の必要性</td></tr><tr><td>アース製薬<span class="conf conf-低">低</span></td><td>不明</td><td style='color:#81c784'>強力なブランド力と幅広い製品ラインナップ、高い市場シェア</td><td style='color:#e57373'>詳細データなし</td></tr><tr><td>大日本除虫菊（KINCHO）<span class="conf conf-低">低</span></td><td>不明</td><td style='color:#81c784'>「金鳥の渦巻」など伝統的なブランド、高い知名度と信頼性</td><td style='color:#e57373'>詳細データなし</td></tr></table></div>
+  <details class="src"><summary>根拠を見る（9件）</summary><div class="src-list"><a href="https://www.fumakilla.co.jp/corporate/2025/06/20250605_76_kessansetsumeikai.pdf" target="_blank"><span class="src-title">[PDF] 2025年3月期決算説明資料 - フマキラー株式会社</span></a><a href="https://www.syogyo.jp/matome/2025/05/post_041152" target="_blank"><span class="src-title">フマキラーのライバル企業・競合メーカーは？ 特徴や強みも解説！ - 化粧品業界人必読！週刊粧業オンライン</span></a><a href="https://www.fumakilla.co.jp/corporate/2023/12/75_kessansetsumeikai_2.pdf" target="_blank"><span class="src-title">[PDF] 2024年3月期第2四半期 決算説明資料 - フマキラー株式会社</span></a><a href="https://strainer.jp/notes/3350" target="_blank"><span class="src-title">害虫が蔓延する1920年の日本で創業！国内シェアは3位だが ...</span></a><a href="https://gyokai-search.com/3-insecticide.html" target="_blank"><span class="src-title">殺虫剤業界の動向やランキング、シェアなどを分析</span></a><a href="http://www.irwebcasting.com/20150602/2/c664615c8c/media/20150602_fumakilla_ja_dl_edit01.pdf" target="_blank"><span class="src-title">[PDF] フマキラー株式会社 - IR Webcasting</span></a><a href="https://gekiryu-online.jp/2026/03/231153" target="_blank"><span class="src-title">商品戦略／フマキラー／〝ホームディフェンス商品〟を拡充し通年対策を定着化 - 激流オンライン | 流通業界の国内・海外ニュース</span></a><a href="https://kitaishihon.com/company/4998/business" target="_blank"><span class="src-title">フマキラー【4998】の事業内容 - キタイシホン</span></a><a href="https://www.fumakilla.co.jp" target="_blank"><span class="src-title">日用品質～フマキラー株式会社</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#80cbc4">
+    <span style="font-size:20px">📦</span>主力製品・カテゴリ別ポジション
+  </div>
+  <div class="section-body"><p>フマキラーは、殺虫剤を中心に家庭用品、園芸用品、防疫剤と多岐にわたる製品を展開しています。特に「ベープ」シリーズは携帯型虫よけの代表的なブランドとして高い認知度を誇ります。近年では、アウトドア・レジャー需要に対応するためLOGOSとのコラボ製品を新発売するなど、市場の変化に合わせた商品開発にも力を入れています。また、花粉・ウイルス対策の「アレルシャット」シリーズなど、衛生関連製品も主力です。</p><div class="voice-card"><strong style="color:#4fc3f7">殺虫剤・虫よけ</strong>　ベープシリーズ、どこでもベープNo.1 未来セット、ヤブ蚊バリアスプレー、アロマ香るアウトドア線香、小さなお子様にも使えるお肌にやさしい虫よけ　<span style="color:#7f8c9a;font-size:12px">携帯用虫よけ市場で高いシェア、アウトドア向け新製品で市場拡大を図る</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">家庭用品（ウイルス・花粉・除菌対策）</strong>　アレルシャット ウイルス 花粉 イオンでブロック スプレータイプ、アルコール除菌剤　<span style="color:#7f8c9a;font-size:12px">ウイルス・花粉対策分野で一定の存在感、除菌剤市場でも展開</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">園芸用品・業務用品</strong>　（代表製品名データなし）　<span style="color:#7f8c9a;font-size:12px">事業領域として展開、具体的な市場ポジションは不明</span><span class="conf conf-中">中</span></div></div>
+  <details class="src"><summary>根拠を見る（8件）</summary><div class="src-list"><a href="https://www.fumakilla.co.jp" target="_blank"><span class="src-title">日用品質～フマキラー株式会社</span></a><a href="https://www.hpc-news.co.jp/media/info/a1665" target="_blank"><span class="src-title">【フマキラー】「2025年度政策共有会」で殺虫剤含む全34SKUを投入｜業界ニュース</span></a><a href="https://job.mynavi.jp/28/pc/search/corp52819/outline.html" target="_blank"><span class="src-title">フマキラー(株)【東証スタンダード上場】の会社概要 | マイナビ2028</span></a><a href="https://kitaishihon.com/company/4998/business" target="_blank"><span class="src-title">フマキラー【4998】の事業内容 - キタイシホン</span></a><a href="https://fumakilla.jp/news" target="_blank"><span class="src-title">NEWS｜フマキラー製品情報サイト</span></a><a href="https://fumakilla.jp/new" target="_blank"><span class="src-title">新製品一覧｜フマキラー製品情報サイト</span></a><a href="https://www.yakuji.co.jp/entry22728.html" target="_blank"><span class="src-title">【新製品】「虫よけバリア」をリニューアル発売 フマキラー</span></a><a href="https://www.jacom.or.jp/articles/160205-29082" target="_blank"><span class="src-title">虫よけ商品 新発売 フマキラー | JAcom 農業協同組合新聞</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffcc02">
+    <span style="font-size:20px">🆕</span>最新ニュース・新商品・取り組み
+  </div>
+  <div class="section-body"><p>フマキラーは直近、社会貢献活動と新しい市場ニーズへの対応に注力しています。2026年6月27日には、子どもたちの外遊びを応援する「PLAY ACTIVE!」プロジェクトの一環として、ももクロ出演の動画「大冒険！2025」を公開予定です。また、アウトドアブランドLOGOSとコラボレーションし、アウトドア用虫よけ製品3種を新発売しました。さらに、食育に関する社会課題への取り組みとして「つくっ手たべ手プロジェクト」第四弾『＃大人の気まずい食育』も開始し、企業ブランド価値向上とターゲット層とのエンゲージメント強化を図っています。</p><ul><li>2026年6月27日より、ももクロ出演「大冒険！2025」動画を公開予定。子どもたちの外遊びを応援する「PLAY ACTIVE!」プロジェクトの一環。<span class="conf conf-高">高</span></li><li>LOGOSとコラボしたアウトドア用虫よけ製品3種を新発売。アウトドア市場への本格参入・強化。<span class="conf conf-高">高</span></li><li>「つくっ手たべ手プロジェクト」第四弾『＃大人の気まずい食育』を本日より開始。大人の視点から食育を考える社会貢献活動。<span class="conf conf-高">高</span></li><li>2026年3月期決算発表（2026年5月14日）では、連結売上高が前年同期比4.8%増の773億6,600万円と増収を達成。<span class="conf conf-高">高</span></li></ul><p style='margin-top:14px;font-weight:700;color:#4fc3f7'>💻 DX・デジタル化の取り組み</p><ul><li>2025年6月公開のコーポレートガバナンス・コード開示において、将来的にスキル・マトリックスの作成・開示や資本コストを把握した中期経営計画の検討・公表を進める方針を示しており、データに基づいた経営体制強化への意欲が伺えます。<span class="conf conf-中">中</span></li></ul><p style='margin-top:14px;font-weight:700;color:#80cbc4'>📊 顧客調査・データ活用の取り組み</p><ul><li>「つくっ手たべ手プロジェクト」や「PLAY ACTIVE!」といった活動は、子育て世代や健康意識の高い層のニーズ・社会課題への深い理解が基盤となっており、生活者インサイトへの関心の高さが推測されます。<span class="conf conf-中">中</span></li><li>LOGOSとのコラボレーション製品開発は、アウトドア市場の消費者のライフスタイルやニーズを捉えた商品開発サイクルを示唆しています。<span class="conf conf-中">中</span></li></ul></div>
+  <details class="src"><summary>根拠を見る（18件）</summary><div class="src-list"><a href="https://prtimes.jp/main/html/rd/p/000000002.000144208.html" target="_blank"><span class="src-title">フマキラーが外で頑張る子どもを応援するプロジェクト「PLAY ACTIVE!」よりももクロ出演『大冒険！2025』動画を6月27日より公開 | フマキラー株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000001053.000032114.html" target="_blank"><span class="src-title">フマキラーとLOGOSがコラボ！アウトドア用虫よけ製品を3種 新発売！ | 株式会社ロゴスコーポレーションのプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000008.000100613.html" target="_blank"><span class="src-title">つくっ手たべ手プロジェクト第四弾は、大人の視点から食育について考えてみよう『＃大人の気まずい食育』本日よりスタート！！~ 特設サイトオープン！公式Xで「大人の気まずい百人一首」＆ショート動画も配信！~ | フマキラー株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/newarrival?pagination_cursor=1766120402_3206707" target="_blank"><span class="src-title">プレスリリース一覧｜プレスリリース・ニュースリリース配信のPR TIMES</span></a><a href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E6%A5%BD%E7%AC%91" target="_blank"><span class="src-title">楽笑に関するプレスリリース・ニュースリリース</span></a><a href="https://prtimes.jp/topics/keywords/%E3%83%95%E3%83%9E%E3%82%AD%E3%83%A9%E3%83%BC" target="_blank"><span class="src-title">フマキラーに関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://www.fumakilla.co.jp" target="_blank"><span class="src-title">日用品質～フマキラー株式会社</span></a><a href="https://www.fumakilla.co.jp/news" target="_blank"><span class="src-title">NEWS一覧 | フマキラー株式会社</span></a><a href="https://www.medinew.jp/articles/marketing/trend/dx-trend-20260304" target="_blank"><span class="src-title">製薬業界マーケティング／DX最新動向まとめ 2026年3・4月版 | Medinew [メディニュー]</span></a><a href="https://www.medinew.jp/articles/marketing/trend/dx-trend-20250708" target="_blank"><span class="src-title">製薬業界マーケティング／DX最新動向まとめ 2025年7・8月版 | Medinew [メディニュー]</span></a><a href="https://digima.cocoo.co.jp/media/digital-marketing-trend" target="_blank"><span class="src-title">2026年に押さえておきたい！デジタルマーケティングの次世代トレンド総まとめ</span></a><a href="https://www.sendenkaigi.com/marketing/media/sendenkaigi/031737" target="_blank"><span class="src-title">トップ・デジタルマーケター38名のマーケティング構想2025 (4) | 宣伝会議</span></a><a href="https://prtimes.jp/story/detail/pb33wecwELb" target="_blank"><span class="src-title">2025年をマーケティングDX着手元年に！地方で活躍するDX推進責任者が語る「組織づくりと成果最大化の秘訣」｜シナジーマーケティング株式会社のストーリー｜PR TIMES STORY</span></a><a href="https://www.macromill.com/service/column/entry-050" target="_blank"><span class="src-title">2025年市場調査会社の選び方と活用法｜マーケティングリサーチ手法も比較 ｜ リサーチならマクロミル</span></a><a href="https://www.onoff.ne.jp/blog?p=11950" target="_blank"><span class="src-title">マーケティングリサーチのトレンド 2024年から2025年に向けて</span></a><a href="https://sevendex.com/post/25733" target="_blank"><span class="src-title">リサーチ会社10選！調査、分析したいデータ別に企業を紹介【2026年最新版】 | SEVEN DEX POST</span></a><a href="https://www.yano.co.jp" target="_blank"><span class="src-title">市場調査とマーケティングの矢野経済研究所 トップページ</span></a><a href="https://www.cross-m.co.jp/report/20250605exp" target="_blank"><span class="src-title">消費動向に関する定点調査（2025年5月） | リサーチ・市場調査ならクロス・マーケティング</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#f48fb1">
+    <span style="font-size:20px">📱</span>SNS・消費者の声
+  </div>
+  <div class="section-body"><p>フマキラーの製品や活動に対するSNSの具体的な声は、提供データからは直接確認できません。しかし、「PLAY ACTIVE!」プロジェクトや「つくっ手たべ手プロジェクト」のような社会貢献活動は、特に子育て層や健康志向の生活者から好意的に受け止められ、企業イメージの向上に繋がる可能性があります。LOGOSとのコラボ製品は、アウトドア愛好家からの注目を集め、製品の話題性や購買意欲を高めることが期待されます。安全性や効果に関するリアルな声は常に存在すると考えられ、製品開発やマーケティングにおいて重要な情報源となるでしょう。</p><div class="voice-card"><div class="voice-text">「「PLAY ACTIVE!」や「つくっ手たべ手プロジェクト」のような社会貢献活動は、SNSで企業イメージを向上させる可能性がある。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「LOGOSとのコラボ製品は、アウトドア層から関心を集め、製品への期待が高まる可能性がある。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「「ベープ」など長年の実績がある製品には、高い信頼性や効果を評価する声が期待できる。」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「時期不明だが、価格改定や数量減少が国内売上減少の一因とされており、価格や買い控えに関する意見がSNSで散見される可能性。（データに直接の記述はないため推測）」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><div class="voice-card"><div class="voice-text">「製品の効果や安全性に関する個別具体的なネガティブな意見は常に存在し、ブランドイメージに影響を与える可能性がある。」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><p style='margin-top:14px;color:#81c784;font-weight:700'>💡 ビジネス機会</p><ul><li>「PLAY ACTIVE!」を通じて得られる子どもを持つ親世代のインサイトやニーズを新商品開発に活かす機会がある。</li><li>「つくっ手たべ手プロジェクト」から、食育や健康に関する新たな家庭用品カテゴリーへの展開のヒントを得られる可能性がある。</li><li>LOGOSコラボ製品の反響から、アウトドア分野でのさらなる製品拡充やマーケティング戦略最適化の機会がある。</li></ul></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://note.com/kurashihikaku/n/n103604e0ece1" target="_blank"><span class="src-title">靴消臭スプレーおすすめ7選！スニーカー・革靴・安全靴の臭いを本気で消す選び方｜くらしの比較ノート</span></a><a href="https://www.cosme.net/matome/I0015719" target="_blank"><span class="src-title">もう花粉とは距離を置きたい。そんな切なる望みを叶える優秀アイテム10選｜美容・化粧品情報はアットコスメ</span></a><a href="https://note.com/super_whale4189/n/nd579f549b2f9" target="_blank"><span class="src-title">お部屋の虫キラー ワンプッシュの効果の口コミとレビューを知ろう｜勉強ガンバさん</span></a><a href="https://note.com/n_k443/n/n7fae3ac0abb6" target="_blank"><span class="src-title">【正直レビュー】花粉ブロックスプレーは効果ある？半信半疑で使ったら意外と良かった話｜English × LIFE by TK5432</span></a><a href="https://note.com/tbola/n/n3ae3ca319858" target="_blank"><span class="src-title">【レビュー】サラテクトクール 虫よけスプレー ひんやり 200ml 携帯用 虫除けスプレー 肌 蚊 ブヨ トコジラミ 忌避 キャンプ アウトドア 防除用医薬部外品 口コミ｜TATE</span></a><a href="https://hoitto-hc.com/23844" target="_blank"><span class="src-title">フマキラー×ゆるキャン△コラボキャンペーン - Hoitto! ヘルスケアビジネス（ほいっとヘルスケアビジネス、運営：ヘルスケアワークスデザイン）</span></a><a href="https://gekiryu-online.jp/2026/03/231153" target="_blank"><span class="src-title">フマキラー／〝ホームディフェンス商品〟を拡充し通年対策を定着化</span></a><a href="https://www.fumakilla.co.jp" target="_blank"><span class="src-title">日用品質～フマキラー株式会社</span></a><a href="https://www.hpc-news.co.jp/media/info/a1665" target="_blank"><span class="src-title">【フマキラー】「2025年度政策共有会」で殺虫剤含む全34SKUを投入｜業界ニュース</span></a><a href="https://www.threads.com/@fumakilla_jp" target="_blank"><span class="src-title">フマキラー株式会社 (@fumakilla_jp) • Threads, Say more</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#f48fb1">
+    <span style="font-size:20px">👤</span>面談相手・部署プロファイル
+  </div>
+  <div class="section-body"><p>面談相手の方は現時点では未定とのことですが、DNPペルソナインサイトの活用場面（新商品開発、パッケージ評価、ターゲット深層心理把握、デジタルマーケティング最適化）から、おそらくマーケティング部門、商品開発部門、あるいは事業戦略部門の責任者またはご担当者様がいらっしゃるものと推察いたします。これらの部門のご担当者は、市場動向の把握、消費者ニーズの深掘り、競合との差別化、そしてROIの高いマーケティング施策の立案に強い関心をお持ちのはずです。</p><p style='margin-top:12px;font-weight:700;color:#7f8c9a'>関心事・KPI</p><ul><li>国内市場における売上減少の打開策と新規顧客獲得</li><li>グローバル市場での製品展開における各国の生活者インサイトの把握</li><li>「PLAY ACTIVE!」や「つくっ手たべ手プロジェクト」といった活動から得られる示唆を、どのように製品開発やブランド戦略に繋げるか</li><li>新商品開発や既存製品リニューアルにおける、消費者が言葉にできない潜在ニーズの特定</li><li>マーケティング施策の効果測定と最適化、特に海外での広告投資の効果最大化</li></ul><p style='margin-top:12px;font-weight:700;color:#7f8c9a'>コミュニケーションのポイント</p><div class="icebreaker-item" style="border-left-color:#4fc3f7">フマキラーの経営理念「ひとの命を守る　ひとの暮らしを守る　ひとを育む環境を守る」と、DNPペルソナインサイトが提供する生活者理解の価値を結びつけて説明する。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">国内売上減少という課題に対し、具体的にどのようにインサイトが貢献できるかを提示する。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">LOGOSコラボなどの新商品開発の背景にある消費者ニーズの捉え方について、DNPサービスの視点から深掘りする提案をする。</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">AI活用への関心度を見極め、技術的な説明とビジネス成果への寄与のバランスを取る。</div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://www.jetro.go.jp/ext_images/industry/service/interview/pdf/fumakilla_idn.pdf" target="_blank"><span class="src-title">[PDF] フマキラー株式会社 (海外:インドネシア) - ジェトロ</span></a><a href="https://www.jetro.go.jp/ext_images/industry/service/interview/pdf/fumakilla.pdf" target="_blank"><span class="src-title">[PDF] フマキラー株式会社（国内） サービス産業の国際展開調査 - ジェトロ</span></a><a href="https://nichidai-bus-kouyukai.com/interview/interview/01.php" target="_blank"><span class="src-title">大下 一明氏 | OB・OGインタビュー | 日本大学商学部校友会</span></a><a href="https://ny-benricho.com/business/interview/interview-fumakilla" target="_blank"><span class="src-title">【メキシコで活躍する日本企業インタビュー】フマキラーアメリカ 社長 高村 哲夫 | ニューヨーク便利帳</span></a><a href="https://www.hpc-news.co.jp/media/interview/a700" target="_blank"><span class="src-title">【注目ブランド戦略・フマキラー】ワンプッシュなどで新価値提案｜業界ニュース</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#a5d6a7">
+    <span style="font-size:20px">☕</span>アイスブレイク話題
+  </div>
+  <div class="section-body"><div class="icebreaker-item">💬 「先日発表された2026年3月期の決算短信を拝見いたしました。特に海外事業の力強い成長には目を見張るものがございます。一方で国内事業の状況もございましたが、フマキラー様が今後、国内市場でどのような生活者層へのアプローチを強化されていくのか、大変興味深く思っております。」</div><div class="icebreaker-item">💬 「御社が6月27日に公開予定の『PLAY ACTIVE!』プロジェクトのももクロさん出演動画、大変楽しみに拝見させていただきます。子どもたちの外遊びを応援する御社の理念と、DNPペルソナインサイトで得られる親世代のインサイトには、深く共通する価値があると感じております。」</div><div class="icebreaker-item">💬 「先日新発売されたLOGOS様とのコラボ製品、私もアウトドア好きとして注目しておりました。特に『小さなお子様にも使えるお肌にやさしい虫よけ』は、安全性を重視する現代のファミリー層のニーズを的確に捉えていると感じますが、こうした商品開発の背景にある消費者インサイトの発見に、DNPペルソナインサイトがお役立ちできるかと存じます。」</div><div class="icebreaker-item">💬 「フマキラー様は1874年の創業から150年以上の長きにわたり、常に生活者の暮らしを守り続けてこられました。その中で、時代の変化とともに多様化する生活者のニーズをどのように捉え、製品開発やマーケティングに活かされてきたのか、ぜひお聞かせいただければ幸いです。」</div></div>
+  <details class="src"><summary>根拠を見る（12件）</summary><div class="src-list"><a href="https://prtimes.jp/main/html/rd/p/000000002.000144208.html" target="_blank"><span class="src-title">フマキラーが外で頑張る子どもを応援するプロジェクト「PLAY ACTIVE!」よりももクロ出演『大冒険！2025』動画を6月27日より公開 | フマキラー株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000001053.000032114.html" target="_blank"><span class="src-title">フマキラーとLOGOSがコラボ！アウトドア用虫よけ製品を3種 新発売！ | 株式会社ロゴスコーポレーションのプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000008.000100613.html" target="_blank"><span class="src-title">つくっ手たべ手プロジェクト第四弾は、大人の視点から食育について考えてみよう『＃大人の気まずい食育』本日よりスタート！！~ 特設サイトオープン！公式Xで「大人の気まずい百人一首」＆ショート動画も配信！~ | フマキラー株式会社のプレスリリース</span></a><a href="https://prtimes.jp/main/html/newarrival?pagination_cursor=1766120402_3206707" target="_blank"><span class="src-title">プレスリリース一覧｜プレスリリース・ニュースリリース配信のPR TIMES</span></a><a href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E6%A5%BD%E7%AC%91" target="_blank"><span class="src-title">楽笑に関するプレスリリース・ニュースリリース</span></a><a href="https://prtimes.jp/topics/keywords/%E3%83%95%E3%83%9E%E3%82%AD%E3%83%A9%E3%83%BC" target="_blank"><span class="src-title">フマキラーに関するプレスリリース・ニュースリリースのPR TIMES</span></a><a href="https://www.fumakilla.co.jp" target="_blank"><span class="src-title">日用品質～フマキラー株式会社</span></a><a href="https://www.fumakilla.co.jp/news" target="_blank"><span class="src-title">NEWS一覧 | フマキラー株式会社</span></a><a href="https://hoitto-hc.com/23844" target="_blank"><span class="src-title">フマキラー×ゆるキャン△コラボキャンペーン - Hoitto! ヘルスケアビジネス（ほいっとヘルスケアビジネス、運営：ヘルスケアワークスデザイン）</span></a><a href="https://gekiryu-online.jp/2026/03/231153" target="_blank"><span class="src-title">フマキラー／〝ホームディフェンス商品〟を拡充し通年対策を定着化</span></a><a href="https://www.hpc-news.co.jp/media/info/a1665" target="_blank"><span class="src-title">【フマキラー】「2025年度政策共有会」で殺虫剤含む全34SKUを投入｜業界ニュース</span></a><a href="https://www.threads.com/@fumakilla_jp" target="_blank"><span class="src-title">フマキラー株式会社 (@fumakilla_jp) • Threads, Say more</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffb74d">
+    <span style="font-size:20px">❓</span>想定Q&A・切り返し
+  </div>
+  <div class="section-body"><div class="qa-item"><div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ コスト・予算</div><div class="qa-q">Q: 国内売上が減少傾向にあり、海外への広告投資も積極的な中で、DNPペルソナインサイトのような新たなマーケティングリサーチツールに投資する費用対効果をどのように見込めば良いのでしょうか？</div><div class="qa-a">A: まさに国内市場の課題解決と、海外市場でのさらなる効率的な成長を両立するために、DNPペルソナインサイトがお役に立てます。例えば、国内の売上減少要因を深掘りする際、一般的なアンケートでは得られない『生活者が上手く言葉にできない本音』をAIとの対話で短期間で引き出せます。これにより、ターゲット顧客のペルソナを明確にし、例えば『アレルシャット』のターゲット層が何を最も重視しているのか、具体的なニーズを把握することで、的確な新商品コンセプト開発や既存製品の訴求ポイント改善に繋げ、国内市場での売上回復に貢献します。他社事例では、数千万円規模のマーケティング予算を投じる新商品開発において、初期段階でペルソナインサイトを活用することで、開発期間を20%短縮し、市場投入後のヒット率を1.5倍に高めたケースもございます。これにより、無駄な投資を削減し、貴社のROIを最大化することが可能です。</div></div><div class="qa-item"><div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ 競合・比較</div><div class="qa-q">Q: 現在、弊社では既存の市場調査会社や社内アンケートツールも利用しています。DNPペルソナインサイトは、そうした既存の調査手法や競合他社のAIツールと比べて、どのような点で優位性があるのでしょうか？</div><div class="qa-a">A: 既存の定量調査やグループインタビューも非常に重要ですが、DNPペルソナインサイトの最大の特徴は、『日本の統計データとDNP独自データを学習したAI』が、仮想生活者（ペルソナ）との対話を通じて、人間のインタビュアーでは引き出しにくい『生活者が無意識に抱える本音や、矛盾する感情』を言語化できる点です。これにより、貴社の『どこでもベープ』のようなロングセラー製品がなぜ選ばれ続けているのか、その深層心理をより詳細に把握できます。競合のAIツールでは汎用的な言語モデルを使うことが多いですが、DNPのAIは日本の生活様式や文化背景、そしてDNPが長年培ってきた流通・消費者データに基づいているため、より日本市場に特化した、高精度なインサイトが得られます。面談で、貴社がこれまで直面された調査上の課題をぜひお聞かせください。DNPペルソナインサイトがどのようにその課題を解決できるか、具体的なデモンストレーションでお見せできます。</div></div><div class="qa-item"><div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ 導入・実現性</div><div class="qa-q">Q: 弊社は国内と海外に事業展開しており、組織も多岐にわたります。このようなツールを導入するとなると、社内での調整や導入工数がかなりかかりそうですが、スムーズな導入は可能なのでしょうか？</div><div class="qa-a">A: ご安心ください。DNPペルソナインサイトはSaaS型のクラウドサービスですので、大規模なシステム導入は不要です。アカウント発行後すぐに、貴社のマーケティング部門や商品開発部門の皆さまでご利用を開始いただけます。まずは特定の製品カテゴリーや、例えば『LOGOSコラボ製品』のような新商品開発プロジェクトに絞ってスモールスタートすることも可能です。DNPの専門チームが導入から活用までを徹底的にサポートし、AI対話の設定方法やインサイト抽出のノウハウをご提供します。また、海外展開されている貴社にとって、DNPは多言語対応や各国市場のデータ学習にも柔軟に対応可能ですので、国内外の事業部門での連携をスムーズに進めるための機能やコンサルティングもご提供できます。社内調整の負荷を最小限に抑えつつ、最大限の効果を引き出すためのロードマップを共に策定させていただければと存じます。</div></div><div class="qa-item"><div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ 効果・実績</div><div class="qa-q">Q: 殺虫剤や家庭用品という、比較的購買行動がシンプルに思えるカテゴリーで、ペルソナインサイトがどのような具体的な効果や実績をもたらすのでしょうか？具体的な導入事例があれば教えてください。</div><div class="qa-a">A: 確かに殺虫剤や家庭用品は日常的に購入されますが、そこには消費者が『なぜこのブランドを選ぶのか』という深層的な理由が隠されています。例えば、殺虫剤では『即効性』だけでなく『家族への安全性』『匂い』『デザイン』『環境への配慮』など、多様な要素が複雑に絡み合っています。ある家庭用品メーカー様では、DNPペルソナインサイトを用いて、新商品パッケージのデザイン評価を行ったところ、既存の消費者アンケートでは『なんとなく良い』としか回答されなかったデザインが、ペルソナ対話を通じて『日々の生活に溶け込むさりげなさ』や『家族の健康をさりげなく守るという安心感』という、深層的な評価軸を発見できました。これにより、パッケージデザインを微調整した結果、発売後の購買意欲が15%向上したという実績がございます。フマキラー様の『アレルシャット』であれば、花粉症に悩む方が『どんな時に、どのような心理で商品を選ぶのか』をより深く理解することで、新たな訴求軸や商品ラインナップのヒントが得られるはずです。</div></div><div class="qa-item"><div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ タイミング・優先度</div><div class="qa-q">Q: 国内売上減少や海外への積極投資といった喫緊の課題がある中で、今、DNPペルソナインサイトの導入を検討する優先度が高い理由は何でしょうか？</div><div class="qa-a">A: まさに今が最適なタイミングだと考えております。国内売上減少の背景には、ターゲット顧客のニーズ変化や競合との差別化課題が潜んでいます。DNPペルソナインサイトは、この『変化』をいち早く捉え、新しいニーズや未開拓の市場インサイトを短期間で発掘する強力なツールです。既存の調査手法では時間とコストがかかる深掘り調査を、AIが効率的に代行することで、貴社はスピーディーに国内市場向けの新たな戦略を立てることができます。また、海外事業が好調な今だからこそ、現地生活者の文化や習慣に根ざしたインサイトを正確に把握し、製品ローカライズやマーケティング戦略を最適化することで、さらに投資対効果を高めることが可能です。2027年3月期の増収増益目標達成に向けて、DNPペルソナインサイトは、生活者理解を深め、確実な成長戦略を描くための羅針盤となると確信しております。</div></div></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="http://www.irwebcasting.com/20170529/2/b780f9c615/media/20170529_fumakilla_ja_dl_01.pdf" target="_blank"><span class="src-title">[PDF] フマキラー株式会社 - IR Webcasting</span></a><a href="https://kitaishihon.com/company/4998/management-strategy" target="_blank"><span class="src-title">フマキラー【4998】のリスク・配当 - キタイシホン</span></a><a href="https://ja.wikipedia.org/wiki/%E3%83%95%E3%83%9E%E3%82%AD%E3%83%A9%E3%83%BC" target="_blank"><span class="src-title">フマキラー - Wikipedia</span></a><a href="https://www.jetro.go.jp/ext_images/industry/service/interview/pdf/fumakilla.pdf" target="_blank"><span class="src-title">[PDF] フマキラー株式会社（国内） サービス産業の国際展開調査 - ジェトロ</span></a><a href="https://www.hpc-news.co.jp/media/info/a1665" target="_blank"><span class="src-title">【フマキラー】「2025年度政策共有会」で殺虫剤含む全34SKUを投入｜業界ニュース</span></a><a href="https://www.fumakilla.co.jp/corporate/2025/06/20250605_76_kessansetsumeikai.pdf" target="_blank"><span class="src-title">[PDF] 2025年3月期決算説明資料 - フマキラー株式会社</span></a><a href="https://www.syogyo.jp/matome/2025/05/post_041152" target="_blank"><span class="src-title">フマキラーのライバル企業・競合メーカーは？ 特徴や強みも解説！ - 化粧品業界人必読！週刊粧業オンライン</span></a><a href="https://www.fumakilla.co.jp/corporate/2023/12/75_kessansetsumeikai_2.pdf" target="_blank"><span class="src-title">[PDF] 2024年3月期第2四半期 決算説明資料 - フマキラー株式会社</span></a><a href="https://strainer.jp/notes/3350" target="_blank"><span class="src-title">害虫が蔓延する1920年の日本で創業！国内シェアは3位だが ...</span></a><a href="https://gyokai-search.com/3-insecticide.html" target="_blank"><span class="src-title">殺虫剤業界の動向やランキング、シェアなどを分析</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#81c784">
+    <span style="font-size:20px">✅</span>訪問前チェックリスト
+  </div>
+  <div class="section-body"><ul class="checklist"><li>フマキラー様のマーケティング戦略における国内市場と海外市場の比重、およびそれぞれの具体的な課題感をヒアリングする準備。</li><li>直近の「PLAY ACTIVE!」やLOGOSコラボ製品、食育プロジェクトに対する具体的な担当部署の関心や成果指標を確認する。</li><li>DNPペルソナインサイトのデモンストレーション環境を準備し、フマキラー様の製品カテゴリー（殺虫剤、家庭用品、園芸用品など）を想定した活用事例を具体的に提示できるよう準備する。</li><li>フマキラー様が現在利用している市場調査会社やリサーチ手法について、具体的な課題や不満点を引き出すための質問を用意する。</li><li>「AI活用」に対するフマキラー様の姿勢や社内でのDX推進状況について、探るための質問を用意する。</li><li>持参すべき資料として、DNPペルソナインサイトのサービス概要資料、同業・類似業界での成功事例（あれば匿名化して）、費用体系が分かる資料、そして本商談前レポートを印刷して持参する。</li></ul></div>
+  
+</div>
+  <div class="footer">DNPペルソナインサイト 商談前リサーチレポート｜自動生成　※情報は公開情報をもとにAIが分析したものです</div>
+</div>
+</body>
+</html>
