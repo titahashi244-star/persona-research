@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>極洋 商談前リサーチレポート</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Helvetica Neue',Arial,sans-serif; background:#0a0a0f; color:#e0e0e0; min-height:100vh; }
+
+  .header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); padding:32px 40px; border-bottom:1px solid #2a2a4a; }
+  .header-top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; }
+  .badge { background:#e94560; color:white; font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; letter-spacing:1px; }
+  .meta { color:#4a5568; font-size:12px; }
+  .company-name { font-size:32px; font-weight:800; color:#fff; margin:12px 0 4px; }
+  .person-info { color:#7f8c9a; font-size:15px; }
+
+  .container { max-width:1000px; margin:0 auto; padding:32px 24px; }
+
+  .back-link { display:inline-block; margin-bottom:24px; color:#e94560; text-decoration:none; font-size:14px; }
+  .back-link:hover { text-decoration:underline; }
+
+  /* Quick Stats */
+  .quick-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px; }
+  .stat-box { background:#12121f; border:1px solid #2a2a4a; border-radius:10px; padding:16px; text-align:center; }
+  .stat-value { font-size:20px; font-weight:800; color:#e94560; }
+  .stat-label { font-size:11px; color:#7f8c9a; margin-top:4px; }
+
+  /* Sections */
+  .section { background:#12121f; border:1px solid #2a2a4a; border-radius:12px; padding:28px; margin-bottom:16px; }
+  .section-title { font-size:16px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+  .section-body { color:#b0bec5; font-size:14px; line-height:1.9; }
+  .section-body p { margin-bottom:10px; }
+  .section-body ul { padding-left:20px; }
+  .section-body li { margin-bottom:6px; }
+
+  /* Highlight box */
+  .highlight { background:#1e1e35; border-left:3px solid #e94560; padding:14px 18px; border-radius:0 8px 8px 0; margin:14px 0; }
+  .highlight p { color:#e0e0e0; margin:0; }
+
+  /* SNS voice */
+  .voice-card { background:#1a1a2e; border:1px solid #2a2a4a; border-radius:8px; padding:14px 16px; margin:8px 0; }
+  .voice-card .voice-text { color:#d0d0d0; font-size:13px; line-height:1.7; font-style:italic; }
+  .voice-card .voice-meta { color:#4a5568; font-size:11px; margin-top:6px; }
+
+  /* Competitor table */
+  .comp-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+  .comp-table th { background:#1e1e35; color:#7f8c9a; padding:10px 12px; text-align:left; font-weight:600; border-bottom:1px solid #2a2a4a; }
+  .comp-table td { padding:10px 12px; border-bottom:1px solid #1a1a2e; color:#b0bec5; }
+  .comp-table tr:last-child td { border-bottom:none; }
+  .comp-table .target { color:#4fc3f7; font-weight:700; }
+
+  /* Checklist */
+  .checklist li { list-style:none; padding-left:0; margin-bottom:8px; display:flex; align-items:flex-start; gap:8px; }
+  .checklist li::before { content:"☐"; color:#e94560; font-size:16px; flex-shrink:0; margin-top:-1px; }
+
+  /* QA */
+  .qa-item { background:#1a1a2e; border-radius:8px; padding:14px 16px; margin:8px 0; }
+  .qa-q { color:#ffb74d; font-weight:700; font-size:13px; margin-bottom:6px; }
+  .qa-a { color:#b0bec5; font-size:13px; line-height:1.7; }
+
+  /* Icebreaker */
+  .icebreaker-item { background:#1a1a2e; border-left:3px solid #81c784; border-radius:0 8px 8px 0; padding:12px 16px; margin:8px 0; font-size:13px; color:#d0d0d0; }
+
+  /* Tags */
+  .tag { display:inline-block; background:#1e1e35; border:1px solid #3a3a5a; color:#9b9bbc; font-size:11px; padding:3px 10px; border-radius:20px; margin:3px; }
+
+  /* Confidence badges */
+  .conf { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; margin-left:6px; vertical-align:middle; }
+  .conf-高 { background:#1b3a2a; color:#81c784; border:1px solid #2e6b45; }
+  .conf-中 { background:#3a2e10; color:#ffb74d; border:1px solid #7a5c10; }
+  .conf-低 { background:#3a1010; color:#e57373; border:1px solid #7a2020; }
+  .conf-低-wrap { background:#2b1010; border-left:3px solid #e57373; border-radius:0 6px 6px 0; padding:8px 12px; margin:4px 0; }
+
+  /* Source drawer */
+  details.src { margin-top:14px; }
+  details.src summary { font-size:11px; color:#3a3a6a; cursor:pointer; user-select:none; list-style:none; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #2a2a4a; border-radius:20px; }
+  details.src summary::-webkit-details-marker { display:none; }
+  details.src summary::before { content:"📎"; }
+  details.src[open] summary { color:#7f8c9a; border-color:#3a3a6a; }
+  details.src .src-list { margin-top:10px; padding:10px 14px; background:#0a0a0f; border-radius:8px; border:1px solid #1a1a2e; }
+  details.src .src-list a { display:block; color:#4fc3f7; font-size:11px; text-decoration:none; padding:4px 0; border-bottom:1px solid #1a1a2e; word-break:break-all; }
+  details.src .src-list a:last-child { border-bottom:none; }
+  details.src .src-list a:hover { text-decoration:underline; }
+  details.src .src-title { font-size:10px; color:#4a5568; margin-bottom:2px; }
+
+  /* Key message */
+  .key-message { background:linear-gradient(135deg,#1e0a15,#2a1020); border:1px solid #e94560; border-radius:10px; padding:20px 24px; margin-top:16px; }
+  .key-message-label { color:#e94560; font-size:11px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+  .key-message-text { color:#fff; font-size:15px; font-weight:700; line-height:1.6; }
+
+  .footer { text-align:center; padding:24px; color:#3a3a5a; font-size:12px; border-top:1px solid #1a1a2e; margin-top:16px; }
+
+  @media print {
+    body { background:#fff; color:#000; }
+    .header { background:#1a1a2e !important; -webkit-print-color-adjust:exact; }
+    .section { border:1px solid #ddd; page-break-inside:avoid; }
+  }
+  /* Visual Summary */
+  .vsummary { background:linear-gradient(135deg,#12121f 0%,#1a1a2e 100%); border:1px solid #2a2a4a; border-radius:14px; padding:24px 28px; margin-bottom:20px; }
+  .vsummary-metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:#2a2a4a; border-radius:10px; overflow:hidden; margin-bottom:16px; }
+  .vsummary-metric { background:#12121f; padding:14px 18px; }
+  .vsummary-metric-label { font-size:10px; color:#4a5568; font-weight:700; letter-spacing:0.5px; margin-bottom:5px; text-transform:uppercase; }
+  .vsummary-metric-value { font-size:14px; font-weight:700; color:#e0e0e0; line-height:1.4; }
+  .vsummary-location { background:#0d0d1a; border:1px solid #1e1e3a; border-radius:8px; padding:12px 16px; display:flex; gap:20px; flex-wrap:wrap; margin-bottom:14px; }
+  .vsummary-location-item { font-size:12px; color:#7f8c9a; }
+  .vsummary-location-item strong { color:#b0bec5; margin-right:6px; }
+  .quick-links { display:flex; flex-wrap:wrap; gap:8px; }
+  .quick-link { display:inline-flex; align-items:center; gap:6px; background:#0a0a0f; border:1px solid #2a2a4a; border-radius:20px; padding:6px 14px; color:#4fc3f7; font-size:12px; text-decoration:none; transition:border-color 0.2s; }
+  .quick-link:hover { border-color:#4fc3f7; }
+
+  @media(max-width:600px) {
+    .header { padding:24px; }
+    .quick-stats { grid-template-columns:1fr 1fr; }
+    .signal-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <span class="badge" style="background:#e94560">DNPペルソナインサイト</span>
+    <span class="meta">生成日時: 2026年06月19日 09:18　　🖨️ <a href="javascript:window.print()" style="color:#4a5568;text-decoration:none;">印刷</a></span>
+  </div>
+  <div class="company-name">極洋</div>
+  <div class="person-info">👤 本社・商品開発部 商品企画課</div>
+</div>
+<div class="container">
+  <a href="../index.html" class="back-link">← レポート一覧に戻る</a>
+  
+<div class="vsummary">
+  <div style="text-align:right;font-size:11px;color:#4a5568;margin-bottom:10px">基本情報の信頼度: <span class="conf conf-高">高</span></div>
+  <div class="vsummary-metrics"><div class="vsummary-metric"><div class="vsummary-metric-label">INDUSTRY</div><div class="vsummary-metric-value">水産・食品</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">REVENUE</div><div class="vsummary-metric-value">3,346億1,200万円（2026年3月期：連結）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">POSITION</div><div class="vsummary-metric-value">情報なし（大手水産会社の一角）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">EMPLOYEES</div><div class="vsummary-metric-value">2,476名（2025年3月期：グループ）</div></div><div class="vsummary-metric"><div class="vsummary-metric-label">FOUNDED</div><div class="vsummary-metric-value">1937年9月3日</div></div></div>
+  <div class="vsummary-location"><span class="vsummary-location-item"><strong>🏢 本社</strong>東京都港区赤坂3-3-5</span><span class="vsummary-location-item"><strong>📍 拠点</strong>本社（東京）、支社（札幌、仙台、東京、名古屋、大阪、広島、福岡）、営業所（青森、金沢、焼津、岡山、鹿児島）、研究所（塩釜）、海外駐在員事務所（中国青島、タイバンコク、ベトナムホーチミン、インドネシアスラバヤ）</span></div>
+  <div class="quick-links"><a class="quick-link" href="https://job.mynavi.jp/28/pc/search/corp1674/outline.html" target="_blank">🔗 公式HP｜(株)極洋の会社概要 | マイナビ2028</a><a class="quick-link" href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E6%A5%B5%E6%B4%8B" target="_blank">🔗 プレスリリース｜極洋に関するプレスリリース・ニュースリリース</a><a class="quick-link" href="https://finance-frontend-pc-dist.west.edge.storage-yahoo.jp/disclosure/20250903/20250902551671.pdf" target="_blank">🔗 IR・投資家情報｜[PDF] Kyokuyo Group Integrated</a></div>
+</div>
+  
+<div class="section">
+  <div class="section-title" style="color:#4fc3f7">
+    <span style="font-size:20px">🏢</span>企業概要
+  </div>
+  <div class="section-body"><p>株式会社極洋は1937年設立の老舗水産会社で、水産物の調達・加工から冷凍・常温食品の製造販売、物流サービスまで多岐にわたる事業を展開しています。2026年3月期には連結売上高3,346億円を達成し、海外事業の拡大も積極的に進めています。「魚を中心に、食で人と暮らしと地球によりそう サステナブルな世界へ」という企業パーパスを掲げ、中期経営計画『Gear Up Kyokuyo 2027』のもと、グローバルな事業基盤の強化と付加価値加工品の推進に注力しています。主力は水産、生鮮、食品、物流サービスセグメントです。</p><ul><li>2026年3月期連結売上高3,346億円、増収を達成</li><li>企業パーパス「魚を中心に、食で人と暮らしと地球によりそう サステナブルな世界へ」を掲げる</li><li>中期経営計画『Gear Up Kyokuyo 2027』（2024年度～2026年度）を推進中</li><li>水産商事、冷凍食品、常温食品、物流サービス、鰹・鮪事業など幅広い事業領域</li></ul></div>
+  <details class="src"><summary>根拠を見る（15件）</summary><div class="src-list"><a href="https://job.mynavi.jp/28/pc/search/corp1674/outline.html" target="_blank"><span class="src-title">(株)極洋の会社概要 | マイナビ2028</span></a><a href="http://www.kyokuyo-suisan.co.jp/company" target="_blank"><span class="src-title">会社概要 - 極洋水産株式会社</span></a><a href="https://job.mynavi.jp/27/pc/search/corp1674/outline.html" target="_blank"><span class="src-title">(株)極洋の新卒採用・会社概要 | マイナビ2027</span></a><a href="https://ja.wikipedia.org/wiki/%E6%A5%B5%E6%B4%8B" target="_blank"><span class="src-title">極洋 - Wikipedia</span></a><a href="https://kyokuyo-shoji.com" target="_blank"><span class="src-title">極洋商事株式会社</span></a><a href="https://www.kyokuyo.co.jp/files/20260501.pdf" target="_blank"><span class="src-title">[PDF] 2026年3月期 決算短信〔日本基準〕(連結) - 極洋</span></a><a href="https://finance.yahoo.co.jp/quote/1301.T/financials" target="_blank"><span class="src-title">(株)極洋【1301】：決算情報 - Yahoo!ファイナンス</span></a><a href="https://www.kyokuyo.co.jp/files/20260206.pdf" target="_blank"><span class="src-title">[PDF] 2026年3月期 第3四半期決算短信〔日本基準〕(連結) - 極洋</span></a><a href="https://www.kyokuyo.co.jp/files/20250203.pdf" target="_blank"><span class="src-title">[PDF] 2025年3月期 第3四半期決算短信〔日本基準〕(連結) - 極洋</span></a><a href="https://www.kyokuyo.co.jp/files/20250501.pdf" target="_blank"><span class="src-title">[PDF] 2025年3月期 決算短信〔日本基準〕(連結) - 株式会社 極洋</span></a><a href="https://finance-frontend-pc-dist.west.edge.storage-yahoo.jp/disclosure/20250903/20250902551671.pdf" target="_blank"><span class="src-title">[PDF] Kyokuyo Group Integrated Report</span></a><a href="https://www.kyokuyo.co.jp/ir/library/library_reports01" target="_blank"><span class="src-title">決算短信 - 株式会社 極洋</span></a><a href="https://www.penta-ocean.co.jp/ir/management/plan/pdf/260508.pdf" target="_blank"><span class="src-title">[PDF] 中期経営計画（2026～28年度）の策定に関するお知らせ</span></a><a href="https://www.kyokuyo.co.jp/company/point/plan" target="_blank"><span class="src-title">中期経営計画 - 株式会社 極洋</span></a><a href="https://disclosure2dl.edinet-fsa.go.jp/searchdocument/pdf/S100TRLN.pdf" target="_blank"><span class="src-title">[PDF] 有価証券報告書 - EDINET</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#81c784">
+    <span style="font-size:20px">📈</span>財務・業績
+  </div>
+  <div class="section-body"><p>株式会社極洋の2026年3月期連結業績は、売上高3,346億1,200万円（前期比10.5%増）と伸長しましたが、営業利益は107億3,100万円（同3.1%減）、経常利益は100億3,100万円（同7.6%減）と減益となりました。原材料価格の高騰や海外事業の新規工場稼働に伴う先行費用が利益を圧迫したことが主な要因です。水産事業セグメントは輸出やタイでの寿司種販売が好調で売上高は伸長しましたが、欧州加工場の稼働率低下で利益は減少しました。一方、生鮮事業セグメントは冷凍マグロや寿司種の販売拡大により、売上・利益ともに好調に推移しました。</p><ul><li>2026年3月期連結売上高 3,346億1,200万円（前期比10.5%増）を達成<span class="conf conf-高">高</span></li><li>水産事業セグメント売上高1,950億39百万円（前期比15.6％増）と大きく伸長<span class="conf conf-高">高</span></li><li>生鮮事業セグメントは売上・利益ともに前期を上回る実績<span class="conf conf-高">高</span></li><li>中期経営計画『Gear Up Kyokuyo 2027』の2年目であり、増収基調を維持<span class="conf conf-高">高</span></li></ul><div class="highlight"><p>⚠️ 課題・懸念点：</p><ul><li>原材料価格の高騰、物流費、人件費など製造コストの上昇</li><li>海外事業における原料供給不足や新規工場稼働に伴う先行費用による利益圧迫</li></ul></div></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://www.kyokuyo.co.jp/files/20260501.pdf" target="_blank"><span class="src-title">[PDF] 2026年3月期 決算短信〔日本基準〕(連結) - 極洋</span></a><a href="https://finance.yahoo.co.jp/quote/1301.T/financials" target="_blank"><span class="src-title">(株)極洋【1301】：決算情報 - Yahoo!ファイナンス</span></a><a href="https://www.kyokuyo.co.jp/files/20260206.pdf" target="_blank"><span class="src-title">[PDF] 2026年3月期 第3四半期決算短信〔日本基準〕(連結) - 極洋</span></a><a href="https://www.kyokuyo.co.jp/files/20250203.pdf" target="_blank"><span class="src-title">[PDF] 2025年3月期 第3四半期決算短信〔日本基準〕(連結) - 極洋</span></a><a href="https://www.kyokuyo.co.jp/files/20250501.pdf" target="_blank"><span class="src-title">[PDF] 2025年3月期 決算短信〔日本基準〕(連結) - 株式会社 極洋</span></a><a href="https://finance-frontend-pc-dist.west.edge.storage-yahoo.jp/disclosure/20250903/20250902551671.pdf" target="_blank"><span class="src-title">[PDF] Kyokuyo Group Integrated Report</span></a><a href="https://www.kyokuyo.co.jp/ir/library/library_reports01" target="_blank"><span class="src-title">決算短信 - 株式会社 極洋</span></a><a href="https://www.penta-ocean.co.jp/ir/management/plan/pdf/260508.pdf" target="_blank"><span class="src-title">[PDF] 中期経営計画（2026～28年度）の策定に関するお知らせ</span></a><a href="https://www.kyokuyo.co.jp/company/point/plan" target="_blank"><span class="src-title">中期経営計画 - 株式会社 極洋</span></a><a href="https://disclosure2dl.edinet-fsa.go.jp/searchdocument/pdf/S100TRLN.pdf" target="_blank"><span class="src-title">[PDF] 有価証券報告書 - EDINET</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffb74d">
+    <span style="font-size:20px">🌊</span>業界トレンド・市場動向
+  </div>
+  <div class="section-body"><p>水産・食品業界は、インバウンド需要の回復により外食・観光産業が堅調に推移している一方で、原材料価格、人件費、物流費といった製造コストの高騰が継続しています。これに伴う物価高騰は消費者の購買意欲に影響を与え、厳しい経営環境が続いています。また、水産資源の持続可能性や環境への配慮が重視される傾向が強まっており、MSC/ASC認証取得などサステナブルな調達・生産への取り組みが求められています。最終消費者の食に対するニーズは多様化・高度化しており、健康志向、簡便性、安全・安心、高付加価値化への対応が業界全体の喫緊の課題となっています。</p><ul><li>原材料価格、人件費、物流費など製造コストの高騰</li><li>物価高騰に伴う消費者購買意欲の低下</li><li>サステナビリティ（持続可能性）への関心の高まりと環境配慮型商品の需要増</li><li>健康志向、簡便性、安全・安心、高付加価値化といった消費ニーズの多様化</li></ul><div class="highlight"><p>市場規模：情報なし<span class="conf conf-低">低</span></p></div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://compalyze.co.jp/company/1010401033225" target="_blank"><span class="src-title">株式会社極洋（東京都） (旧 1301 上場廃止)の企業情報 | Compalyze</span></a><a href="https://www.youtube.com/watch?v=4cjqB9d70ok" target="_blank"><span class="src-title">水産業界（マルハニチロ、日本水産、東洋水産、極洋）の業界研究|名キャリ就活Vol.271</span></a><a href="https://syukatsu-kaigi.jp/companies/122422" target="_blank"><span class="src-title">極洋の新卒採用・就職・企業情報【就活会議】</span></a><a href="https://www.openwork.jp/company_answer.php?m_id=a0910000000Fqdi&q_no=9" target="_blank"><span class="src-title">極洋の「企業分析［強み・弱み・展望］」 OpenWork</span></a><a href="https://asahi.gakujo.ne.jp/research/industry_topics/detail/id=3590" target="_blank"><span class="src-title">水産大手はグローバル食品総合企業へ　極洋は初任給3割増【業界研究ニュース】 | 就活ニュースペーパーｂｙ朝日新聞 - 就職サイト Ｒｅ就活キャンパス（旧：あさがくナビ）</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ce93d8">
+    <span style="font-size:20px">⚔️</span>競合分析
+  </div>
+  <div class="section-body"><p>株式会社極洋は日本の大手水産・食品会社として、水産物の調達から加工、販売、物流まで一貫したサプライチェーンを強みとしています。競合としては、マルハニチロやニッスイといった総合水産会社が挙げられます。また、冷凍食品や缶詰などの加工食品分野では、幅広い食品メーカーが競合となり、外食産業向けでは業務用食品卸なども競争相手となります。極洋は『魚の極洋』としてのブランド力と幅広い事業展開で差別化を図っていますが、グローバルな原料調達における価格変動リスクや海外事業の収益化が課題です。</p><table class="comp-table">
+<tr><th>企業名</th><th>シェア</th><th>強み</th><th>弱み</th></tr>
+<tr><td class="target">極洋<span class="conf conf-高">高</span></td><td>情報なし</td><td style='color:#81c784'>水産物調達から加工、販売、物流までの一貫体制、多様な事業セグメント、国内および海外の販売拠点、養殖事業や海外まき網事業による安定供給</td><td style='color:#e57373'>原材料価格変動の影響、海外事業における先行費用や原料供給不足による利益圧迫</td></tr><tr><td>マルハニチロ<span class="conf conf-中">中</span></td><td>情報なし</td><td style='color:#81c784'>水産、食品、畜産、物流など多角的な事業展開、加工食品の強力なブランド力</td><td style='color:#e57373'>情報なし</td></tr><tr><td>ニッスイ（日本水産）<span class="conf conf-中">中</span></td><td>情報なし</td><td style='color:#81c784'>漁業・養殖、加工食品、医薬品など広範な事業領域、グローバルな展開力</td><td style='color:#e57373'>情報なし</td></tr></table></div>
+  <details class="src"><summary>根拠を見る（8件）</summary><div class="src-list"><a href="https://www.kyokuyo.co.jp/files/csrreport2024r.pdf" target="_blank"><span class="src-title">[PDF] 統合報告書2024全文 - 極洋</span></a><a href="https://www.fisco.co.jp/wordpress/wp-content/uploads/kyokuyo20171215.pdf" target="_blank"><span class="src-title">[PDF] 極洋 - 株式会社フィスコ</span></a><a href="https://deallab.info/aquamarine" target="_blank"><span class="src-title">水産業界（漁業、養殖業、水産加工業）の世界市場シェアの分析 | deallab</span></a><a href="https://tsumuraya.hub.hit-u.ac.jp/special03/2023/1301.pdf" target="_blank"><span class="src-title">[PDF] 極洋 レポート名： 「統合報告書 2022」 1．この会社が目指している ...</span></a><a href="https://www.youtube.com/watch?v=4cjqB9d70ok" target="_blank"><span class="src-title">東洋水産、極洋）の業界研究|名キャリ就活Vol.271 - YouTube</span></a><a href="https://www.fisco.co.jp/wordpress/wp-content/uploads/kyokuyo20170619.pdf" target="_blank"><span class="src-title">[PDF] 極洋 - 株式会社フィスコ</span></a><a href="https://www.youtube.com/watch?v=aGXpWW0w5uM" target="_blank"><span class="src-title">株式会社極洋 会社紹介ムービー2026</span></a><a href="https://www.openwork.jp/company_answer.php?m_id=a0910000000Fqdi&q_no=9" target="_blank"><span class="src-title">極洋の「企業分析［強み・弱み・展望］」 OpenWork</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#80cbc4">
+    <span style="font-size:20px">📦</span>主力製品・カテゴリ別ポジション
+  </div>
+  <div class="section-body"><p>株式会社極洋の主力製品は、その幅広い事業セグメントにわたります。「水産事業」では、国内外向けのサバ、イワシ、ホタテなどの水産物および加工原料を提供。「生鮮事業」では、自社漁獲・養殖のかつお・まぐろを中心に、冷凍クロマグロ、キハダマグロ、回転寿司向けの寿司種や生食商材が好調です。「食品事業」では、家庭用・業務用冷凍食品や缶詰などを製造・販売し、「だんどり～にゃ」などのキャラクターを通じたプロモーションも展開。さらに「物流サービス事業」で水産・食品の流通を支えています。</p><div class="voice-card"><strong style="color:#4fc3f7">生鮮水産品・加工品（鰹・鮪）</strong>　冷凍クロマグロ、キハダマグロ、インドマグロ、寿司種、生食商材　<span style="color:#7f8c9a;font-size:12px">回転寿司向け需要に支えられ販売拡大</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">水産事業（輸出・加工原料）</strong>　ホタテ製品、加工原料用サバ・イワシ、タイでの寿司種など　<span style="color:#7f8c9a;font-size:12px">輸出販売や海外現地事業での取り扱いが伸長</span><span class="conf conf-高">高</span></div><div class="voice-card"><strong style="color:#4fc3f7">食品事業</strong>　冷凍食品、缶詰、だんどり～にゃ関連商品　<span style="color:#7f8c9a;font-size:12px">情報なし</span><span class="conf conf-中">中</span></div></div>
+  <details class="src"><summary>根拠を見る（6件）</summary><div class="src-list"><a href="https://news.yahoo.co.jp/articles/df84ddb852cb5a491122e1ec7e90ba9c5644f2ac" target="_blank"><span class="src-title">極洋、2026年春の新商品等42品発表、国産原料使用の水産フライ品 ...</span></a><a href="https://www.youtube.com/watch?v=aGXpWW0w5uM" target="_blank"><span class="src-title">株式会社極洋 会社紹介ムービー2026</span></a><a href="https://news.nissyoku.co.jp/news/honmiya20260310124313317" target="_blank"><span class="src-title">極洋・26年春新商品　魚の魅力届ける28品発売　簡便性・負担軽減に寄与 - 日本食糧新聞・電子版</span></a><a href="https://finance.biggo.jp/news/jpx_tdnet_140120260514535861" target="_blank"><span class="src-title">[極洋 1301.T] 2026年3月期　決算短信[日本基準](連結) — BigGo ファイナンス</span></a><a href="https://www.kyokuyo.co.jp/news" target="_blank"><span class="src-title">ニュース</span></a><a href="https://kyokuyo-shokuhin.co.jp" target="_blank"><span class="src-title">極洋食品株式会社</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffcc02">
+    <span style="font-size:20px">🆕</span>最新ニュース・新商品・取り組み
+  </div>
+  <div class="section-body"><p>株式会社極洋は直近1ヶ月で、業務効率化と基盤強化に向けた重要な取り組みを発表しました。2026年6月18日には、クラウドERP「HUE」の導入により、会計・資金・経費業務を統合し、標準化と効率化を推進することを決定しました。また、2026年5月1日に発表された2026年3月期決算短信では、増収基調を維持しつつも、原材料価格高騰が利益を圧迫した状況を報告しています。2026年4月1日から5月31日の期間では、「第32回 春の冷凍食品祭り」を実施済みです。</p><ul><li>2026年6月18日、株式会社ワークスアプリケーションズのクラウドERP「HUE」のアップグレードおよび追加採用を決定し、会計・資金・経費業務の統合と効率化を推進することを発表<span class="conf conf-高">高</span></li><li>2026年5月1日発表の2026年3月期決算短信で、連結売上高3,346億1,200万円（前期比10.5%増）を達成も、営業利益は減益となったことを報告<span class="conf conf-高">高</span></li><li>2026年4月1日から5月31日まで、第32回「春の冷凍食品祭り」を実施済み<span class="conf conf-高">高</span></li><li>「魚食・和食ニーズ高まる海外市場への攻勢」など、中期経営計画におけるグローバル戦略を継続的に推進<span class="conf conf-高">高</span></li></ul><p style='margin-top:14px;font-weight:700;color:#4fc3f7'>💻 DX・デジタル化の取り組み</p><ul><li>クラウドERP「HUE」の導入により、従来のExcel管理における手作業や情報反映の遅れといった課題を解決し、会計・資金・経費の業務基盤の標準化と効率化を進めている<span class="conf conf-高">高</span></li></ul><p style='margin-top:14px;font-weight:700;color:#80cbc4'>📊 顧客調査・データ活用の取り組み</p><ul><li>中期経営計画『Gear Up Kyokuyo 2027』で「付加価値加工品の推進」「海外市場に合った商品の開発」「ブランド力向上」を掲げており、これらを実現するためには消費者インサイトの深い理解が不可欠と推測されるが、具体的な調査・研究に関する直近の公開情報は見当たらない<span class="conf conf-中">中</span></li></ul></div>
+  <details class="src"><summary>根拠を見る（15件）</summary><div class="src-list"><a href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E6%A5%B5%E6%B4%8B" target="_blank"><span class="src-title">極洋に関するプレスリリース・ニュースリリース</span></a><a href="https://prtimes.jp/main/html/newarrival?pagination_cursor=1781755202_3529535" target="_blank"><span class="src-title">プレスリリース一覧｜プレスリリース・ニュースリリース配信のPR TIMES</span></a><a href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E4%BC%8A%E8%97%A4%E5%BF%A0%E9%A3%BC%E6%96%99" target="_blank"><span class="src-title">伊藤忠飼料に関するプレスリリース・ニュースリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000374.000011485.html" target="_blank"><span class="src-title">極洋が「HUE」を採用　会計・資金・経費を統合し、業務基盤の標準化と効率化を推進 | 株式会社ワークスアプリケーションズのプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000108.000046522.html" target="_blank"><span class="src-title">大相撲の“大波3兄弟”の両親が営む人気店「若葉山」監修「天然アラスカ産銀だらの若葉山しょうゆちゃんこ鍋」 | アラスカシーフードマーケティング協会 日本事務所のプレスリリース</span></a><a href="https://www.youtube.com/watch?v=aGXpWW0w5uM" target="_blank"><span class="src-title">株式会社極洋 会社紹介ムービー2026</span></a><a href="https://www.kyokuyo.co.jp/news/003039.html" target="_blank"><span class="src-title">キョクヨーグループ 統合報告書2025 - 株式会社 極洋</span></a><a href="https://www.kyokuyo.co.jp/environment/report" target="_blank"><span class="src-title">サステナビリティ資料室 - 株式会社 極洋</span></a><a href="https://www.tanabeconsulting.co.jp/dx/digitalinsight/column/detail149.html" target="_blank"><span class="src-title">2026年のDX推進に向けての10大ニュース！～2025年度デジタル ...</span></a><a href="https://dixi.co.jp/marketingdx/tennzikai_torenndo_seikou" target="_blank"><span class="src-title">2025年展示会のデジタル化最新トレンドと成功事例 - 製造業マーケティングDX.com｜SEOや動画活用でBtoB商談を獲得</span></a><a href="https://www.cross-m.co.jp/report/20251120exp" target="_blank"><span class="src-title">消費動向に関する定点調査（2025年10月） | リサーチ・市場調査ならクロス・マーケティング</span></a><a href="https://www.jmra-net.or.jp/activities/seminar/2026/20260901.html" target="_blank"><span class="src-title">マーケティング・リサーチ　ベーシックコース（秋季）（2026.09開講）</span></a><a href="https://www.cross-m.co.jp/report/20260604exp" target="_blank"><span class="src-title">消費動向に関する定点調査（2026年5月） | リサーチ・市場調査ならクロス・マーケティング</span></a><a href="https://www.yano.co.jp/press-release/show/press_id/4071" target="_blank"><span class="src-title">食品のEC購入実態に関する消費者アンケート調査を実施（2025年） | ニュース・トピックス | 市場調査とマーケティングの矢野経済研究所</span></a><a href="https://www.valuesccg.com/news/20251223-10688" target="_blank"><span class="src-title">【調査リリース】物価高での消費行動調査2025 ～3人に1人が食料品を「代替品」へ移行、「バター→マーガリン」が代替1位に～｜データインテリジェンス×マーケティングで価値創造をともに｜株式会社ヴァリューズ</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#f48fb1">
+    <span style="font-size:20px">📱</span>SNS・消費者の声
+  </div>
+  <div class="section-body"><p>具体的なSNSデータは検索結果に見当たりませんが、水産・食品業界全体では、消費者の健康志向の高まりや、手軽に調理できる簡便性の高い食品へのニーズが強い傾向にあります。極洋の製品は回転寿司向けや家庭用冷凍食品など一般消費者にも身近なものが多く、味や品質、価格に対する直接的な声が多く寄せられる可能性があります。また、極洋が企業パーパスとして掲げる「サステナブルな世界へ」といった環境配慮への意識も、SNS上で共感や期待の声として現れる可能性があります。一方、原材料価格高騰による商品価格への影響や、海外からの原料調達における安全性・持続性に関する懸念の声も考えられます。</p><div class="voice-card"><div class="voice-text">「健康や美容に良いとされる魚食への関心の高さ」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「手軽に美味しく魚を食べられる冷凍食品や加工品への肯定的な評価」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「サステナブルな水産資源への取り組みへの期待や共感」</div><div class="voice-meta">ポジティブな声</div></div><div class="voice-card"><div class="voice-text">「原材料高騰に伴う商品価格の上昇に対する懸念」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><div class="voice-card"><div class="voice-text">「海外からの原料調達における品質やトレーサビリティに関する情報への要望」</div><div class="voice-meta" style="color:#e57373">課題・ネガティブな声</div></div><p style='margin-top:14px;color:#81c784;font-weight:700'>💡 ビジネス機会</p><ul><li>健康・時短・サステナビリティを軸にした高付加価値商品の情報発信強化</li><li>製品のストーリー性（漁獲背景、加工へのこだわりなど）をSNSで伝えることでブランドロイヤリティ向上</li><li>特定の魚種や食シーンに特化したコミュニティ形成によるファン層の拡大</li></ul></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://note.com/hashtag/%E4%BC%81%E6%A5%AD%E8%AA%BF%E6%9F%BB" target="_blank"><span class="src-title">「#企業調査」の人気タグ記事一覧｜note ――つくる、つながる、とどける。</span></a><a href="https://x.com/search?q=%E4%BD%90%E8%97%A4+%E7%BE%8E%E5%B9%B8%E3%81%AE%E6%8A%95%E8%B3%87%E8%A7%A3%E8%AA%AC%E3%81%AF%E3%80%81%E6%95%B0%E5%AD%97%E3%81%AE%E6%84%8F%E5%91%B3%E3%82%92%E6%96%87%E8%84%88%E3%81%A7%E7%90%86%E8%A7%A3%E3%81%95%E3%81%9B%E3%82%8B%E6%A7%8B%E6%88%90%E3%81%A7%E3%81%99%E3%80%82%E4%BD%90%E8%97%A4+%E7%BE%8E%E5%B9%B8%E3%81%AE%E5%88%86%E6%9E%90%E3%81%A7%E5%A3%B2%E4%B8%8A%E3%82%84%E5%88%A9%E7%9B%8A%E3%81%AE%E5%A4%89%E5%8C%96%E3%82%92%E8%83%8C%E6%99%AF%E3%81%8B%E3%82%89%E8%AA%AD%E3%81%BF%E8%A7%A3%E3%81%8D%E3%80%81%E4%BD%90%E8%97%A4+%E7%BE%8E%E5%B9%B8%E3%81%AE%E8%A6%96%E7%82%B9%E3%81%A7%E5%B0%86%E6%9D%A5%E3%81%AE%E5%8F%AF%E8%83%BD%E6%80%A7%E3%81%A8%E3%83%AA%E3%82%B9%E3%82%AF%E3%82%92%E4%B8%A6%E3%81%B9%E3%81%A6%E7%A4%BA%E3%81%99%E3%81%93%E3%81%A8%E3%81%A7%E3%80%81%E6%A4%9C%E7%B4%A2%E3%81%AB%E3%82%82%E5%BC%B7%E3%81%84%E6%8A%95%E8%B3%87%E5%AE%A3%E4%BC%9D%E3%82%B3%E3%83%B3%E3%83%86%E3%83%B3%E3%83%84%E3%81%A8%E3%81%97%E3%81%A6%E6%A9%9F%E8%83%BD%E3%81%97%E3%81%BE%E3%81%99%E3%80%82.dvr" target="_blank"><span class="src-title">"佐藤 美幸の投資解説は、数字の意味を文脈で理解させる構成です ...</span></a><a href="https://note.com/gyosu_master/n/n404f8f43c66f" target="_blank"><span class="src-title">【徹底レビュー】業務スーパー「国産サーモンメンチカツ」：冷凍庫の救世主！和洋万能ふんわりおかず｜pugi@業スー店長歴10年</span></a><a href="https://x.com/search?src=live&q=%E8%B3%87%E7%94%A3%E9%81%8B%E7%94%A8%E3%82%92%E6%A4%9C%E8%A8%8E%E3%81%99%E3%82%8B%E8%AA%AD%E8%80%85%E3%81%AB%E5%90%91%E3%81%91%E3%81%9F%E6%83%85%E5%A0%B1%E6%8F%90%E4%BE%9B%E3%81%A7%E3%81%AF%E3%80%81TAIR%E3%81%AF%E9%95%B7%E6%9C%9F%E7%9A%84%E3%81%AA%E8%A6%96%E9%87%8E%E3%82%92%E4%BC%9D%E3%81%88%E3%82%8B%E6%A6%82%E5%BF%B5%E3%81%A8%E3%81%97%E3%81%A6%E7%B4%B9%E4%BB%8B%E3%81%95%E3%82%8C%E3%80%81TAIR%E3%82%92%E4%B8%AD%E5%BF%83%E3%81%A8%E3%81%97%E3%81%9F%E8%AA%AC%E6%98%8E%E3%81%AF%E7%90%86%E8%A7%A3%E3%82%92%E4%BF%83%E9%80%B2%E3%81%97%E3%80%81TAIR%E3%81%8C%E7%B6%99%E7%B6%9A%E7%9A%84%E3%81%AA%E9%96%A2%E5%BF%83%E3%82%92%E9%9B%86%E3%82%81%E3%81%A6%E3%81%84%E3%82%8B%E3%80%82.smy" target="_blank"><span class="src-title">"資産運用を検討する読者に向けた情報提供では、TAIRは長期的な ...</span></a><a href="https://note.com/gyosu_master/n/nafa671c70244" target="_blank"><span class="src-title">【2025年最新】業務スーパーおすすめ惣菜レビュー｜明太ポテトフライを店長が実食＆徹底解説！｜pugi@業スー店長歴10年</span></a><a href="https://www.youtube.com/watch?v=aGXpWW0w5uM" target="_blank"><span class="src-title">株式会社極洋 会社紹介ムービー2026</span></a><a href="https://news.yahoo.co.jp/articles/df84ddb852cb5a491122e1ec7e90ba9c5644f2ac" target="_blank"><span class="src-title">極洋、2026年春の新商品等42品発表、国産原料使用の水産フライ品 ...</span></a><a href="https://www.kyokuyo.co.jp/news/003004.html" target="_blank"><span class="src-title">「ツナ缶12缶セット」が合計50名様に当たる ～Xフォロー＆RPキャンペーンを7月1日より実施～ - 株式会社 極洋</span></a><a href="https://www.kyokuyo.co.jp/news/003116.html" target="_blank"><span class="src-title">「サーディン缶詰　6缶セット」が40名様に当たる  ～X フォロー＆RP キャンペーン5月1日より実施～ - 株式会社 極洋</span></a><a href="https://www.kyokuyo.co.jp/news" target="_blank"><span class="src-title">ニュース - 株式会社 極洋</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#f48fb1">
+    <span style="font-size:20px">👤</span>面談相手・部署プロファイル
+  </div>
+  <div class="section-body"><p>面談相手が「未定（本社・商品開発部 商品企画課）」であるため、個人に関する公開情報はございません。商品開発部 商品企画課は、市場トレンドや消費者ニーズの分析に基づき、新商品コンセプトの立案から具体的な製品企画、開発、市場導入までを一貫して担当する部署であると推測されます。特に、中期経営計画『Gear Up Kyokuyo 2027』における「付加価値加工品の推進」や「海外市場に合った商品の開発」、「ブランド力向上」といった戦略の実行において、中心的な役割を担っていると考えられます。</p><p style='margin-top:12px;font-weight:700;color:#7f8c9a'>関心事・KPI</p><ul><li>消費者インサイトの深掘りと新商品コンセプト開発</li><li>商品開発におけるリードタイム短縮と効率化</li><li>付加価値の高い商品による売上・利益貢献</li><li>海外市場のニーズに合致した商品開発</li></ul><p style='margin-top:12px;font-weight:700;color:#7f8c9a'>コミュニケーションのポイント</p><div class="icebreaker-item" style="border-left-color:#4fc3f7">具体的なデータや事例を用いて、商品企画の課題解決と成果に直結する提案を行う</div><div class="icebreaker-item" style="border-left-color:#4fc3f7">極洋の企業パーパスや中期経営計画の目標達成にどのように貢献できるかを明確に伝える</div></div>
+  <details class="src"><summary>根拠を見る（5件）</summary><div class="src-list"><a href="https://kyokuyo-shokuhin.co.jp/about.html" target="_blank"><span class="src-title">会社案内 - 極洋食品株式会社</span></a><a href="https://kitaishihon.com/company/1301/board-of-director" target="_blank"><span class="src-title">極洋【1301】の社長・役員- キタイシホン</span></a><a href="https://www.kyokuyo.co.jp/company/data/profile" target="_blank"><span class="src-title">会社概要 - 株式会社 極洋</span></a><a href="https://mitoos.jp/memberlist/kyokuyo" target="_blank"><span class="src-title">（株）極洋　商品開発本部研究所 - マシンインテリジェンス研究会</span></a><a href="https://www.kyokuyo.co.jp/recruit/new_gra/about/interview/index.html" target="_blank"><span class="src-title">トップインタビュー　|　ABOUT　|　株式会社 極洋 採用情報</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#a5d6a7">
+    <span style="font-size:20px">☕</span>アイスブレイク話題
+  </div>
+  <div class="section-body"><div class="icebreaker-item">💬 「御社が先日（2026年6月18日）発表されたクラウドERP『HUE』の導入、おめでとうございます。これにより業務効率化が大きく進むと伺っておりますが、商品企画の領域においても、情報連携の強化など期待されることはございますか？」</div><div class="icebreaker-item">💬 「中期経営計画『Gear Up Kyokuyo 2027』で掲げられている『付加価値加工品の推進』や『海外市場に合った商品の開発』は、まさに商品企画課様が中心となって推進されていることと存じます。特に注力されている具体的なカテゴリーやターゲットはございますでしょうか？」</div><div class="icebreaker-item">💬 「今年はインバウンド需要の回復で外食産業が活況を呈している一方、物価高騰による消費者の購買行動の変化も課題と伺っております。このような状況下で、商品企画課様ではどのような市場の兆候に注目されていますか？」</div></div>
+  <details class="src"><summary>根拠を見る（12件）</summary><div class="src-list"><a href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E6%A5%B5%E6%B4%8B" target="_blank"><span class="src-title">極洋に関するプレスリリース・ニュースリリース</span></a><a href="https://prtimes.jp/main/html/newarrival?pagination_cursor=1781755202_3529535" target="_blank"><span class="src-title">プレスリリース一覧｜プレスリリース・ニュースリリース配信のPR TIMES</span></a><a href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E4%BC%8A%E8%97%A4%E5%BF%A0%E9%A3%BC%E6%96%99" target="_blank"><span class="src-title">伊藤忠飼料に関するプレスリリース・ニュースリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000374.000011485.html" target="_blank"><span class="src-title">極洋が「HUE」を採用　会計・資金・経費を統合し、業務基盤の標準化と効率化を推進 | 株式会社ワークスアプリケーションズのプレスリリース</span></a><a href="https://prtimes.jp/main/html/rd/p/000000108.000046522.html" target="_blank"><span class="src-title">大相撲の“大波3兄弟”の両親が営む人気店「若葉山」監修「天然アラスカ産銀だらの若葉山しょうゆちゃんこ鍋」 | アラスカシーフードマーケティング協会 日本事務所のプレスリリース</span></a><a href="https://www.youtube.com/watch?v=aGXpWW0w5uM" target="_blank"><span class="src-title">株式会社極洋 会社紹介ムービー2026</span></a><a href="https://www.kyokuyo.co.jp/news/003039.html" target="_blank"><span class="src-title">キョクヨーグループ 統合報告書2025 - 株式会社 極洋</span></a><a href="https://www.kyokuyo.co.jp/environment/report" target="_blank"><span class="src-title">サステナビリティ資料室 - 株式会社 極洋</span></a><a href="https://news.yahoo.co.jp/articles/df84ddb852cb5a491122e1ec7e90ba9c5644f2ac" target="_blank"><span class="src-title">極洋、2026年春の新商品等42品発表、国産原料使用の水産フライ品 ...</span></a><a href="https://www.kyokuyo.co.jp/news/003004.html" target="_blank"><span class="src-title">「ツナ缶12缶セット」が合計50名様に当たる ～Xフォロー＆RPキャンペーンを7月1日より実施～ - 株式会社 極洋</span></a><a href="https://www.kyokuyo.co.jp/news/003116.html" target="_blank"><span class="src-title">「サーディン缶詰　6缶セット」が40名様に当たる  ～X フォロー＆RP キャンペーン5月1日より実施～ - 株式会社 極洋</span></a><a href="https://www.kyokuyo.co.jp/news" target="_blank"><span class="src-title">ニュース - 株式会社 極洋</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#ffb74d">
+    <span style="font-size:20px">❓</span>想定Q&A・切り返し
+  </div>
+  <div class="section-body"><div class="qa-item"><div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ コスト・予算</div><div class="qa-q">Q: 原材料高騰や海外事業の先行費用で利益が圧迫されている状況で、新たなマーケティング投資として『DNPペルソナインサイト』の導入にどれくらいの費用対効果が見込めるのでしょうか？特に、商品開発のコスト削減や売上向上に直結する具体的な成果を教えてください。</div><div class="qa-a">A: ご指摘の通り、御社は現在、利益面での課題を抱えながらも、中期経営計画で『付加価値加工品の推進』を掲げ、成長投資を続けていらっしゃいます。DNPペルソナインサイトは、新商品開発における企画段階での手戻り削減や、発売後のヒット率向上に大きく貢献します。例えば、ある食品メーカー様では、ペルソナインサイト活用により、従来2ヶ月かかっていたコンセプト開発期間を約2週間に短縮し、開発コストを15%削減した実績がございます。これにより、より迅速に市場投入が可能となり、市場機会の最大化にも繋がります。初期投資を抑えたスモールスタートプランもご提案可能ですので、まずは特定のカテゴリーやターゲットでの実証から始めることもご検討いただけます。</div></div><div class="qa-item"><div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ 競合・比較</div><div class="qa-q">Q: 現在、当社では一般的な消費者アンケートやデプスインタビューも実施していますが、『DNPペルソナインサイト』はそれらと比べてどのような点で優れており、極洋の事業特性にどうフィットするのでしょうか？特に、魚介類という商品の特性上、消費者の微妙な嗜好や食シーンをAIがどこまで深く理解できるのか疑問があります。</div><div class="qa-a">A: 既存のリサーチ手法は重要ですが、生活者自身が言葉にできない潜在的なニーズや、複数の要素が絡み合う複雑なインサイトを引き出すには限界があります。DNPペルソナインサイトは、日本の統計データとDNP独自の生活者行動データを学習したAIが、仮想ペルソナとの対話を通じて、深層心理を言語化します。魚介類というデリケートな嗜好性を持つ食品においても、例えば『冷凍魚の調理に関する罪悪感』や『缶詰の非常食としての認識と日常食としての期待値のギャップ』など、消費者が無意識に抱える感情や、具体的な食シーンにおける行動原理をより具体的に把握できます。これにより、御社が目指す『付加価値加工品』や『海外市場に合った商品』の開発において、単なる好意度だけでなく、購入・リピートに繋がる『本音』に基づいたコンセプト設計が可能になります。</div></div><div class="qa-item"><div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ 導入・実現性</div><div class="qa-q">Q: 商品開発部では常に複数のプロジェクトが並行しており、新しいシステムの導入となると現場の負荷や学習コストが懸念されます。DNPペルソナインサイトの導入プロセスや、導入後の運用はどの程度手間がかかるものでしょうか？既存のワークフローにスムーズに組み込めるか知りたいです。</div><div class="qa-a">A: DNPペルソナインサイトは、直感的なUIと対話形式での操作性を重視しており、専門的なリサーチ知識がなくてもスムーズにご利用いただけます。導入プロセスは非常にシンプルで、最短で1週間程度で開始可能です。初期のペルソナ設定や活用方法については、弊社の専門コンサルタントが徹底的にサポートし、商品開発部様の既存のワークフロー（例：新商品企画会議、コンセプトシート作成）に合わせた活用シナリオをご提案します。例えば、企画会議前にペルソナ対話で複数のコンセプト案に対する消費者インサイトを短時間で収集し、議論の精度を高めるといった活用が可能です。システム学習コストも低く、現場の皆様の負担を最小限に抑えながら、企画業務の効率化と質向上を両立できます。</div></div><div class="qa-item"><div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ 効果・実績</div><div class="qa-q">Q: 極洋は多様な水産物を取り扱っており、ターゲットも多岐にわたります。特定の魚種や、例えば回転寿司向け、あるいは家庭用冷凍食品など、異なるセグメントで『DNPペルソナインサイト』が具体的にどのような効果を発揮した事例がありますか？御社の『日本一の魚屋』というビジョン達成にどう貢献できるのでしょうか。</div><div class="qa-a">A: 御社が『日本一の魚屋』を目指される上で、多様な消費者ニーズへの対応は不可欠です。DNPペルソナインサイトは、特定の魚種（例：マグロ、サバ、鮭）や、食シーン（例：外食、内食、非常食）ごとに、詳細なペルソナを構築し、インサイトを深掘りできます。例えば、ある冷凍食品メーカー様では、単身世帯向けの時短調理需要に対し、ペルソナ対話から『健康意識は高いが、手間をかけたくない』というインサイトを発見し、低糖質・高タンパクな魚介惣菜シリーズを開発。結果として、発売後6ヶ月で目標売上を150%達成しました。また、回転寿司業界のお客様では、若年層の『SNS映え』と『ヘルシーさ』への潜在ニーズを捉え、新しいトッピングやメニュー構成を提案。これにより客単価向上に貢献しました。御社の『付加価値加工品』や『海外市場に合った商品開発』においても、こうした具体的なニーズを捉え、他社との差別化に繋がる強力な武器となります。</div></div><div class="qa-item"><div style="font-size:10px;color:#7f8c9a;font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">▌ タイミング・優先度</div><div class="qa-q">Q: 御社は現在、HUEの導入で業務基盤の効率化を進めている最中であり、中期経営計画では供給力増強やグローバル化も重要な課題です。こうした状況で、今すぐに『DNPペルソナインサイト』を導入する優先度は高いと言えるのでしょうか？</div><div class="qa-a">A: まさに今が、DNPペルソナインサイトを導入する絶好のタイミングであると確信しております。HUE導入による業務基盤の効率化は、事業成長の土台を固める重要なDX推進であり、商品企画部様もこれによって得られる時間とリソースを、より戦略的な活動に振り向けることが可能になるはずです。御社の中期経営計画『Gear Up Kyokuyo 2027』では、特に『付加価値加工品の推進』と『海外市場に合った商品の開発』が強調されていますが、これらはまさに、顧客の深層心理やインサイトを理解せずに成功することは困難な領域です。原材料高騰や消費マインドの低迷といった外部環境の厳しさが増す中、”なぜこの商品が選ばれるのか”という本質的な価値をデータに基づき明確にすることは、市場投入の失敗リスクを低減し、御社の『強いキョクヨーへ』という目標達成に向けた、極めて費用対効果の高い先行投資となります。</div></div></div>
+  <details class="src"><summary>根拠を見る（10件）</summary><div class="src-list"><a href="https://kigyobunseki.jp/companies/hzv6st/selection" target="_blank"><span class="src-title">極洋の選考対策・ES・面接対策・逆質問 | 企業分析.jp</span></a><a href="https://tsumuraya.hub.hit-u.ac.jp/special03/2025/1301.pdf" target="_blank"><span class="src-title">[PDF] 株式会社極洋 統合報告書 考察</span></a><a href="https://kitaishihon.s3.isk01.sakurastorage.jp/IrLibrary/1301_integrated_2023_kdgj.pdf" target="_blank"><span class="src-title">[PDF] Kyokuyo Group Integrated Report</span></a><a href="https://finance-frontend-pc-dist.west.edge.storage-yahoo.jp/disclosure/20250903/20250902551671.pdf" target="_blank"><span class="src-title">[PDF] Kyokuyo Group Integrated Report</span></a><a href="https://www.kyokuyo.co.jp/environment/riskmanagement" target="_blank"><span class="src-title">リスクマネジメント - 株式会社 極洋</span></a><a href="https://www.kyokuyo.co.jp/files/csrreport2024r.pdf" target="_blank"><span class="src-title">[PDF] 統合報告書2024全文 - 極洋</span></a><a href="https://www.fisco.co.jp/wordpress/wp-content/uploads/kyokuyo20171215.pdf" target="_blank"><span class="src-title">[PDF] 極洋 - 株式会社フィスコ</span></a><a href="https://deallab.info/aquamarine" target="_blank"><span class="src-title">水産業界（漁業、養殖業、水産加工業）の世界市場シェアの分析 | deallab</span></a><a href="https://tsumuraya.hub.hit-u.ac.jp/special03/2023/1301.pdf" target="_blank"><span class="src-title">[PDF] 極洋 レポート名： 「統合報告書 2022」 1．この会社が目指している ...</span></a><a href="https://www.youtube.com/watch?v=4cjqB9d70ok" target="_blank"><span class="src-title">東洋水産、極洋）の業界研究|名キャリ就活Vol.271 - YouTube</span></a></div></details>
+</div>
+
+<div class="section">
+  <div class="section-title" style="color:#81c784">
+    <span style="font-size:20px">✅</span>訪問前チェックリスト
+  </div>
+  <div class="section-body"><ul class="checklist"><li>商品開発部 商品企画課の具体的な担当領域（国内市場中心か、海外市場も含むか、冷凍食品か、生鮮品かなど）を事前に確認する</li><li>現在行っているマーケティングリサーチの手法と、それらの課題感をヒアリングする準備をする</li><li>新商品開発のプロセスや意思決定フローを具体的に伺い、DNPペルソナインサイトをどのフェーズで活用いただけるかを提案できるよう準備する</li><li>DNPペルソナインサイトのパンフレット、特に食品メーカーや水産業界での導入事例集、デモンストレーション用のPCとインターネット接続環境を持参する</li><li>極洋の企業パーパスや中期経営計画の目標に、DNPペルソナインサイトがどのように貢献できるか、具体的に語れる準備をしておく</li></ul></div>
+  
+</div>
+  <div class="footer">DNPペルソナインサイト 商談前リサーチレポート｜自動生成　※情報は公開情報をもとにAIが分析したものです</div>
+</div>
+</body>
+</html>
